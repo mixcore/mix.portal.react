@@ -1,0 +1,9 @@
+{
+  "extends": "react-app",
+  "rules": {
+    "import/no-anonymous-default-export": 0,
+    "jsx-a11y/href-no-hash": 0,
+    "no-console": "warn",
+    "valid-jsdoc": "warn"
+  }
+}

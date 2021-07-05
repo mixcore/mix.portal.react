@@ -1,0 +1,127 @@
+{
+  "name": "antd-admin",
+  "version": "5.3.0",
+  "license": "MIT",
+  "description": "An admin dashboard application demo built upon Ant Design and UmiJS",
+  "dependencies": {
+    "@ant-design/icons": "^4.6.2",
+    "@ant-design/pro-layout": "^6.16.0",
+    "@lingui/core": "^3.8.2",
+    "@lingui/detect-locale": "^3.8.2",
+    "@lingui/react": "^3.8.2",
+    "antd": "^4.15.0",
+    "axios": "^0.21.0",
+    "classnames": "^2.2.6",
+    "dva-model-extend": "^0.1.2",
+    "echarts": "^5.0.0",
+    "echarts-for-react": "^3.0.0",
+    "echarts-gl": "^2.0.2",
+    "echarts-liquidfill": "^3.0.0",
+    "json-format": "^1.0.1",
+    "lodash": "^4.17.11",
+    "md5": "^2.2.1",
+    "nprogress": "^0.2.0",
+    "path-to-regexp": "^6.1.0",
+    "prop-types": "^15.7.0",
+    "qs": "^6.10.0",
+    "react": "^17.0.2",
+    "react-countup": "^4.2.0",
+    "react-dom": "^17.0.2",
+    "react-helmet": "^6.0.0",
+    "react-highcharts": "^16.1.0",
+    "react-perfect-scrollbar": "^1.5.0",
+    "recharts": "^2.0.0",
+    "store": "^2.0.0"
+  },
+  "devDependencies": {
+    "@babel/preset-react": "^7.12.13",
+    "@lingui/babel-preset-react": "^2.9.2",
+    "@lingui/cli": "^3.8.2",
+    "@lingui/loader": "^3.8.2",
+    "@lingui/macro": "^3.8.2",
+    "@typescript-eslint/eslint-plugin": "^4.20.0",
+    "@typescript-eslint/parser": "^4.20.0",
+    "@umijs/plugin-esbuild": "^1.2.0",
+    "@umijs/preset-react": "^1.8.0",
+    "babel-eslint": "^10.0.0",
+    "babel-plugin-dev-expression": "^0.2.1",
+    "babel-plugin-import": "^1.10.0",
+    "babel-plugin-macros": "^3.0.1",
+    "babel-plugin-module-resolver": "^3.1.1",
+    "cross-env": "^7.0.0",
+    "eslint": "^7.23.0",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-config-react-app": "^6.0.0",
+    "eslint-plugin-babel": "^5.3.1",
+    "eslint-plugin-flowtype": "^5.4.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-react": "^7.23.1",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "husky": "^6.0.0",
+    "less-vars-to-js": "^1.3.0",
+    "lint-staged": "^10.0.0",
+    "mockjs": "^1.1.0",
+    "prettier": "^2.0.0",
+    "stylelint": "^13.2.0",
+    "stylelint-config-prettier": "^8.0.0",
+    "stylelint-config-standard": "^21.0.0",
+    "typescript": "^4.2.3",
+    "umi": "^3.4.25"
+  },
+  "engines": {
+    "node": ">= 10.0.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "npm run eslint",
+      "npm run prettier"
+    ],
+    "*.less": [
+      "npm run stylelint",
+      "npm run prettier"
+    ]
+  },
+  "lingui": {
+    "fallbackLocales": {
+      "default": "en"
+    },
+    "sourceLocale": "en",
+    "locales": [
+      "en",
+      "zh",
+      "pt-br"
+    ],
+    "catalogs": [
+      {
+        "path": "src/locales/{locale}/messages",
+        "include": [
+          "src/pages"
+        ],
+        "exclude": [
+          "**/node_modules/**"
+        ]
+      }
+    ],
+    "orderBy": "origin",
+    "runtimeConfigModule": [
+      "@/i18n",
+      "i18n"
+    ]
+  },
+  "scripts": {
+    "start": "umi dev",
+    "build": "cross-env UMI_ENV=prod umi build",
+    "test": "umi test",
+    "analyze": "cross-env ANALYZE=1 umi dev",
+    "eslint": "eslint --fix 'src/**/*.{ts,tsx,js.jsx}'",
+    "stylelint": "stylelint src/**/*.less --syntax less",
+    "prettier": "prettier --write 'src/**/*.{ts,tsx,js.jsx,less}'",
+    "precommit": "lint-staged",
+    "add-locale": "lingui add-locale",
+    "extract": "lingui extract",
+    "trans": "lingui extract --clean && node ./scripts/translate.js",
+    "doc": "docsify serve docs"
+  }
+}
