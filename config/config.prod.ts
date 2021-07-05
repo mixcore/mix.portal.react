@@ -1,7 +1,7 @@
 import type { IConfig } from 'umi'
 
 const config: IConfig = {
-  publicPath: 'https://cdn.antd-admin.zuiidea.com/',
+  publicPath: 'https://react.portal.mixcore.org/',
   outputPath: 'docs'
 }
 
