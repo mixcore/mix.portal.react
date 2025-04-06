@@ -33,3 +33,14 @@ export interface FooterItem {
 export type MainNavItem = NavItemWithOptionalChildren;
 
 export type SidebarNavItem = NavItemWithChildren;
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  avatar?: string;
+  avatarUrl?: string;
+  username?: string;
+  firstName?: string;
+  lastName?: string;
+}

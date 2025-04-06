@@ -1,6 +1,6 @@
 'use client';
 
-import { Header } from '@/components/layout/header';
+import Header from '@/components/layout/header';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
@@ -70,17 +70,17 @@ export function EnhancedShell({
     {
       title: 'Pages',
       href: '/admin/pages',
-      icon: <Icons.file className='h-5 w-5' />
+      icon: <Icons.file className='h-4 w-4' />
     },
     {
       title: 'Posts',
       href: '/admin/posts',
-      icon: <Icons.post className='h-5 w-5' />
+      icon: <Icons.post className='h-4 w-4' />
     },
     {
       title: 'Media',
       href: '/admin/media',
-      icon: <Icons.media className='h-5 w-5' />
+      icon: <Icons.media className='h-4 w-4' />
     }
   ];
 
@@ -88,12 +88,12 @@ export function EnhancedShell({
     {
       title: 'Users',
       href: '/admin/users',
-      icon: <Icons.users className='h-5 w-5' />
+      icon: <Icons.user className='h-4 w-4' />
     },
     {
       title: 'Roles',
       href: '/admin/roles',
-      icon: <Icons.settings className='h-5 w-5' />
+      icon: <Icons.settings className='h-4 w-4' />
     }
   ];
 
@@ -101,12 +101,12 @@ export function EnhancedShell({
     {
       title: 'Settings',
       href: '/admin/settings',
-      icon: <Icons.settings className='h-5 w-5' />
+      icon: <Icons.settings className='h-4 w-4' />
     },
     {
       title: 'Plugins',
       href: '/admin/plugins',
-      icon: <Icons.folder className='h-5 w-5' />
+      icon: <Icons.folder className='h-4 w-4' />
     }
   ];
 
@@ -321,7 +321,7 @@ export function EnhancedShell({
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={handleLogout}>
-                        <Icons.logout className='mr-2 h-4 w-4' />
+                        <Icons.logout className='h-4 w-4' />
                         <span>Logout</span>
                       </DropdownMenuItem>
                     </DropdownMenuContent>

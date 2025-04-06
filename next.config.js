@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
+  distDir: 'dist',
   images: {
     remotePatterns: [
       {
@@ -43,7 +45,18 @@ const nextConfig = {
   experimental: {
     // This setting is no longer needed in Next.js 15+ as App Router is now the default
   },
-  transpilePackages: ['geist']
+  transpilePackages: ['geist'],
+  // Add these settings to help with build issues
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        path: false
+      };
+    }
+    return config;
+  }
 };
 
 module.exports = nextConfig;
