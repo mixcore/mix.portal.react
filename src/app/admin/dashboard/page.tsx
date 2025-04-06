@@ -1,173 +1,178 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { DashboardLayout } from '@/components/layout/dashboard-layout';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { PostsApi } from '@/services/api';
 
-interface DashboardData {
-  totalPost: number;
-  totalPage: number;
-  totalUser: number;
-  totalMedia: number;
-}
-
-export default function Dashboard() {
-  const [data, setData] = useState<DashboardData>({
-    totalPost: 0,
-    totalPage: 0,
-    totalUser: 0,
-    totalMedia: 0,
+export default function DashboardPage() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [stats, setStats] = useState({ 
+    posts: 0, 
+    pages: 0, 
+    users: 0, 
+    media: 0 
   });
-  const [loading, setLoading] = useState(true);
 
+  // Simulate loading stats
   useEffect(() => {
-    // In a real scenario, you would fetch data from your API
-    const fetchDashboardData = async () => {
+    const fetchStats = async () => {
       try {
-        // Simulate API call with mock data
-        // In production, replace with actual API call
-        setTimeout(() => {
-          setData({
-            totalPost: 25,
-            totalPage: 8,
-            totalUser: 12,
-            totalMedia: 56,
-          });
-          setLoading(false);
-        }, 500);
+        // Replace with actual API calls when available
+        const postsData = await PostsApi.getPosts(0, 1);
+        
+        setStats({
+          posts: postsData.data.totalItems || 0,
+          pages: 12, // Mock data
+          users: 5,  // Mock data
+          media: 24  // Mock data
+        });
       } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-        setLoading(false);
+        console.error('Error fetching dashboard stats:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchDashboardData();
+    fetchStats();
   }, []);
 
-  return (
-    <div className="container mx-auto p-6">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-      </div>
+  // Dashboard stat cards
+  const statsCards = [
+    {
+      title: 'Total Posts',
+      value: isLoading ? '...' : stats.posts,
+      icon: <Icons.post className="h-4 w-4 text-muted-foreground" />,
+      description: 'All published and draft posts',
+      href: '/admin/post'
+    },
+    {
+      title: 'Total Pages',
+      value: isLoading ? '...' : stats.pages,
+      icon: <Icons.page className="h-4 w-4 text-muted-foreground" />,
+      description: 'All published and draft pages',
+      href: '/admin/page'
+    },
+    {
+      title: 'Registered Users',
+      value: isLoading ? '...' : stats.users,
+      icon: <Icons.users className="h-4 w-4 text-muted-foreground" />,
+      description: 'All registered users',
+      href: '/admin/user'
+    },
+    {
+      title: 'Media Items',
+      value: isLoading ? '...' : stats.media,
+      icon: <Icons.media className="h-4 w-4 text-muted-foreground" />,
+      description: 'All uploaded media files',
+      href: '/admin/media'
+    }
+  ];
 
-      {loading ? (
-        <div className="flex items-center justify-center p-12">
-          <Icons.spinner className="h-12 w-12 text-primary animate-spin" />
-        </div>
-      ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          <Card className="flex flex-col">
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-medium">Posts</CardTitle>
-              <Icons.file className="h-5 w-5 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{data.totalPost}</div>
-              <p className="text-xs text-muted-foreground">
-                Total blog posts and articles
-              </p>
-            </CardContent>
-            <CardFooter>
-              <Button asChild variant="ghost" className="w-full">
-                <Link href="/admin/post/list">View all posts</Link>
-              </Button>
-            </CardFooter>
-          </Card>
-          
-          <Card className="flex flex-col">
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-medium">Pages</CardTitle>
-              <Icons.page className="h-5 w-5 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{data.totalPage}</div>
-              <p className="text-xs text-muted-foreground">
-                Total website pages
-              </p>
-            </CardContent>
-            <CardFooter>
-              <Button asChild variant="ghost" className="w-full">
-                <Link href="/admin/page/list">View all pages</Link>
-              </Button>
-            </CardFooter>
-          </Card>
-          
-          <Card className="flex flex-col">
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-medium">Users</CardTitle>
-              <Icons.users className="h-5 w-5 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{data.totalUser}</div>
-              <p className="text-xs text-muted-foreground">
-                Total registered users
-              </p>
-            </CardContent>
-            <CardFooter>
-              <Button asChild variant="ghost" className="w-full">
-                <Link href="/admin/user/list">View all users</Link>
-              </Button>
-            </CardFooter>
-          </Card>
-          
-          <Card className="flex flex-col">
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-medium">Media</CardTitle>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-5 w-5 text-muted-foreground"
-              >
-                <path d="M21 15V6" />
-                <path d="M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
-                <path d="M12 12H3" />
-                <path d="M16 6H3" />
-                <path d="M12 18H3" />
-              </svg>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{data.totalMedia}</div>
-              <p className="text-xs text-muted-foreground">
-                Total media items
-              </p>
-            </CardContent>
-            <CardFooter>
-              <Button asChild variant="ghost" className="w-full">
-                <Link href="/admin/media/list">View all media</Link>
-              </Button>
-            </CardFooter>
-          </Card>
-        </div>
-      )}
+  // Quick actions
+  const quickActions = [
+    {
+      title: 'Create New Post',
+      description: 'Start writing a new blog post',
+      icon: <Icons.post className="h-4 w-4" />,
+      href: '/admin/post/create',
+    },
+    {
+      title: 'Add New Page',
+      description: 'Create a new website page',
+      icon: <Icons.page className="h-4 w-4" />,
+      href: '/admin/page/create',
+    },
+    {
+      title: 'Upload Media',
+      description: 'Add images or documents',
+      icon: <Icons.media className="h-4 w-4" />,
+      href: '/admin/media/upload',
+    },
+    {
+      title: 'Manage Settings',
+      description: 'Configure your website',
+      icon: <Icons.settings className="h-4 w-4" />,
+      href: '/admin/settings',
+    },
+  ];
 
-      <div className="grid gap-6 mt-6 md:grid-cols-3">
-        <Card className="col-span-2">
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Overview of your recent actions</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">Your recent activity will appear here.</p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>System Updates</CardTitle>
-            <CardDescription>Recent system notifications</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">System updates and notifications will appear here.</p>
-          </CardContent>
-        </Card>
-      </div>
+  // Recent activity feed (mock data)
+  const activityFeed = (
+    <div className="space-y-4">
+      {[
+        { user: 'admin', action: 'created a new post', time: '2 hours ago', type: 'post' },
+        { user: 'editor', action: 'updated a page', time: '5 hours ago', type: 'page' },
+        { user: 'admin', action: 'uploaded media', time: '1 day ago', type: 'media' },
+        { user: 'contributor', action: 'commented on a post', time: '2 days ago', type: 'comment' },
+      ].map((activity, i) => (
+        <div key={i} className="flex items-start space-x-3 py-2">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent">
+            {activity.type === 'post' && <Icons.post className="h-4 w-4" />}
+            {activity.type === 'page' && <Icons.page className="h-4 w-4" />}
+            {activity.type === 'media' && <Icons.media className="h-4 w-4" />}
+            {activity.type === 'comment' && <Icons.post className="h-4 w-4" />}
+          </span>
+          <div className="space-y-1">
+            <p className="text-sm font-medium leading-none">
+              <span className="font-semibold">{activity.user}</span> {activity.action}
+            </p>
+            <p className="text-xs text-muted-foreground">{activity.time}</p>
+          </div>
+        </div>
+      ))}
     </div>
+  );
+
+  // Main content
+  const mainContent = (
+    <Card>
+      <CardHeader>
+        <CardTitle>Welcome to your Dashboard</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="text-muted-foreground mb-4">
+          This is your Mixcore dashboard. Get started by creating content or managing your site.
+        </p>
+        <div className="grid gap-4 md:grid-cols-2">
+          <Link href="/admin/post/create" className="block">
+            <Button className="w-full justify-start" variant="outline">
+              <Icons.post className="mr-2 h-4 w-4" />
+              Create New Post
+            </Button>
+          </Link>
+          <Link href="/admin/page/create" className="block">
+            <Button className="w-full justify-start" variant="outline">
+              <Icons.page className="mr-2 h-4 w-4" />
+              Create New Page
+            </Button>
+          </Link>
+          <Link href="/admin/media/upload" className="block">
+            <Button className="w-full justify-start" variant="outline">
+              <Icons.media className="mr-2 h-4 w-4" />
+              Upload Media
+            </Button>
+          </Link>
+          <Link href="/admin/settings" className="block">
+            <Button className="w-full justify-start" variant="outline">
+              <Icons.settings className="mr-2 h-4 w-4" />
+              Site Settings
+            </Button>
+          </Link>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  return (
+    <DashboardLayout 
+      statsCards={statsCards}
+      quickActions={quickActions}
+      activityFeed={activityFeed}
+      contentArea={mainContent}
+    />
   );
 } 

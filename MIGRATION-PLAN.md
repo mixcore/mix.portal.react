@@ -32,13 +32,14 @@ In this phase, we'll set up the core infrastructure and build essential UI compo
 
 | Task | Priority | Status | Assigned To | Deadline |
 |------|----------|--------|-------------|----------|
-| API service architecture | High | ❌ Not Started | | Mid Week 2 |
-| Authentication service | High | ❌ Not Started | | Mid Week 2 |
+| API service architecture | High | ✅ Completed | | Mid Week 2 |
+| Authentication service | High | 🔄 In Progress | | Mid Week 2 |
 | Login page | High | 🔄 In Progress | | End of Week 2 |
-| Main navigation | High | 🔄 In Progress | | End of Week 2 |
-| Mobile responsive menu | Medium | ❌ Not Started | | End of Week 2 |
-| User profile dropdown | Medium | ❌ Not Started | | End of Week 2 |
-| Authentication API integration | High | ❌ Not Started | | End of Week 2 |
+| Main navigation | High | ✅ Completed | | End of Week 2 |
+| Mobile responsive menu | Medium | 🔄 In Progress | | End of Week 2 |
+| User profile dropdown | Medium | ✅ Completed | | End of Week 2 |
+| Authentication API integration | High | 🔄 In Progress | | End of Week 2 |
+| Layout variants | Medium | ✅ Completed | | End of Week 2 |
 
 ## Phase 2: Content Management (Weeks 3-5)
 
@@ -48,7 +49,7 @@ In this phase, we'll focus on migrating the core content management functionalit
 
 | Task | Priority | Status | Assigned To | Deadline |
 |------|----------|--------|-------------|----------|
-| Dashboard enhancements | Medium | ❌ Not Started | | Mid Week 3 |
+| Dashboard enhancements | Medium | ✅ Completed | | Mid Week 3 |
 | Post list page | High | ❌ Not Started | | End of Week 3 |
 | Page list page | High | ❌ Not Started | | End of Week 3 |
 | Data table component | High | ❌ Not Started | | Mid Week 3 |

@@ -1,19 +1,29 @@
-import axios from 'axios';
 import { User } from '@/types';
+import { apiClient } from './apiClient';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
+export interface LoginResponse {
+    accessToken: string;
+    refreshToken: string;
+    user: User;
+}
+
+export interface AuthResult<T = any> {
+    success: boolean;
+    data?: T;
+    errors?: string[];
+}
 
 export const AuthService = {
     // Login user
-    login: async (username: string, password: string) => {
+    login: async (username: string, password: string): Promise<AuthResult<LoginResponse>> => {
         try {
-            const response = await axios.post(`${API_URL}/rest/security/login`, {
+            const response = await apiClient.post<{ username: string; password: string }, { success: boolean; data: LoginResponse; errors?: string[] }>('/rest/security/login', {
                 username,
                 password,
             });
 
-            if (response.data && response.data.success) {
-                const { accessToken, refreshToken } = response.data.data;
+            if (response && response.success) {
+                const { accessToken, refreshToken } = response.data;
 
                 // Store tokens in localStorage
                 localStorage.setItem('authToken', accessToken);
@@ -21,15 +31,16 @@ export const AuthService = {
 
                 return {
                     success: true,
-                    data: response.data.data,
+                    data: response.data,
                 };
             }
 
             return {
                 success: false,
-                errors: response.data?.errors || ['Login failed'],
+                errors: response.errors || ['Login failed'],
             };
-        } catch {
+        } catch (error) {
+            console.error('Login error:', error);
             return {
                 success: false,
                 errors: ['An error occurred during login'],
@@ -53,23 +64,15 @@ export const AuthService = {
     // Get current user
     getCurrentUser: async (): Promise<User | null> => {
         try {
-            const token = localStorage.getItem('authToken');
+            const response = await apiClient.get<{ success: boolean; data: User; errors?: string[] }>('/rest/security/user/current');
 
-            if (!token) return null;
-
-            const response = await axios.get(`${API_URL}/rest/security/user/current`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            if (response.data && response.data.success) {
-                return response.data.data;
+            if (response && response.success) {
+                return response.data;
             }
 
             return null;
-        } catch (err) {
-            console.error('Error getting current user:', err);
+        } catch (error) {
+            console.error('Error getting current user:', error);
             return null;
         }
     },
@@ -81,5 +84,47 @@ export const AuthService = {
         if (!user) return false;
 
         return user.roles.includes(role);
+    },
+
+    // Refresh token
+    refreshToken: async (): Promise<AuthResult<LoginResponse>> => {
+        try {
+            const refreshToken = localStorage.getItem('refreshToken');
+
+            if (!refreshToken) {
+                return {
+                    success: false,
+                    errors: ['No refresh token available'],
+                };
+            }
+
+            const response = await apiClient.post<{ refreshToken: string }, { success: boolean; data: LoginResponse; errors?: string[] }>('/rest/security/refresh-token', {
+                refreshToken,
+            });
+
+            if (response && response.success) {
+                const { accessToken, refreshToken: newRefreshToken } = response.data;
+
+                // Store tokens in localStorage
+                localStorage.setItem('authToken', accessToken);
+                localStorage.setItem('refreshToken', newRefreshToken);
+
+                return {
+                    success: true,
+                    data: response.data,
+                };
+            }
+
+            return {
+                success: false,
+                errors: response.errors || ['Token refresh failed'],
+            };
+        } catch (error) {
+            console.error('Token refresh error:', error);
+            return {
+                success: false,
+                errors: ['An error occurred while refreshing token'],
+            };
+        }
     },
 }; 

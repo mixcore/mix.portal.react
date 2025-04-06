@@ -22,7 +22,7 @@ This document tracks the progress of migrating the Mixcore application from Angu
 - [x] Theme support (light/dark mode)
 - [x] Basic layout components
 - [ ] Authentication service
-- [ ] API service interfaces
+- [x] API service interfaces
 - [ ] Error handling system
 - [ ] State management strategy
 - [ ] Form validation
@@ -52,12 +52,12 @@ This document tracks the progress of migrating the Mixcore application from Angu
 
 ### Layout Components
 - [x] SiteHeader
-- [ ] Sidebar/Navigation
-- [ ] Footer
-- [ ] Layout variants (admin, public, auth)
-- [ ] Mobile responsive menu
+- [x] Sidebar/Navigation
+- [x] Footer
+- [x] Layout variants (admin, public, auth)
+- [🔄] Mobile responsive menu
 - [ ] Breadcrumbs
-- [ ] Dashboard layout
+- [x] Dashboard layout
 
 ## Pages Migration
 

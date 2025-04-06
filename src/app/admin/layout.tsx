@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { SiteHeader } from '@/components/layout/site-header';
+import { ShellLayout } from '@/components/layout/shell-layout';
 
 export const metadata: Metadata = {
   title: 'Mixcore Admin - Next.js',
@@ -11,10 +11,5 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <div className="relative flex min-h-screen flex-col">
-      <SiteHeader />
-      <div className="flex-1">{children}</div>
-    </div>
-  );
+  return <ShellLayout>{children}</ShellLayout>;
 } 

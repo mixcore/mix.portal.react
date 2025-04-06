@@ -1,34 +1,14 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { AxiosRequestConfig } from 'axios';
 import { ApiResponse, PaginationResult, Post, Page, User, Media } from '@/types';
+import { apiClient } from './apiClient';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
-
-// Create axios instance
-const axiosInstance = axios.create({
-    baseURL: API_URL,
-    headers: {
-        'Content-Type': 'application/json',
-    },
-});
-
-// Add request interceptor for auth token
-axiosInstance.interceptors.request.use((config) => {
-    const token = localStorage.getItem('authToken');
-    if (token && config.headers) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-});
-
-// Generic fetch data function
+// Generic fetch data function with apiClient
 async function fetchData<T>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
     try {
-        const response: AxiosResponse<ApiResponse<T>> = await axiosInstance.get(url, config);
-        return response.data;
+        const response = await apiClient.get<ApiResponse<T>>(url, config);
+        return response;
     } catch (error) {
-        if (axios.isAxiosError(error) && error.response?.data) {
-            return error.response.data as ApiResponse<T>;
-        }
+        console.error('Fetch data error:', error);
         return {
             data: {} as T,
             success: false,
@@ -38,15 +18,13 @@ async function fetchData<T>(url: string, config?: AxiosRequestConfig): Promise<A
     }
 }
 
-// Generic post data function
+// Generic post data function with apiClient
 async function postData<T, R = T>(url: string, data: T, config?: AxiosRequestConfig): Promise<ApiResponse<R>> {
     try {
-        const response: AxiosResponse<ApiResponse<R>> = await axiosInstance.post(url, data, config);
-        return response.data;
+        const response = await apiClient.post<T, ApiResponse<R>>(url, data, config);
+        return response;
     } catch (error) {
-        if (axios.isAxiosError(error) && error.response?.data) {
-            return error.response.data as ApiResponse<R>;
-        }
+        console.error('Post data error:', error);
         return {
             data: {} as R,
             success: false,
@@ -72,7 +50,7 @@ export const PostsApi = {
         return postData<Partial<Post>, Post>(`/rest/mix-post/${id}`, post);
     },
     deletePost: (id: string) => {
-        return axiosInstance.delete(`/rest/mix-post/${id}`).then(res => res.data);
+        return apiClient.delete<ApiResponse<boolean>>(`/rest/mix-post/${id}`);
     }
 };
 
@@ -92,7 +70,7 @@ export const PagesApi = {
         return postData<Partial<Page>, Page>(`/rest/mix-page/${id}`, page);
     },
     deletePage: (id: string) => {
-        return axiosInstance.delete(`/rest/mix-page/${id}`).then(res => res.data);
+        return apiClient.delete<ApiResponse<boolean>>(`/rest/mix-page/${id}`);
     }
 };
 
@@ -107,6 +85,15 @@ export const UsersApi = {
     },
     getCurrentUser: () => {
         return fetchData<User>('/rest/mix-user/current');
+    },
+    createUser: (user: Partial<User>) => {
+        return postData<Partial<User>, User>('/rest/mix-user', user);
+    },
+    updateUser: (id: string, user: Partial<User>) => {
+        return postData<Partial<User>, User>(`/rest/mix-user/${id}`, user);
+    },
+    deleteUser: (id: string) => {
+        return apiClient.delete<ApiResponse<boolean>>(`/rest/mix-user/${id}`);
     }
 };
 
@@ -116,13 +103,19 @@ export const MediaApi = {
         const params = { pageIndex, pageSize, searchText };
         return fetchData<PaginationResult<Media>>('/rest/mix-media/search', { params });
     },
+    getMediaItem: (id: string) => {
+        return fetchData<Media>(`/rest/mix-media/${id}`);
+    },
     uploadMedia: (file: File) => {
         const formData = new FormData();
         formData.append('file', file);
-        return axiosInstance.post('/rest/mix-media/upload', formData, {
+        return apiClient.post<FormData, ApiResponse<Media>>('/rest/mix-media/upload', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
-        }).then(res => res.data);
+        });
+    },
+    deleteMedia: (id: string) => {
+        return apiClient.delete<ApiResponse<boolean>>(`/rest/mix-media/${id}`);
     }
 }; 
