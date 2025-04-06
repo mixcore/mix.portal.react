@@ -29,10 +29,25 @@ npm install @radix-ui/react-tabs
 npm install lucide-react
 
 # Data fetching and form libraries
-npm install axios
+# Note: We're using fetch API instead of axios to avoid Node.js compatibility issues
 npm install formik
 npm install yup
 ```
+
+## Known Issues and Solutions
+
+### Module not found: Can't resolve './db.json'
+
+If you encounter this error with axios:
+```
+Module not found: Can't resolve './db.json'
+```
+
+This is due to Node.js specific modules being used by axios in a browser environment. The solution is to:
+
+1. Use the built-in fetch API instead of axios for API calls
+2. Implement a custom fetchClient service (see `src/services/fetchClient.ts`) 
+3. Add the 'use client' directive to API-related files
 
 ## Migration Files
 

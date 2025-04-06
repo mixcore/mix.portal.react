@@ -1,5 +1,7 @@
+'use client';
+
 import { User } from '@/types';
-import { apiClient } from './apiClient';
+import { fetchClient } from './fetchClient';
 
 export interface LoginResponse {
     accessToken: string;
@@ -17,7 +19,7 @@ export const AuthService = {
     // Login user
     login: async (username: string, password: string): Promise<AuthResult<LoginResponse>> => {
         try {
-            const response = await apiClient.post<{ username: string; password: string }, { success: boolean; data: LoginResponse; errors?: string[] }>('/rest/security/login', {
+            const response = await fetchClient.post<{ success: boolean; data: LoginResponse; errors?: string[] }>('/rest/security/login', {
                 username,
                 password,
             });
@@ -50,6 +52,7 @@ export const AuthService = {
 
     // Logout user
     logout: () => {
+        if (typeof window === 'undefined') return;
         localStorage.removeItem('authToken');
         localStorage.removeItem('refreshToken');
         window.location.href = '/security/login';
@@ -64,7 +67,7 @@ export const AuthService = {
     // Get current user
     getCurrentUser: async (): Promise<User | null> => {
         try {
-            const response = await apiClient.get<{ success: boolean; data: User; errors?: string[] }>('/rest/security/user/current');
+            const response = await fetchClient.get<{ success: boolean; data: User; errors?: string[] }>('/rest/security/user/current');
 
             if (response && response.success) {
                 return response.data;
@@ -98,7 +101,7 @@ export const AuthService = {
                 };
             }
 
-            const response = await apiClient.post<{ refreshToken: string }, { success: boolean; data: LoginResponse; errors?: string[] }>('/rest/security/refresh-token', {
+            const response = await fetchClient.post<{ success: boolean; data: LoginResponse; errors?: string[] }>('/rest/security/refresh-token', {
                 refreshToken,
             });
 

@@ -6,6 +6,9 @@ export interface User {
     lastName?: string;
     avatarUrl?: string;
     roles: string[];
+    isActive: boolean;
+    createdDate: string;
+    updatedDate?: string;
 }
 
 export interface Post {

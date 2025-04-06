@@ -1,9 +1,12 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+'use client';
+
+// Import only the browser-compatible parts of axios
+import axios from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 class ApiClient {
-    private instance: AxiosInstance;
+    private instance: any;
     private refreshAttempted: boolean = false;
 
     constructor() {
@@ -20,21 +23,21 @@ class ApiClient {
     private setupInterceptors(): void {
         // Request interceptor
         this.instance.interceptors.request.use(
-            (config) => {
+            (config: any) => {
                 const token = this.getAuthToken();
                 if (token && config.headers) {
                     config.headers.Authorization = `Bearer ${token}`;
                 }
                 return config;
             },
-            (error) => Promise.reject(error)
+            (error: any) => Promise.reject(error)
         );
 
         // Response interceptor
         this.instance.interceptors.response.use(
-            (response) => response,
-            async (error: AxiosError) => {
-                const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
+            (response: any) => response,
+            async (error: any) => {
+                const originalRequest = error.config;
 
                 // If we get a 401 and we haven't tried to refresh the token yet
                 if (error.response?.status === 401 && !this.refreshAttempted && originalRequest) {
@@ -94,53 +97,54 @@ class ApiClient {
     }
 
     private logout(): void {
+        if (typeof window === 'undefined') return;
         localStorage.removeItem('authToken');
         localStorage.removeItem('refreshToken');
         window.location.href = '/security/login';
     }
 
     // Generic API methods
-    async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
+    async get<T>(url: string, config?: any): Promise<T> {
         try {
-            const response: AxiosResponse<T> = await this.instance.get(url, config);
+            const response = await this.instance.get(url, config);
             return response.data;
         } catch (error) {
-            this.handleError(error as AxiosError);
+            this.handleError(error);
             throw error;
         }
     }
 
-    async post<T, R = T>(url: string, data?: T, config?: AxiosRequestConfig): Promise<R> {
+    async post<T, R = any>(url: string, data?: T, config?: any): Promise<R> {
         try {
-            const response: AxiosResponse<R> = await this.instance.post(url, data, config);
+            const response = await this.instance.post(url, data, config);
             return response.data;
         } catch (error) {
-            this.handleError(error as AxiosError);
+            this.handleError(error);
             throw error;
         }
     }
 
-    async put<T, R = T>(url: string, data?: T, config?: AxiosRequestConfig): Promise<R> {
+    async put<T, R = any>(url: string, data?: T, config?: any): Promise<R> {
         try {
-            const response: AxiosResponse<R> = await this.instance.put(url, data, config);
+            const response = await this.instance.put(url, data, config);
             return response.data;
         } catch (error) {
-            this.handleError(error as AxiosError);
+            this.handleError(error);
             throw error;
         }
     }
 
-    async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
+    async delete<T>(url: string, config?: any): Promise<T> {
         try {
-            const response: AxiosResponse<T> = await this.instance.delete(url, config);
+            const response = await this.instance.delete(url, config);
             return response.data;
         } catch (error) {
-            this.handleError(error as AxiosError);
+            this.handleError(error);
             throw error;
         }
     }
 
-    private handleError(error: AxiosError): void {
+    private handleError(error: any): void {
         if (error.response) {
             // The request was made and the server responded with a status code
             // outside of the range of 2xx
