@@ -12,6 +12,7 @@ We are migrating the Mixcore application from AngularJS to Next.js, utilizing Ta
 - **PAGES-DETAIL-TRACKING.md**: Detailed tracking of each page's migration status
 - **MIGRATION-PLAN.md**: Phase-by-phase plan with tasks, priorities, and timeline
 - **ANGULAR-TO-REACT-PATTERNS.md**: Reference guide for converting AngularJS patterns to React/Next.js
+- **API-DOCUMENTATION-GUIDE.md**: Guide for using the API documentation during migration
 
 ## Core Technologies
 
@@ -31,9 +32,12 @@ To continue migration work at any point, follow these steps:
 
 3. **Review relevant patterns**: If converting an AngularJS component, reference the ANGULAR-TO-REACT-PATTERNS.md file for guidance.
 
-4. **Follow this migration workflow**:
+4. **Check API documentation**: For implementing API integrations, refer to the API-DOCUMENTATION-GUIDE.md and api-docs directory.
+
+5. **Follow this migration workflow**:
    - Study the original AngularJS component/page
    - Identify the React/Next.js pattern to use
+   - Review the API endpoints needed for the component/page
    - Create the new component/page following Next.js best practices
    - Implement the UI using Tailwind CSS and shadcn/ui
    - Implement functionality and API integration
@@ -131,6 +135,53 @@ export default function PageName() {
     </PageLayout>
   );
 }
+```
+
+## API Service Template
+
+When creating an API service, use this template:
+
+```typescript
+// services/apiServiceName.ts
+import axios from 'axios';
+import { apiClient } from './apiClient';
+
+// Define interfaces based on API schemas
+interface DataModel {
+  // Properties from API schema
+}
+
+interface QueryParams {
+  // Query parameters
+}
+
+// Create the service
+export const serviceName = {
+  // Get list
+  getList: async (params?: QueryParams) => {
+    return apiClient.get<DataModel[]>('/api/endpoint', { params });
+  },
+  
+  // Get single item
+  getById: async (id: string) => {
+    return apiClient.get<DataModel>(`/api/endpoint/${id}`);
+  },
+  
+  // Create
+  create: async (data: DataModel) => {
+    return apiClient.post<DataModel>('/api/endpoint', data);
+  },
+  
+  // Update
+  update: async (id: string, data: Partial<DataModel>) => {
+    return apiClient.put<DataModel>(`/api/endpoint/${id}`, data);
+  },
+  
+  // Delete
+  delete: async (id: string) => {
+    return apiClient.delete(`/api/endpoint/${id}`);
+  }
+};
 ```
 
 ## Common Migration Patterns
@@ -234,7 +285,7 @@ export function UserForm({ onSubmit }) {
 After completing a component or page migration:
 
 1. Update PAGES-DETAIL-TRACKING.md:
-   - Change the status from ❌ or 🔄 to ✅
+   - Change the status from ❌ or 🔄 to ✅ for both UI and API integration columns
    - Add any relevant notes
 
 2. Update MIGRATION-CHECKLIST.md:

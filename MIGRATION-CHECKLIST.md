@@ -102,6 +102,80 @@ This document tracks the progress of migrating the Mixcore application from Angu
 - [ ] Audit logs
 - [ ] Social feed integrations
 
+## API Integration Status
+
+### Authentication & Security APIs
+- [ ] Authentication APIs
+  - [ ] Login API
+  - [ ] Register API
+  - [ ] Password reset API
+  - [ ] Two-factor authentication API
+- [ ] Role management APIs
+  - [ ] Role list API
+  - [ ] Role create/update/delete APIs
+  - [ ] Role permissions API
+- [ ] OAuth client APIs
+
+### User Management APIs
+- [ ] User APIs
+  - [ ] User list API
+  - [ ] User details API
+  - [ ] User create/update/delete APIs
+  - [ ] User profile API
+- [ ] Permissions APIs
+  - [ ] Get permissions API
+  - [ ] Add/remove permission APIs
+
+### Content APIs
+- [ ] Post APIs
+  - [ ] Post list API
+  - [ ] Post details API
+  - [ ] Post create/update/delete APIs
+  - [ ] Post category APIs
+  - [ ] Post tag APIs
+- [ ] Page APIs
+  - [ ] Page list API
+  - [ ] Page details API
+  - [ ] Page create/update/delete APIs
+  - [ ] Page template APIs
+
+### Media APIs
+- [ ] Media APIs
+  - [ ] Media list API
+  - [ ] Media upload API
+  - [ ] Media details API
+  - [ ] Media update/delete APIs
+
+### System & Configuration APIs
+- [ ] Configuration APIs
+  - [ ] Global settings API
+  - [ ] App settings API
+  - [ ] System information API
+- [ ] Database APIs
+  - [ ] Database list API
+  - [ ] Database data APIs
+  - [ ] Database context APIs
+- [ ] Module APIs
+  - [ ] Module list API
+  - [ ] Module data APIs
+  - [ ] Module configuration APIs
+
+### Workflow & Automation APIs
+- [ ] Workflow APIs
+  - [ ] Workflow list API
+  - [ ] Workflow trigger APIs
+  - [ ] Workflow execution APIs
+- [ ] Scheduler APIs
+  - [ ] Scheduled tasks API
+  - [ ] Task execution APIs
+
+### Misc APIs
+- [ ] URL alias APIs
+- [ ] Localization APIs
+- [ ] Audit log APIs
+- [ ] Import/Export APIs
+- [ ] Store/e-commerce APIs
+
 ## Service/API Integration
 
 - [ ] Authentication services
@@ -146,7 +220,11 @@ This document tracks the progress of migrating the Mixcore application from Angu
 
 - [x] Basic README
 - [ ] Component documentation
-- [ ] API documentation
+- [x] API documentation
+  - [x] API schema reference
+  - [x] Auth API documentation
+  - [x] Automation API documentation
+  - [x] MixCore Services API documentation
 - [ ] Deployment documentation
 - [ ] User guides
 - [ ] Developer guides
