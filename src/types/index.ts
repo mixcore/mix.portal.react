@@ -1,71 +1,35 @@
-export interface User {
-    id: string;
-    username: string;
-    email: string;
-    firstName?: string;
-    lastName?: string;
-    avatarUrl?: string;
-    roles: string[];
-    isActive: boolean;
-    createdDate: string;
-    updatedDate?: string;
+import { Icons } from '@/components/icons';
+
+export interface NavItem {
+  title: string;
+  url: string;
+  disabled?: boolean;
+  external?: boolean;
+  shortcut?: [string, string];
+  icon?: keyof typeof Icons;
+  label?: string;
+  description?: string;
+  isActive?: boolean;
+  items?: NavItem[];
 }
 
-export interface Post {
-    id: string;
+export interface NavItemWithChildren extends NavItem {
+  items: NavItemWithChildren[];
+}
+
+export interface NavItemWithOptionalChildren extends NavItem {
+  items?: NavItemWithChildren[];
+}
+
+export interface FooterItem {
+  title: string;
+  items: {
     title: string;
-    excerpt?: string;
-    content?: string;
-    thumbnail?: string;
-    createdDate: string;
-    createdBy: string;
-    status: number;
-    type: string;
-    template?: string;
-    tags?: string[];
-    categories?: Category[];
+    href: string;
+    external?: boolean;
+  }[];
 }
 
-export interface Page {
-    id: string;
-    title: string;
-    excerpt?: string;
-    content?: string;
-    thumbnail?: string;
-    createdDate: string;
-    createdBy: string;
-    status: number;
-    template?: string;
-}
+export type MainNavItem = NavItemWithOptionalChildren;
 
-export interface Category {
-    id: string;
-    name: string;
-    description?: string;
-    parentId?: string;
-}
-
-export interface Media {
-    id: string;
-    fileName: string;
-    fileSize: number;
-    fileType: string;
-    url: string;
-    createdDate: string;
-    createdBy: string;
-}
-
-export interface PaginationResult<T> {
-    items: T[];
-    totalItems: number;
-    pageSize: number;
-    pageIndex: number;
-    totalPages: number;
-}
-
-export interface ApiResponse<T> {
-    data: T;
-    success: boolean;
-    errors?: string[];
-    status: number;
-} 
+export type SidebarNavItem = NavItemWithChildren;

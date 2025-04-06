@@ -1,83 +1,109 @@
-# Mixcore Next.js Migration with Tailwind CSS and shadcn/ui
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/9113740/201498864-2a900c64-d88f-4ed4-b5cf-770bcb57e1f5.png">
+  <source media="(prefers-color-scheme: light)" srcset="https://user-images.githubusercontent.com/9113740/201498152-b171abb8-9225-487a-821c-6ff49ee48579.png">
+</picture>
 
-This project is a migration of the Mixcore application from AngularJS to Next.js, enhanced with Tailwind CSS and shadcn/ui components.
+<div align="center"><strong>Next.js Admin Dashboard Starter Template With Shadcn-ui</strong></div>
+<div align="center">Built with the Next.js 15 App Router</div>
+<br />
+<div align="center">
+<a href="https://dub.sh/shadcn-dashboard">View Demo</a>
+<span>
+</div>
+
+## Overview
+
+This is a starter template using the following stack:
+
+- Framework - [Next.js 15](https://nextjs.org/13)
+- Language - [TypeScript](https://www.typescriptlang.org)
+- Styling - [Tailwind CSS v4](https://tailwindcss.com)
+- Components - [Shadcn-ui](https://ui.shadcn.com)
+- Schema Validations - [Zod](https://zod.dev)
+- State Management - [Zustand](https://zustand-demo.pmnd.rs)
+- Search params state manager - [Nuqs](https://nuqs.47ng.com/)
+- Auth - [Clerk](https://go.clerk.com/ILdYhn7)
+- Tables - [Tanstack Data Tables](https://ui.shadcn.com/docs/components/data-table) • [Dice UI](https://www.diceui.com/docs/components/data-table)
+- Forms - [React Hook Form](https://ui.shadcn.com/docs/components/form)
+- Command+k interface - [kbar](https://kbar.vercel.app/)
+- Linting - [ESLint](https://eslint.org)
+- Pre-commit Hooks - [Husky](https://typicode.github.io/husky/)
+- Formatting - [Prettier](https://prettier.io)
+
+_If you are looking for a React admin dashboard starter, here is the [repo](https://github.com/Kiranism/react-shadcn-dashboard-starter)._
+
+## Pages
+
+| Pages                                                                                 | Specifications                                                                                                                                                                                                                                                          |
+| :------------------------------------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Signup / Signin](https://next-shadcn-dashboard-starter.vercel.app/auth/sign-up)      | Authentication with **Clerk** provides secure authentication and user management with multiple sign-in options including passwordless authentication, social logins, and enterprise SSO - all designed to enhance security while delivering a seamless user experience. |
+| [Dashboard (Overview)](https://next-shadcn-dashboard-starter.vercel.app/dashboard)    | Cards with recharts graphs for analytics.Parallel routes in the overview sections with independent loading, error handling, and isolated component rendering .                                                                                                          |
+| [Product](https://next-shadcn-dashboard-starter.vercel.app/dashboard/product)         | Tanstack tables with server side searching, filter, pagination by Nuqs which is a Type-safe search params state manager in nextjs                                                                                                                                       |
+| [Product/new](https://next-shadcn-dashboard-starter.vercel.app/dashboard/product/new) | A Product Form with shadcn form (react-hook-form + zod).                                                                                                                                                                                                                |
+| [Profile](https://next-shadcn-dashboard-starter.vercel.app/dashboard/profile)         | Clerk's full-featured account management UI that allows users to manage their profile and security settings                                                                                                                                                             |
+| [Kanban Board](https://next-shadcn-dashboard-starter.vercel.app/dashboard/kanban)     | A Drag n Drop task management board with dnd-kit and zustand to persist state locally.                                                                                                                                                                                  |
+| [Not Found](https://next-shadcn-dashboard-starter.vercel.app/dashboard/notfound)      | Not Found Page Added in the root level                                                                                                                                                                                                                                  |
+| -                                                                                     | -                                                                                                                                                                                                                                                                       |
+
+## Feature based organization
+
+```plaintext
+src/
+├── app/ # Next.js App Router directory
+│ ├── (auth)/ # Auth route group
+│ │ ├── (signin)/
+│ ├── (dashboard)/ # Dashboard route group
+│ │ ├── layout.tsx
+│ │ ├── loading.tsx
+│ │ └── page.tsx
+│ └── api/ # API routes
+│
+├── components/ # Shared components
+│ ├── ui/ # UI components (buttons, inputs, etc.)
+│ └── layout/ # Layout components (header, sidebar, etc.)
+│
+├── features/ # Feature-based modules
+│ ├── feature/
+│ │ ├── components/ # Feature-specific components
+│ │ ├── actions/ # Server actions
+│ │ ├── schemas/ # Form validation schemas
+│ │ └── utils/ # Feature-specific utilities
+│ │
+├── lib/ # Core utilities and configurations
+│ ├── auth/ # Auth configuration
+│ ├── db/ # Database utilities
+│ └── utils/ # Shared utilities
+│
+├── hooks/ # Custom hooks
+│ └── use-debounce.ts
+│
+├── stores/ # Zustand stores
+│ └── dashboard-store.ts
+│
+└── types/ # TypeScript types
+└── index.ts
+```
 
 ## Getting Started
 
-First, install the dependencies:
+> [!NOTE]  
+> We are using **Next 15** with **React 19**, follow these steps:
 
-```bash
-npm install
-# or
-yarn install
-```
-
-Then, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-## Project Structure
-
-- `src/app` - Next.js App Router pages and layouts
-- `src/components` - Reusable React components
-  - `src/components/ui` - shadcn/ui components
-  - `src/components/layout` - Layout components like Header, Sidebar, etc.
-- `src/lib` - Utility functions and helpers
-- `src/services` - API services and utilities
-- `src/styles` - Tailwind CSS and global styles
-- `src/types` - TypeScript type definitions
-
-## Environment Variables
-
-Create a `.env.local` file in the root directory with the following variables:
+Clone the repo:
 
 ```
-NEXT_PUBLIC_API_URL=http://localhost:5000
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your-nextauth-secret-key-here
+git clone https://github.com/Kiranism/next-shadcn-dashboard-starter.git
 ```
 
-## Tech Stack
+- `pnpm install` ( we have legacy-peer-deps=true added in the .npmrc)
+- Create a `.env.local` file by copying the example environment file:
+  `cp env.example.txt .env.local`
+- Add the required environment variables to the `.env.local` file.
+- `pnpm run dev`
 
-- **Next.js**: React framework with App Router
-- **Tailwind CSS**: Utility-first CSS framework
-- **shadcn/ui**: UI components built with Radix UI and Tailwind CSS
-- **TypeScript**: Type safety
-- **Axios**: HTTP client for API requests
-- **NextAuth.js**: Authentication for Next.js
-- **Formik & Yup**: Form handling and validation
+You should now be able to access the application at http://localhost:3000.
 
-## Migration Notes
+> [!WARNING]
+> After cloning or forking the repository, be cautious when pulling or syncing with the latest changes, as this may result in breaking conflicts.
 
-This project migrates from AngularJS to Next.js with the following changes:
-
-1. Replaced AngularJS controllers with React components
-2. Migrated Angular services to React hooks and API services
-3. Converted Angular templates to JSX
-4. Moved from UI Bootstrap to Tailwind CSS and shadcn/ui
-5. Implemented Next.js App Router for routing
-6. Added TypeScript for type safety
-
-## Features
-
-- Modern React-based architecture with Next.js App Router
-- Server-side rendering and Static Site Generation for improved SEO and performance
-- Dark mode support via next-themes
-- Responsive design with Tailwind CSS
-- Accessible UI components from shadcn/ui
-- Component-based architecture for better maintainability
-- Type safety with TypeScript
-
-## Next Steps
-
-- Complete the implementation of authentication with NextAuth.js
-- Add more admin pages for all existing functionality
-- Improve API integration
-- Add unit and integration tests
-- Implement additional shadcn/ui components as needed
+Cheers! 🥂

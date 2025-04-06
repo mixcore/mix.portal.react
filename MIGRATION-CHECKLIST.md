@@ -43,12 +43,12 @@ This document tracks the progress of migrating the Mixcore application from Angu
 - [ ] Checkbox
 - [ ] Radio group
 - [ ] Form components
-- [ ] Table
+- [x] Table
 - [ ] Tabs
-- [ ] Pagination
+- [x] Pagination
 - [ ] Avatar
-- [ ] Badge
-- [ ] Tooltip
+- [x] Badge
+- [x] Tooltip
 
 ### Layout Components
 - [x] SiteHeader
@@ -72,7 +72,7 @@ This document tracks the progress of migrating the Mixcore application from Angu
 - [ ] User edit
 
 ### Content Management
-- [ ] Post list
+- [x] Post list
 - [ ] Post create/edit
 - [ ] Post categories
 - [ ] Post tags
@@ -127,8 +127,8 @@ This document tracks the progress of migrating the Mixcore application from Angu
   - [ ] Add/remove permission APIs
 
 ### Content APIs
-- [ ] Post APIs
-  - [ ] Post list API
+- [🔄] Post APIs
+  - [x] Post list API
   - [ ] Post details API
   - [ ] Post create/update/delete APIs
   - [ ] Post category APIs
@@ -180,7 +180,7 @@ This document tracks the progress of migrating the Mixcore application from Angu
 
 - [ ] Authentication services
 - [ ] User API services
-- [ ] Post API services
+- [🔄] Post API services
 - [ ] Page API services
 - [ ] Media API services
 - [ ] Configuration services

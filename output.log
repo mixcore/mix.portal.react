@@ -1,0 +1,12 @@
+
+> next-shadcn-dashboard-starter@1.0.0 dev D:\mixcore\mix.core\src\applications\mixcore\wwwroot
+> next dev --turbopack
+
+   笆ｲ Next.js 15.2.4 (Turbopack)
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.1.135:3000
+   - Environments: .env.local
+
+ 笨・Starting...
+ 笨・Compiled in 1143ms
+ 笨・Ready in 3.4s

@@ -6,10 +6,6 @@ This document serves as a prompt reference to help continue the migration from A
 
 We are migrating the Mixcore application from AngularJS to Next.js, utilizing Tailwind CSS and shadcn/ui for UI components. This migration aims to modernize the codebase, improve developer experience, and enhance user experience.
 
-## Key References
-
-- **shadcn Dashboard Demo**: Local reference available at `/shadcn-dashboard-demo` - Use this as the primary reference for dashboard layout, components, and UI patterns. The source code contains examples of proper implementation of shadcn components, layouts, and dashboard UI.
-
 ## Required Dependencies
 
 Make sure the following dependencies are installed:
@@ -338,6 +334,45 @@ After completing a component or page migration:
 3. Update MIGRATION-PLAN.md:
    - Update task status
    - Note any dependencies or challenges encountered
+
+## Feature based organization
+
+```plaintext
+src/
+├── app/ # Next.js App Router directory
+│ ├── (auth)/ # Auth route group
+│ │ ├── (signin)/
+│ ├── (dashboard)/ # Dashboard route group
+│ │ ├── layout.tsx
+│ │ ├── loading.tsx
+│ │ └── page.tsx
+│ └── api/ # API routes
+│
+├── components/ # Shared components
+│ ├── ui/ # UI components (buttons, inputs, etc.)
+│ └── layout/ # Layout components (header, sidebar, etc.)
+│
+├── features/ # Feature-based modules
+│ ├── feature/
+│ │ ├── components/ # Feature-specific components
+│ │ ├── actions/ # Server actions
+│ │ ├── schemas/ # Form validation schemas
+│ │ └── utils/ # Feature-specific utilities
+│ │
+├── lib/ # Core utilities and configurations
+│ ├── auth/ # Auth configuration
+│ ├── db/ # Database utilities
+│ └── utils/ # Shared utilities
+│
+├── hooks/ # Custom hooks
+│ └── use-debounce.ts
+│
+├── stores/ # Zustand stores
+│ └── dashboard-store.ts
+│
+└── types/ # TypeScript types
+└── index.ts
+```
 
 ## Next Steps
 
