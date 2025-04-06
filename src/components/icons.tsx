@@ -25,6 +25,7 @@ import {
   FolderOpen,
   Globe,
   BarChart,
+  Search,
 } from "lucide-react"
 
 export type Icon = LucideIcon
@@ -72,4 +73,5 @@ export const Icons = {
   folder: FolderOpen,
   globe: Globe,
   chart: BarChart,
+  search: Search,
 } 

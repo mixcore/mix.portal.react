@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { ShellLayout } from '@/components/layout/shell-layout';
+import { EnhancedShell } from '@/components/layout/enhanced-shell';
 
 export const metadata: Metadata = {
   title: 'Mixcore Security - Next.js',
@@ -12,10 +12,10 @@ export default function SecurityLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ShellLayout showSidebar={false}>
+    <EnhancedShell showSidebar={false}>
       <div className="container mx-auto max-w-md py-10">
         {children}
       </div>
-    </ShellLayout>
+    </EnhancedShell>
   );
 } 

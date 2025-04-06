@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { ShellLayout } from '@/components/layout/shell-layout';
+import { EnhancedShell } from '@/components/layout/enhanced-shell';
 
 export const metadata: Metadata = {
   title: 'Mixcore Admin - Next.js',
@@ -11,5 +11,5 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <ShellLayout>{children}</ShellLayout>;
+  return <EnhancedShell>{children}</EnhancedShell>;
 } 

@@ -6,6 +6,34 @@ This document serves as a prompt reference to help continue the migration from A
 
 We are migrating the Mixcore application from AngularJS to Next.js, utilizing Tailwind CSS and shadcn/ui for UI components. This migration aims to modernize the codebase, improve developer experience, and enhance user experience.
 
+## Key References
+
+- **shadcn Dashboard Demo**: Local reference available at `/shadcn-dashboard-demo` - Use this as the primary reference for dashboard layout, components, and UI patterns. The source code contains examples of proper implementation of shadcn components, layouts, and dashboard UI.
+
+## Required Dependencies
+
+Make sure the following dependencies are installed:
+
+```bash
+# Core shadcn UI dependencies
+npm install @radix-ui/react-tooltip
+npm install @radix-ui/react-dropdown-menu
+npm install @radix-ui/react-avatar
+npm install @radix-ui/react-dialog
+npm install @radix-ui/react-select
+npm install @radix-ui/react-popover
+npm install @radix-ui/react-slot
+npm install @radix-ui/react-tabs
+
+# Icon libraries
+npm install lucide-react
+
+# Data fetching and form libraries
+npm install axios
+npm install formik
+npm install yup
+```
+
 ## Migration Files
 
 - **MIGRATION-CHECKLIST.md**: High-level tracking of migration progress across all aspects of the application
