@@ -29,7 +29,7 @@ export const AuthService = {
                 success: false,
                 errors: response.data?.errors || ['Login failed'],
             };
-        } catch (error) {
+        } catch {
             return {
                 success: false,
                 errors: ['An error occurred during login'],
@@ -68,8 +68,8 @@ export const AuthService = {
             }
 
             return null;
-        } catch (error) {
-            console.error('Error getting current user:', error);
+        } catch (err) {
+            console.error('Error getting current user:', err);
             return null;
         }
     },

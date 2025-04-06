@@ -5,10 +5,9 @@ import { useRouter } from 'next/navigation';
 import { Formik, Form as FormikForm, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { AuthService } from '@/services/auth';
-import styles from './login.module.css';
 
 // Import shadcn components
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -47,7 +46,7 @@ export default function Login() {
       } else {
         setError(result.errors?.[0] || 'Login failed. Please try again.');
       }
-    } catch (err) {
+    } catch {
       setError('An error occurred during login. Please try again.');
     } finally {
       setIsLoading(false);
@@ -81,7 +80,7 @@ export default function Login() {
               validationSchema={validationSchema}
               onSubmit={handleSubmit}
             >
-              {({ isSubmitting }) => (
+              {() => (
                 <FormikForm className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="username">Username</Label>

@@ -13,6 +13,7 @@ import {
   ChevronsUpDown,
   X,
   type LucideIcon,
+  Image,
 } from "lucide-react"
 
 export type Icon = LucideIcon
@@ -48,4 +49,5 @@ export const Icons = {
   file: FileText,
   page: LayoutTemplate,
   users: Users,
+  media: Image,
 } 

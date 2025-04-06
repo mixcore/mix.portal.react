@@ -1,11 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Container, Row, Col, Card, Table, Button, Form, InputGroup } from 'react-bootstrap';
 import Link from 'next/link';
 import { PostsApi } from '@/services/api';
 import { Post, PaginationResult } from '@/types';
-import styles from './posts.module.css';
 
 export default function PostList() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -19,11 +18,7 @@ export default function PostList() {
   const [searchText, setSearchText] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchPosts();
-  }, [pagination.pageIndex]);
-
-  const fetchPosts = async () => {
+  const fetchPosts = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     
@@ -47,7 +42,11 @@ export default function PostList() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [pagination.pageIndex, pagination.pageSize, searchText]);
+
+  useEffect(() => {
+    fetchPosts();
+  }, [fetchPosts]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
