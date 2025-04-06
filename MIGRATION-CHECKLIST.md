@@ -33,11 +33,13 @@ This document tracks the progress of migrating the Mixcore application from Angu
 - [x] Button
 - [x] Card
 - [x] Toast system
+- [x] Input
+- [x] Label
+- [x] Alert
 - [ ] Dialog/Modal
-- [ ] Dropdown menu
-- [ ] Select
-- [ ] Input
-- [ ] Textarea
+- [x] Dropdown menu
+- [x] Select
+- [x] Textarea
 - [ ] Checkbox
 - [ ] Radio group
 - [ ] Form components
@@ -60,7 +62,7 @@ This document tracks the progress of migrating the Mixcore application from Angu
 ## Pages Migration
 
 ### Authentication & User Management
-- [ ] Login page
+- [x] Login page
 - [ ] Register page
 - [ ] Forgot password flow
 - [ ] Reset password
@@ -181,7 +183,6 @@ Use this section to track specific challenges, decisions, or notes about the mig
 
 ### Known Issues
 
-- TypeScript errors in Button component usage need to be resolved
 - Need to implement proper API error handling
 - Need to finalize authentication strategy
 

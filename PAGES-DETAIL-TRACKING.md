@@ -13,7 +13,7 @@ This document provides a detailed tracking of each page from the original Mixcor
 
 | Page Name | Status | Notes | Priority |
 |-----------|--------|-------|----------|
-| Login | 🔄 In Progress | Basic UI done, need auth flow | High |
+| Login | ✅ Completed | Implemented with shadcn/ui components | High |
 | Register | ❌ Not Started | | Medium |
 | Forgot Password | ❌ Not Started | | Medium |
 | Reset Password | ❌ Not Started | | Medium |
@@ -163,6 +163,12 @@ This document provides a detailed tracking of each page from the original Mixcor
 | User Avatar | ❌ Not Started | | Medium |
 | Notifications | ❌ Not Started | | Medium |
 | Error Boundaries | ❌ Not Started | | Medium |
+| Input | ✅ Completed | shadcn/ui component | High |
+| Label | ✅ Completed | shadcn/ui component | High |
+| Alert | ✅ Completed | shadcn/ui component | High |
+| Dropdown Menu | ✅ Completed | shadcn/ui component | High |
+| Select | ✅ Completed | shadcn/ui component | High |
+| Textarea | ✅ Completed | shadcn/ui component | High |
 
 ## Progress Legend
 
@@ -176,6 +182,9 @@ This document provides a detailed tracking of each page from the original Mixcor
 | Date | Updated By | Changes |
 |------|------------|---------|
 | YYYY-MM-DD | Developer Name | Initial checklist creation |
+| 2023-04-06 | Claude | Updated login page to use shadcn/ui components, added Input, Label, Alert components |
+| 2023-04-06 | Claude | Added Dropdown Menu and Select components |
+| 2023-04-06 | Claude | Added Textarea component |
 
 ## Notes
 

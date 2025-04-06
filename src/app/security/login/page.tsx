@@ -1,12 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
 import { useRouter } from 'next/navigation';
 import { Formik, Form as FormikForm, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { AuthService } from '@/services/auth';
 import styles from './login.module.css';
+
+// Import shadcn components
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 interface LoginFormValues {
   username: string;
@@ -48,77 +55,79 @@ export default function Login() {
   };
 
   return (
-    <Container className={styles.loginContainer}>
-      <Row className="justify-content-center">
-        <Col md={6} lg={4}>
-          <div className={styles.logoContainer}>
-            <h1 className="text-center mb-4">Mixcore</h1>
-          </div>
+    <div className="container flex items-center justify-center min-h-screen px-4 py-12">
+      <div className="w-full max-w-md space-y-6">
+        <div className="flex justify-center">
+          <h1 className="text-3xl font-bold">Mixcore</h1>
+        </div>
 
-          <Card className={styles.loginCard}>
-            <Card.Body>
-              <h2 className="text-center mb-4">Login</h2>
-              
-              {error && (
-                <Alert variant="danger" className="mb-4">
-                  {error}
-                </Alert>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-center">Login</CardTitle>
+            <CardDescription className="text-center">
+              Enter your credentials to access your account
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {error && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
+            <Formik
+              initialValues={initialValues}
+              validationSchema={validationSchema}
+              onSubmit={handleSubmit}
+            >
+              {({ isSubmitting }) => (
+                <FormikForm className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="username">Username</Label>
+                    <Field
+                      as={Input}
+                      id="username"
+                      name="username"
+                      type="text"
+                      placeholder="Enter your username"
+                    />
+                    <ErrorMessage
+                      name="username"
+                      component="div"
+                      className="text-sm text-red-500"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Password</Label>
+                    <Field
+                      as={Input}
+                      id="password"
+                      name="password"
+                      type="password"
+                      placeholder="Enter your password"
+                    />
+                    <ErrorMessage
+                      name="password"
+                      component="div"
+                      className="text-sm text-red-500"
+                    />
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? 'Logging in...' : 'Login'}
+                  </Button>
+                </FormikForm>
               )}
-
-              <Formik
-                initialValues={initialValues}
-                validationSchema={validationSchema}
-                onSubmit={handleSubmit}
-              >
-                {({ isSubmitting }) => (
-                  <FormikForm>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Username</Form.Label>
-                      <Field
-                        type="text"
-                        name="username"
-                        className="form-control"
-                        placeholder="Enter username"
-                      />
-                      <ErrorMessage
-                        name="username"
-                        component="div"
-                        className="text-danger"
-                      />
-                    </Form.Group>
-
-                    <Form.Group className="mb-4">
-                      <Form.Label>Password</Form.Label>
-                      <Field
-                        type="password"
-                        name="password"
-                        className="form-control"
-                        placeholder="Enter password"
-                      />
-                      <ErrorMessage
-                        name="password"
-                        component="div"
-                        className="text-danger"
-                      />
-                    </Form.Group>
-
-                    <div className="d-grid">
-                      <Button
-                        variant="primary"
-                        type="submit"
-                        disabled={isLoading}
-                        className={styles.loginButton}
-                      >
-                        {isLoading ? 'Logging in...' : 'Login'}
-                      </Button>
-                    </div>
-                  </FormikForm>
-                )}
-              </Formik>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+            </Formik>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 }
