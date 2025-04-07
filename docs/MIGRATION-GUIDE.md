@@ -10,6 +10,7 @@ This document serves as the single source of truth for the Mixcore migration fro
 - [Directory Structure](#directory-structure)
 - [Development Workflow](#development-workflow)
 - [Component Guidelines](#component-guidelines)
+- [Shared Component Architecture](#shared-component-architecture)
 - [Additional Resources](#additional-resources)
 
 ## Project Overview
@@ -37,13 +38,14 @@ Current status: **Phase 2 - Content Management** (See [Implementation Plan](./tr
 - ✅ Created reusable table component with pagination
 - ✅ Set up basic API client infrastructure
 - ✅ Implemented Ghost-inspired post editor with distraction-free writing experience
+- ✅ Created shared components for content list, detail, and edit views
 - ⏳ Working on Posts management features
 
 ### Current Focus
 
-- Complete Pages feature (including edit functionality)
-- Implement Posts management feature
-- Refine authentication system
+- Complete media management features
+- Refine search and filtering functionality
+- Enhance localization support
 
 View the [Detailed Progress Tracker](./tracking/PROGRESS-TRACKER.md) for complete status.
 
@@ -97,6 +99,96 @@ Our migration follows a phased approach:
 
 See the detailed [Implementation Plan](./tracking/IMPLEMENTATION-PLAN.md) for specific tasks and timelines.
 
+## Shared Component Architecture
+
+To maximize code reuse and ensure UI consistency, we've implemented a set of shared layout components for content management:
+
+### Content List Layout
+
+`ContentListLayout` provides a standardized layout for list pages (posts, pages, media, etc.) with:
+
+- Consistent header with title, description, and create button
+- Search and filter functionality
+- View mode toggle (grid/table)
+- Empty state handling
+- Loading state
+- Delete confirmation modal
+
+Usage example:
+```tsx
+<ContentListLayout
+  title="Posts"
+  description="Manage your blog posts"
+  createNewPath="/dashboard/posts/new"
+  createNewLabel="Add Post"
+  // Additional props...
+>
+  {/* Table or grid view */}
+</ContentListLayout>
+```
+
+### Content Detail Layout
+
+`ContentDetailLayout` creates a consistent view for content detail pages with:
+
+- Back navigation
+- Title and description
+- Action buttons (edit, preview, delete)
+- Status badge
+- Loading and not-found states
+
+Usage example:
+```tsx
+<ContentDetailLayout
+  title={post?.title || 'Post Details'}
+  description={post?.excerpt}
+  backPath="/dashboard/posts"
+  editPath={post ? `/dashboard/posts/${post.id}/edit` : undefined}
+  // Additional props...
+>
+  {/* Content detail view */}
+</ContentDetailLayout>
+```
+
+### Content Edit Layout 
+
+`ContentEditLayout` standardizes the editing experience with:
+
+- Consistent header with navigation and actions
+- Form layout with main content and sidebar structure
+- Cancel and delete confirmation modals
+- Loading and saving states
+- Standard action buttons
+
+Usage example:
+```tsx
+<ContentEditLayout
+  title={`Edit Post: ${title}`}
+  backPath="/dashboard/posts"
+  isLoading={isLoading}
+  isSaving={isSaving}
+  onSubmit={handleSubmit}
+  // Additional props...
+>
+  <ContentFormGrid>
+    <ContentMainColumn>
+      {/* Main content */}
+    </ContentMainColumn>
+    <ContentSideColumn>
+      {/* Settings and metadata */}
+    </ContentSideColumn>
+  </ContentFormGrid>
+</ContentEditLayout>
+```
+
+### Benefits of This Architecture
+
+1. **Consistency**: Ensures uniform UI/UX across all content types
+2. **Reduced Duplication**: Core layout logic is written once and reused
+3. **Maintainability**: Changes to layout need to be made in only one place
+4. **Faster Development**: New content types can be added quickly by reusing layouts
+5. **Better Testing**: Core layout logic can be comprehensively tested in one place
+
 ## Directory Structure
 
 The new application uses a feature-based organization:
@@ -114,8 +206,12 @@ src/
 │ └── api/ # API routes
 │
 ├── components/ # Shared components
-│ ├── ui/ # UI components
-│ └── layout/ # Layout components
+│ ├── ui/ # UI components 
+│ ├── layout/ # Layout components
+│ └── shared/ # Shared feature components
+│     ├── content-list-layout.tsx
+│     ├── content-detail-layout.tsx
+│     └── content-edit-layout.tsx
 │
 ├── features/ # Feature-based modules
 │ ├── feature/
@@ -149,6 +245,16 @@ When migrating an AngularJS component:
 3. Create the equivalent in the Next.js app
 4. Implement API integration
 5. Update tracking documents
+
+### Content Feature Implementation Pattern
+
+When implementing a new content type:
+
+1. Define the data model in `src/types/`
+2. Create API service in `src/services/`
+3. Implement list view using `ContentListLayout`
+4. Implement detail view using `ContentDetailLayout` 
+5. Implement edit view using `ContentEditLayout`
 
 ## Component Guidelines
 
