@@ -61,7 +61,7 @@ const mockPosts: Post[] = [
     createdBy: 'admin',
     modifiedBy: '',
     priority: 3,
-    status: MixContentStatus.Schedule,
+    status: MixContentStatus.Archived,
     isDeleted: false,
     tenantId: 1,
     specificulture: 'en-US',

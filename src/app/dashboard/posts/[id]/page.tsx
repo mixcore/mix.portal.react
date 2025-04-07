@@ -13,10 +13,20 @@ import {
   CardDescription,
   CardFooter
 } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Pencil, Trash2, ArrowLeft, ExternalLink } from 'lucide-react';
+import {
+  Pencil,
+  Trash2,
+  ArrowLeft,
+  ExternalLink,
+  Calendar,
+  User,
+  Globe,
+  Tag,
+  FileText,
+  Info
+} from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { Post } from '@/types/post';
 import { MixContentStatus } from '@/types/content';
@@ -60,7 +70,7 @@ export default function PostDetailPage() {
     try {
       setIsLoading(true);
       if (post?.id) {
-        await postService.deletePost(post.id);
+        await postService.deletePost(Number(post.id));
         toast({
           title: 'Success',
           description: 'Post deleted successfully'
@@ -87,18 +97,21 @@ export default function PostDetailPage() {
     const statusValue = Number(status);
 
     if (statusValue === MixContentStatus.Published) {
-      return <Badge className='bg-green-500'>Published</Badge>;
+      return <Badge className='bg-green-500 text-white'>Published</Badge>;
     } else if (statusValue === MixContentStatus.Draft) {
       return <Badge variant='outline'>Draft</Badge>;
-    } else if (statusValue === MixContentStatus.Schedule) {
-      return <Badge className='bg-yellow-500'>Scheduled</Badge>;
-    } else if (statusValue === MixContentStatus.Preview) {
-      return <Badge variant='secondary'>Preview</Badge>;
+    } else if (statusValue === MixContentStatus.Archived) {
+      return <Badge className='bg-yellow-500 text-white'>Archived</Badge>;
     } else if (statusValue === MixContentStatus.Deleted) {
       return <Badge variant='destructive'>Deleted</Badge>;
     } else {
       return <Badge>{status}</Badge>;
     }
+  };
+
+  const formatDate = (dateStr?: string) => {
+    if (!dateStr) return 'Unknown';
+    return format(new Date(dateStr), 'PPP');
   };
 
   if (isLoading) {
@@ -133,189 +146,260 @@ export default function PostDetailPage() {
         loading={isLoading}
       />
 
-      <div className='flex items-center justify-between'>
-        <div className='flex items-center space-x-2'>
-          <Button
-            variant='outline'
-            size='icon'
-            onClick={() => router.push('/dashboard/posts')}
-          >
-            <ArrowLeft className='h-4 w-4' />
-          </Button>
-          <Heading
-            title={post.title || 'Untitled Post'}
-            description='View and manage post details'
-          />
-        </div>
-        <div className='flex items-center space-x-2'>
-          <Button
-            variant='outline'
-            onClick={() => router.push(`/dashboard/posts/${post.id}/edit`)}
-          >
-            <Pencil className='mr-2 h-4 w-4' />
-            Edit
-          </Button>
-          <Button
-            variant='destructive'
-            onClick={() => setOpenDeleteAlert(true)}
-          >
-            <Trash2 className='mr-2 h-4 w-4' />
-            Delete
-          </Button>
-        </div>
-      </div>
-
-      <Separator className='my-4' />
-
-      <Tabs defaultValue='content' className='mt-6'>
-        <TabsList>
-          <TabsTrigger value='content'>Content</TabsTrigger>
-          <TabsTrigger value='metadata'>Metadata & SEO</TabsTrigger>
-          <TabsTrigger value='advanced'>Advanced</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value='content' className='space-y-4 pt-4'>
-          <Card>
-            <CardHeader>
-              <div className='flex items-center justify-between'>
-                <CardTitle>Post Content</CardTitle>
+      <div className='space-y-8 px-1 py-4 md:px-4 md:py-6'>
+        <div className='flex flex-col justify-between gap-4 sm:flex-row sm:items-center'>
+          <div className='flex items-start gap-3'>
+            <Button
+              variant='outline'
+              size='icon'
+              onClick={() => router.push('/dashboard/posts')}
+              className='mt-1'
+            >
+              <ArrowLeft className='h-4 w-4' />
+            </Button>
+            <div>
+              <h1 className='text-2xl font-bold'>
+                {post.title || 'Untitled Post'}
+              </h1>
+              <div className='mt-1.5 flex flex-wrap items-center gap-2'>
                 {getStatusBadge(post.status)}
+                <div className='text-muted-foreground flex items-center text-sm'>
+                  <Calendar className='mr-1 h-3 w-3' />
+                  {formatDate(post.createdDateTime)}
+                </div>
               </div>
-              <CardDescription>
-                Created{' '}
-                {post.createdDateTime
-                  ? format(new Date(post.createdDateTime), 'PPP')
-                  : 'Unknown'}
-                {post.lastModified &&
-                  ` • Updated ${format(new Date(post.lastModified), 'PPP')}`}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className='space-y-4'>
+            </div>
+          </div>
+          <div className='flex shrink-0 items-center gap-2'>
+            <Button
+              variant='outline'
+              onClick={() => router.push(`/dashboard/posts/${post.id}/edit`)}
+            >
+              <Pencil className='mr-2 h-4 w-4' />
+              Edit
+            </Button>
+            <Button
+              variant='destructive'
+              onClick={() => setOpenDeleteAlert(true)}
+            >
+              <Trash2 className='mr-2 h-4 w-4' />
+              Delete
+            </Button>
+          </div>
+        </div>
+
+        <div className='grid grid-cols-1 gap-6 lg:grid-cols-3'>
+          <div className='space-y-6 lg:col-span-2'>
+            {/* Main Content Card */}
+            <Card>
               {post.image && (
-                <div className='mb-4 overflow-hidden rounded-md'>
+                <div className='aspect-video w-full overflow-hidden'>
                   <img
                     src={post.image}
                     alt={post.title || 'Post image'}
-                    className='aspect-video w-full object-cover'
+                    className='h-full w-full object-cover transition-all hover:scale-105'
                   />
                 </div>
               )}
-
-              <div className='prose dark:prose-invert max-w-full'>
-                <h1 className='text-3xl font-bold'>{post.title}</h1>
+              <CardHeader className={post.image ? 'pt-5' : ''}>
+                <CardTitle className='text-xl'>Content</CardTitle>
                 {post.excerpt && (
-                  <p className='text-muted-foreground text-lg'>
+                  <CardDescription className='text-base'>
                     {post.excerpt}
-                  </p>
+                  </CardDescription>
                 )}
-                {post.content && (
-                  <div className='mt-4'>
+              </CardHeader>
+              <CardContent>
+                <div className='prose dark:prose-invert max-w-full'>
+                  {post.content ? (
                     <RichTextEditor
                       content={post.content}
                       onChange={() => {}}
                       readOnly={true}
                     />
+                  ) : (
+                    <p className='text-muted-foreground italic'>
+                      No content available
+                    </p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* SEO Card */}
+            <Card>
+              <CardHeader className='pb-3'>
+                <div className='flex items-center gap-2'>
+                  <Tag className='h-4 w-4' />
+                  <CardTitle className='text-lg'>SEO & Metadata</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className='grid gap-4 sm:grid-cols-2'>
+                  <div>
+                    <h3 className='mb-1 text-sm font-medium'>SEO Title</h3>
+                    <p className='text-muted-foreground bg-muted/50 rounded px-2 py-1 text-sm'>
+                      {post.seoTitle || post.title || 'Not set'}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className='mb-1 text-sm font-medium'>SEO Keywords</h3>
+                    <p className='text-muted-foreground bg-muted/50 rounded px-2 py-1 text-sm'>
+                      {post.seoKeywords || 'Not set'}
+                    </p>
+                  </div>
+                  <div className='sm:col-span-2'>
+                    <h3 className='mb-1 text-sm font-medium'>
+                      SEO Description
+                    </h3>
+                    <p className='text-muted-foreground bg-muted/50 rounded px-2 py-1 text-sm'>
+                      {post.seoDescription || post.excerpt || 'Not set'}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* System Info Card */}
+            <Card>
+              <CardHeader className='pb-3'>
+                <div className='flex items-center gap-2'>
+                  <Info className='h-4 w-4' />
+                  <CardTitle className='text-lg'>System Information</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+                  <div>
+                    <h3 className='mb-1 text-sm font-medium'>ID</h3>
+                    <p className='text-muted-foreground text-sm'>{post.id}</p>
+                  </div>
+                  <div>
+                    <h3 className='mb-1 text-sm font-medium'>Parent ID</h3>
+                    <p className='text-muted-foreground text-sm'>
+                      {post.parentId || 'None'}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className='mb-1 text-sm font-medium'>Culture ID</h3>
+                    <p className='text-muted-foreground text-sm'>
+                      {post.mixCultureId || 'None'}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className='space-y-6'>
+            {/* Post Details Card */}
+            <Card>
+              <CardHeader className='pb-3'>
+                <div className='flex items-center gap-2'>
+                  <FileText className='h-4 w-4' />
+                  <CardTitle className='text-lg'>Post Details</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className='space-y-5'>
+                <div className='space-y-1'>
+                  <div className='flex items-center justify-between'>
+                    <span className='text-sm font-medium'>Status</span>
+                    <div>{getStatusBadge(post.status)}</div>
+                  </div>
+                  <Separator />
+                </div>
+
+                <div className='space-y-1'>
+                  <div className='flex items-center justify-between'>
+                    <span className='text-sm font-medium'>Creation Date</span>
+                    <span className='text-sm'>
+                      {formatDate(post.createdDateTime)}
+                    </span>
+                  </div>
+                  <Separator />
+                </div>
+
+                {post.modifiedDateTime && (
+                  <div className='space-y-1'>
+                    <div className='flex items-center justify-between'>
+                      <span className='text-sm font-medium'>Last Modified</span>
+                      <span className='text-sm'>
+                        {formatDate(post.modifiedDateTime)}
+                      </span>
+                    </div>
+                    <Separator />
                   </div>
                 )}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
 
-        <TabsContent value='metadata' className='space-y-4 pt-4'>
-          <Card>
-            <CardHeader>
-              <CardTitle>SEO & Metadata</CardTitle>
-            </CardHeader>
-            <CardContent className='space-y-4'>
-              <div className='grid gap-4 md:grid-cols-2'>
-                <div>
-                  <h3 className='mb-2 font-medium'>SEO Title</h3>
-                  <p className='text-muted-foreground'>
-                    {post.seoTitle || post.title || 'Not set'}
-                  </p>
-                </div>
-                <div>
-                  <h3 className='mb-2 font-medium'>SEO Description</h3>
-                  <p className='text-muted-foreground'>
-                    {post.seoDescription || post.excerpt || 'Not set'}
-                  </p>
-                </div>
-              </div>
-
-              <div>
-                <h3 className='mb-2 font-medium'>Additional Properties</h3>
-                <div className='rounded-md border p-4'>
-                  <div className='grid gap-3'>
-                    <div className='grid grid-cols-2 items-center gap-4'>
-                      <span className='font-medium'>Priority:</span>
-                      <span>{post.priority || 0}</span>
-                    </div>
-                    <div className='grid grid-cols-2 items-center gap-4'>
-                      <span className='font-medium'>Public:</span>
-                      <span>{post.isPublic ? 'Yes' : 'No'}</span>
-                    </div>
-                    <div className='grid grid-cols-2 items-center gap-4'>
-                      <span className='font-medium'>Created By:</span>
-                      <span>{post.createdBy || 'Unknown'}</span>
-                    </div>
-                    <div className='grid grid-cols-2 items-center gap-4'>
-                      <span className='font-medium'>Modified By:</span>
-                      <span>{post.modifiedBy || 'N/A'}</span>
-                    </div>
+                <div className='space-y-1'>
+                  <div className='flex items-center justify-between'>
+                    <span className='text-sm font-medium'>Created By</span>
+                    <span className='text-sm'>
+                      {post.createdBy || 'Unknown'}
+                    </span>
                   </div>
+                  <Separator />
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
 
-        <TabsContent value='advanced' className='space-y-4 pt-4'>
-          <Card>
-            <CardHeader>
-              <CardTitle>Advanced Settings</CardTitle>
-            </CardHeader>
-            <CardContent className='space-y-4'>
-              <div className='grid gap-4 md:grid-cols-2'>
-                <div>
-                  <h3 className='mb-2 font-medium'>Culture</h3>
-                  <p className='text-muted-foreground'>
-                    {post.specificulture || 'Default'}
-                  </p>
-                </div>
-                <div>
-                  <h3 className='mb-2 font-medium'>Template</h3>
-                  <p className='text-muted-foreground'>Default Template</p>
-                </div>
-              </div>
-
-              <div>
-                <h3 className='mb-2 font-medium'>System Information</h3>
-                <div className='rounded-md border p-4'>
-                  <div className='grid gap-3'>
-                    <div className='grid grid-cols-2 items-center gap-4'>
-                      <span className='font-medium'>ID:</span>
-                      <span>{post.id}</span>
+                {post.modifiedBy && (
+                  <div className='space-y-1'>
+                    <div className='flex items-center justify-between'>
+                      <span className='text-sm font-medium'>Modified By</span>
+                      <span className='text-sm'>{post.modifiedBy}</span>
                     </div>
-                    <div className='grid grid-cols-2 items-center gap-4'>
-                      <span className='font-medium'>Parent ID:</span>
-                      <span>{post.parentId || 'None'}</span>
-                    </div>
-                    <div className='grid grid-cols-2 items-center gap-4'>
-                      <span className='font-medium'>Mix Culture ID:</span>
-                      <span>{post.mixCultureId || 'None'}</span>
-                    </div>
-                    <div className='grid grid-cols-2 items-center gap-4'>
-                      <span className='font-medium'>Tenant ID:</span>
-                      <span>{post.tenantId || 'None'}</span>
-                    </div>
+                    <Separator />
                   </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+                )}
+              </CardContent>
+              <CardFooter>
+                <Button
+                  variant='outline'
+                  className='w-full'
+                  onClick={() => window.open(`/posts/${post.id}`, '_blank')}
+                >
+                  <ExternalLink className='mr-2 h-4 w-4' />
+                  View Published Post
+                </Button>
+              </CardFooter>
+            </Card>
+
+            {/* Actions Card */}
+            <Card>
+              <CardHeader className='pb-3'>
+                <CardTitle className='text-lg'>Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className='space-y-2'>
+                <Button
+                  variant='default'
+                  className='w-full justify-start'
+                  onClick={() =>
+                    router.push(`/dashboard/posts/${post.id}/edit`)
+                  }
+                >
+                  <Pencil className='mr-2 h-4 w-4' />
+                  Edit This Post
+                </Button>
+                <Button
+                  variant='outline'
+                  className='w-full justify-start'
+                  onClick={() => router.push('/dashboard/posts/new')}
+                >
+                  <FileText className='mr-2 h-4 w-4' />
+                  Create New Post
+                </Button>
+                <Button
+                  variant='outline'
+                  className='text-destructive hover:text-destructive w-full justify-start'
+                  onClick={() => setOpenDeleteAlert(true)}
+                >
+                  <Trash2 className='mr-2 h-4 w-4' />
+                  Delete This Post
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
     </>
   );
 }

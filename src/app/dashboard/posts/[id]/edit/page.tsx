@@ -245,23 +245,23 @@ export default function EditPostPage() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value={MixContentStatus.Draft.toString()}>
-                            Draft
-                          </SelectItem>
                           <SelectItem
                             value={MixContentStatus.Published.toString()}
                           >
                             Published
                           </SelectItem>
-                          <SelectItem
-                            value={MixContentStatus.Schedule.toString()}
-                          >
-                            Scheduled
+                          <SelectItem value={MixContentStatus.Draft.toString()}>
+                            Draft
                           </SelectItem>
                           <SelectItem
-                            value={MixContentStatus.Preview.toString()}
+                            value={MixContentStatus.Archived.toString()}
                           >
-                            Preview
+                            Archived
+                          </SelectItem>
+                          <SelectItem
+                            value={MixContentStatus.Deleted.toString()}
+                          >
+                            Deleted
                           </SelectItem>
                         </SelectContent>
                       </Select>

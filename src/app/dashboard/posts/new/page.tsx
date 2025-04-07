@@ -198,14 +198,14 @@ export default function CreatePostPage() {
                             Published
                           </SelectItem>
                           <SelectItem
-                            value={MixContentStatus.Schedule.toString()}
+                            value={MixContentStatus.Archived.toString()}
                           >
-                            Scheduled
+                            Archived
                           </SelectItem>
                           <SelectItem
-                            value={MixContentStatus.Preview.toString()}
+                            value={MixContentStatus.Deleted.toString()}
                           >
-                            Preview
+                            Deleted
                           </SelectItem>
                         </SelectContent>
                       </Select>
