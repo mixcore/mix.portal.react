@@ -76,6 +76,33 @@ export const navItems: NavItem[] = [
     ]
   },
   {
+    title: 'MixDb',
+    url: '/dashboard/mixdb',
+    icon: 'database',
+    isActive: false,
+    shortcut: ['m', 'd'],
+    items: [
+      {
+        title: 'Dashboard',
+        url: '/dashboard/mixdb',
+        icon: 'dashboard',
+        shortcut: ['m', 'o']
+      },
+      {
+        title: 'Databases',
+        url: '/dashboard/mixdb/databases',
+        icon: 'database',
+        shortcut: ['d', 'b']
+      },
+      {
+        title: 'Form Builder',
+        url: '/dashboard/mixdb/forms',
+        icon: 'form',
+        shortcut: ['f', 'b']
+      }
+    ]
+  },
+  {
     title: 'Management',
     url: '#',
     icon: 'settings',

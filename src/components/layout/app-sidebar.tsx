@@ -106,6 +106,7 @@ export default function AppSidebar() {
   const navCategories = {
     content: navItems.filter((item) => item.title === 'Content'),
     design: navItems.filter((item) => item.title === 'Design'),
+    mixdb: navItems.filter((item) => item.title === 'MixDb'),
     management: navItems.filter((item) =>
       ['Account', 'Product', 'Kanban'].includes(item.title)
     ),
@@ -337,6 +338,88 @@ export default function AppSidebar() {
                           {isCollapsed &&
                             (pathname?.includes('/dashboard/templates') ||
                               pathname?.includes('/dashboard/themes')) && (
+                              <div className='bg-primary absolute -top-1 -right-1 h-2 w-2 rounded-full'></div>
+                            )}
+                        </div>
+                        <span>{item.title}</span>
+                        <IconChevronRight className='text-muted-foreground ml-auto size-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
+                      </SidebarMenuButton>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className='pl-5'>
+                      <div className='flex flex-col gap-1 py-2'>
+                        {item.items.map((subItem) => {
+                          return (
+                            <Link
+                              key={subItem.title}
+                              href={subItem.url}
+                              className={cn(
+                                'hover:bg-muted flex w-full items-center justify-between gap-2 rounded-md px-2 py-1',
+                                pathname?.includes(subItem.url) &&
+                                  'bg-muted font-medium'
+                              )}
+                            >
+                              {subItem.title}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </CollapsibleContent>
+                  </SidebarMenuItem>
+                </Collapsible>
+              ) : (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    tooltip={item.title}
+                    asChild
+                    isActive={pathname?.includes(item.url)}
+                  >
+                    <Link href={item.url}>
+                      <div className='relative'>
+                        <Icon />
+                        {isCollapsed && pathname?.includes(item.url) && (
+                          <div className='bg-primary absolute -top-1 -right-1 h-2 w-2 rounded-full'></div>
+                        )}
+                      </div>
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              );
+            })}
+          </SidebarMenu>
+        </SidebarGroup>
+
+        {/* MixDb */}
+        <SidebarGroup>
+          <div className='flex items-center'>
+            <SidebarGroupLabel>MixDb</SidebarGroupLabel>
+            {isCollapsed && (
+              <span className='text-muted-foreground flex h-4 w-8 items-center justify-center text-[9px] font-bold uppercase'>
+                Mdb
+              </span>
+            )}
+          </div>
+          <SidebarMenu>
+            {navCategories.mixdb.map((item) => {
+              const Icon = item.icon ? Icons[item.icon] : Icons.logo;
+              return item?.items && item?.items?.length > 0 ? (
+                <Collapsible
+                  key={item.title}
+                  asChild
+                  defaultOpen={
+                    pathname?.includes('/dashboard/mixdb/databases') ||
+                    pathname?.includes('/dashboard/mixdb/forms')
+                  }
+                  className='group/collapsible'
+                >
+                  <SidebarMenuItem>
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuButton tooltip={item.title}>
+                        <div className='relative'>
+                          <Icon />
+                          {isCollapsed &&
+                            (pathname?.includes('/dashboard/mixdb/databases') ||
+                              pathname?.includes('/dashboard/mixdb/forms')) && (
                               <div className='bg-primary absolute -top-1 -right-1 h-2 w-2 rounded-full'></div>
                             )}
                         </div>

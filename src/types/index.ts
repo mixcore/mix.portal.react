@@ -44,3 +44,31 @@ export interface User {
   firstName?: string;
   lastName?: string;
 }
+
+export interface Request {
+  pageIndex?: number;
+  pageSize?: number;
+  searchText?: string;
+  searchColumns?: string[];
+  orderBy?: string;
+  direction?: 'asc' | 'desc';
+  fromDate?: string;
+  toDate?: string;
+  status?: string;
+  mixDatabaseId?: number;
+  mixDatabaseName?: string;
+  [key: string]: any;
+}
+
+export interface PaginatedResponse<T> {
+  items: T[];
+  pagingData: {
+    pageIndex: number;
+    pageSize: number;
+    totalItems: number;
+    totalPage: number;
+  };
+  success: boolean;
+  status: number;
+  errors: any[];
+}
