@@ -1,2 +1,13 @@
+packages:
+  - 'app'
+  - 'components'
+  - 'lib'
+  - 'providers'
+  - 'src'
+  - 'styles'
+  - 'mix-app'
+  - 'default-mixcontent'
+  - 'api-docs'
+
 onlyBuiltDependencies:
   - sharp
