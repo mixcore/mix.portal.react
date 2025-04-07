@@ -49,6 +49,27 @@ export const navItems: NavItem[] = [
     ]
   },
   {
+    title: 'Design',
+    url: '#',
+    icon: 'palette',
+    isActive: false,
+    shortcut: ['d', 's'],
+    items: [
+      {
+        title: 'Templates',
+        url: '/dashboard/templates',
+        icon: 'code',
+        shortcut: ['t', 'e']
+      },
+      {
+        title: 'Themes',
+        url: '/dashboard/themes',
+        icon: 'palette',
+        shortcut: ['t', 'h']
+      }
+    ]
+  },
+  {
     title: 'Product',
     url: '/dashboard/product',
     icon: 'product',

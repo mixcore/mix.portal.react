@@ -59,6 +59,7 @@ import {
   TooltipTrigger
 } from '@/components/ui/tooltip';
 import Image from 'next/image';
+import { cn } from '@/lib/utils';
 
 export default function AppSidebar() {
   const pathname = usePathname();
@@ -104,6 +105,7 @@ export default function AppSidebar() {
   // Group navigation items by category
   const navCategories = {
     content: navItems.filter((item) => item.title === 'Content'),
+    design: navItems.filter((item) => item.title === 'Design'),
     management: navItems.filter((item) =>
       ['Account', 'Product', 'Kanban'].includes(item.title)
     ),
@@ -232,16 +234,9 @@ export default function AppSidebar() {
                 >
                   <SidebarMenuItem>
                     <CollapsibleTrigger asChild>
-                      <SidebarMenuButton
-                        tooltip={item.title}
-                        isActive={
-                          pathname?.includes('/dashboard/posts') ||
-                          pathname?.includes('/dashboard/pages') ||
-                          pathname?.includes('/dashboard/media')
-                        }
-                      >
+                      <SidebarMenuButton tooltip={item.title}>
                         <div className='relative'>
-                          {item.icon && <Icon />}
+                          <Icon />
                           {isCollapsed &&
                             (pathname?.includes('/dashboard/posts') ||
                               pathname?.includes('/dashboard/pages') ||
@@ -250,36 +245,117 @@ export default function AppSidebar() {
                             )}
                         </div>
                         <span>{item.title}</span>
-                        <IconChevronRight className='ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
+                        <IconChevronRight className='text-muted-foreground ml-auto size-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
                       </SidebarMenuButton>
                     </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <SidebarMenuSub>
-                        {item.items?.map((subItem) => (
-                          <SidebarMenuSubItem key={subItem.title}>
-                            <SidebarMenuSubButton
-                              asChild
-                              isActive={pathname?.includes(subItem.url)}
+                    <CollapsibleContent className='pl-5'>
+                      <div className='flex flex-col gap-1 py-2'>
+                        {item.items.map((subItem) => {
+                          return (
+                            <Link
+                              key={subItem.title}
+                              href={subItem.url}
+                              className={cn(
+                                'hover:bg-muted flex w-full items-center justify-between gap-2 rounded-md px-2 py-1',
+                                pathname?.includes(subItem.url) &&
+                                  'bg-muted font-medium'
+                              )}
                             >
-                              <Link href={subItem.url}>
-                                <span>{subItem.title}</span>
-                                {isCollapsed &&
-                                  pathname?.includes(subItem.url) && (
-                                    <span className='bg-primary ml-auto h-1.5 w-1.5 rounded-full'></span>
-                                  )}
-                              </Link>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                        ))}
-                      </SidebarMenuSub>
+                              {subItem.title}
+                            </Link>
+                          );
+                        })}
+                      </div>
                     </CollapsibleContent>
                   </SidebarMenuItem>
                 </Collapsible>
               ) : (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
-                    asChild
                     tooltip={item.title}
+                    asChild
+                    isActive={pathname?.includes(item.url)}
+                  >
+                    <Link href={item.url}>
+                      <div className='relative'>
+                        <Icon />
+                        {isCollapsed && pathname?.includes(item.url) && (
+                          <div className='bg-primary absolute -top-1 -right-1 h-2 w-2 rounded-full'></div>
+                        )}
+                      </div>
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              );
+            })}
+          </SidebarMenu>
+        </SidebarGroup>
+
+        {/* Design */}
+        <SidebarGroup>
+          <div className='flex items-center'>
+            <SidebarGroupLabel>Design</SidebarGroupLabel>
+            {isCollapsed && (
+              <span className='text-muted-foreground flex h-4 w-8 items-center justify-center text-[9px] font-bold uppercase'>
+                Dsg
+              </span>
+            )}
+          </div>
+          <SidebarMenu>
+            {navCategories.design.map((item) => {
+              const Icon = item.icon ? Icons[item.icon] : Icons.logo;
+              return item?.items && item?.items?.length > 0 ? (
+                <Collapsible
+                  key={item.title}
+                  asChild
+                  defaultOpen={
+                    pathname?.includes('/dashboard/templates') ||
+                    pathname?.includes('/dashboard/themes')
+                  }
+                  className='group/collapsible'
+                >
+                  <SidebarMenuItem>
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuButton tooltip={item.title}>
+                        <div className='relative'>
+                          <Icon />
+                          {isCollapsed &&
+                            (pathname?.includes('/dashboard/templates') ||
+                              pathname?.includes('/dashboard/themes')) && (
+                              <div className='bg-primary absolute -top-1 -right-1 h-2 w-2 rounded-full'></div>
+                            )}
+                        </div>
+                        <span>{item.title}</span>
+                        <IconChevronRight className='text-muted-foreground ml-auto size-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
+                      </SidebarMenuButton>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className='pl-5'>
+                      <div className='flex flex-col gap-1 py-2'>
+                        {item.items.map((subItem) => {
+                          return (
+                            <Link
+                              key={subItem.title}
+                              href={subItem.url}
+                              className={cn(
+                                'hover:bg-muted flex w-full items-center justify-between gap-2 rounded-md px-2 py-1',
+                                pathname?.includes(subItem.url) &&
+                                  'bg-muted font-medium'
+                              )}
+                            >
+                              {subItem.title}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </CollapsibleContent>
+                  </SidebarMenuItem>
+                </Collapsible>
+              ) : (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    tooltip={item.title}
+                    asChild
                     isActive={pathname?.includes(item.url)}
                   >
                     <Link href={item.url}>

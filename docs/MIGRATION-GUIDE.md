@@ -11,6 +11,7 @@ This document serves as the single source of truth for the Mixcore migration fro
 - [Development Workflow](#development-workflow)
 - [Component Guidelines](#component-guidelines)
 - [Shared Component Architecture](#shared-component-architecture)
+- [Template Management Architecture](#template-management-architecture)
 - [Additional Resources](#additional-resources)
 
 ## Project Overview
@@ -46,6 +47,7 @@ Current status: **Phase 2 - Content Management** (See [Implementation Plan](./tr
 - Complete media management features
 - Refine search and filtering functionality
 - Enhance localization support
+- Implement template management system
 
 View the [Detailed Progress Tracker](./tracking/PROGRESS-TRACKER.md) for complete status.
 
@@ -188,6 +190,88 @@ Usage example:
 3. **Maintainability**: Changes to layout need to be made in only one place
 4. **Faster Development**: New content types can be added quickly by reusing layouts
 5. **Better Testing**: Core layout logic can be comprehensively tested in one place
+
+## Template Management Architecture
+
+The template management system is a crucial part of Mixcore CMS, allowing users to create, edit, and manage website templates. The migration from AngularJS to Next.js includes a complete redesign of the template editor interface while maintaining all functionality.
+
+### Key Components
+
+1. **TemplateListLayout**: A specialized layout for browsing and managing templates
+   - Template filtering by theme and type
+   - Template preview functionality
+   - Template creation and duplication
+   - Template organization by folders (Pages, Posts, Masters, etc.)
+
+2. **TemplateEditor**: A modern code editor for template files
+   - Syntax highlighting for HTML, CSS, and JavaScript
+   - Live preview capabilities
+   - Version history
+   - Responsive design preview
+
+3. **ThemeManager**: Interface for managing themes
+   - Theme installation and activation
+   - Theme settings
+   - Asset management (scripts, styles, images)
+
+### Implementation Plan
+
+The template management system will be implemented using:
+
+- Monaco Editor for code editing (used by VS Code)
+- React-based preview system
+- File-system-like navigation for template organization
+- Expandable panel design for efficient workspace utilization
+
+Example template management interface:
+
+```tsx
+<TemplateManagementLayout
+  currentTheme={theme}
+  templateType="page"
+>
+  <TemplatesSidebar 
+    templates={templates}
+    onSelect={selectTemplate}
+    onCreate={createTemplate}
+  />
+  <TemplateEditor
+    template={currentTemplate}
+    onChange={handleTemplateChange}
+    language="html"
+    theme="vs-dark"
+  />
+  <TemplatePreview
+    template={currentTemplate}
+    previewMode={previewMode}
+    viewportSize={viewportSize}
+  />
+</TemplateManagementLayout>
+```
+
+### Data Structure
+
+Templates in the new system will follow this data structure:
+
+```typescript
+interface Template {
+  id: string;
+  name: string;
+  folderType: 'Pages' | 'Posts' | 'Masters' | 'Layouts' | 'Modules';
+  themeId: string;
+  content: string;
+  scripts?: string;
+  styles?: string;
+  metadata?: {
+    description?: string;
+    thumbnail?: string;
+    author?: string;
+    version?: string;
+  };
+  lastModified: Date;
+  createdDate: Date;
+}
+```
 
 ## Directory Structure
 

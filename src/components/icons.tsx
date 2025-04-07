@@ -33,7 +33,9 @@ import {
   IconBrandGithub,
   IconLogout,
   IconMenu,
-  IconLayout
+  IconLayout,
+  IconPalette,
+  IconCode
 } from '@tabler/icons-react';
 
 export type Icon = React.ComponentType<IconProps>;
@@ -71,5 +73,8 @@ export const Icons = {
   userCircle: IconUserCircle,
   userEdit: IconUserEdit,
   menu: IconMenu,
-  page: IconLayout
+  page: IconLayout,
+  palette: IconPalette,
+  code: IconCode,
+  userPen: IconUserEdit
 };
