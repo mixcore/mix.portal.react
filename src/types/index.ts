@@ -11,6 +11,13 @@ export interface NavItem {
   description?: string;
   isActive?: boolean;
   items?: NavItem[];
+  contextId?: string;
+  appId?: string;
+  personaIds?: string[];
+  roleIds?: string[];
+  permissionIds?: string[];
+  tenantId?: number;
+  priority?: number;
 }
 
 export interface NavItemWithChildren extends NavItem {

@@ -69,6 +69,45 @@ When migrating a component or page, follow these steps:
 5. Implement API integration following the [API Guide](./guides/API-GUIDE.md)
 6. Update the [Progress Tracker](./tracking/PROGRESS-TRACKER.md) once completed
 
+## Navigation Context System
+
+The application now supports context-specific navigation based on app context, user persona, roles, and permissions. This allows the UI to adapt based on user context:
+
+### Key Features
+
+- **Context-Specific Navigation**: Menu items can be filtered based on the active context (CMS, MixDB, Design, etc.)
+- **Persona-Based Views**: Different users can have tailored experiences (Admin, Content Manager, Designer, etc.)
+- **Role and Permission Support**: Navigation adapts to user's assigned roles and permissions
+- **Priority-Based Ordering**: Menu items are displayed in priority order for better organization
+
+### Implementation
+
+Context-specific navigation is implemented through:
+
+1. **NavItem Extensions**: The NavItem interface now includes `contextId`, `appId`, `personaIds`, `roleIds`, etc.
+2. **Context Provider**: The `NavigationContextProvider` manages the active context and persona
+3. **Context Selector**: Users can switch between contexts and personas via the sidebar
+4. **Filtered Items**: The sidebar dynamically renders navigation based on the active context
+
+### Example Usage
+
+To create a context-specific menu item:
+
+```tsx
+{
+  title: 'Content',
+  url: '#',
+  icon: 'post',
+  contextId: 'cms', // Context identification
+  appId: 'cms',
+  personaIds: ['admin', 'content-manager'], // Only visible to these personas
+  priority: 10, // Ordering priority
+  items: [
+    // Child items
+  ]
+}
+```
+
 ## Component Templates
 
 ### UI Component Template

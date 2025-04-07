@@ -4,6 +4,8 @@
 import { useTheme } from 'next-themes';
 import React from 'react';
 import { ActiveThemeProvider } from '../active-theme';
+// NavigationContextProvider is now used in the dashboard layout
+// import { NavigationContextProvider } from '@/providers/navigation-context-provider';
 
 export default function Providers({
   activeThemeValue,
@@ -17,6 +19,7 @@ export default function Providers({
 
   return (
     <ActiveThemeProvider initialTheme={activeThemeValue}>
+      {/* NavigationContextProvider moved to dashboard layout */}
       {/* <ClerkProvider
         appearance={{
           baseTheme: resolvedTheme === 'dark' ? dark : undefined
