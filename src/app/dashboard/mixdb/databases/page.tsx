@@ -42,12 +42,74 @@ import {
   PaginationPrevious,
   Pagination
 } from '@/components/ui/pagination';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Icons } from '@/components/icons';
 import { MixDbService } from '@/lib/services/mixdb-service';
 import { MixDatabase } from '@/types/mixdb';
 import { PaginatedResponse, Request } from '@/types';
-import { LoadingSection } from '@/components/loading-section';
-import { EmptySection } from '@/components/empty-section';
+import { toast } from '@/components/ui/use-toast';
+
+// Internal component for Loading
+const LoadingSection = ({ className = '' }: { className?: string }) => {
+  return (
+    <div
+      className={`flex flex-col items-center justify-center p-8 ${className}`}
+    >
+      <Icons.spinner className='text-primary h-10 w-10 animate-spin' />
+      <p className='text-muted-foreground mt-4 text-sm'>Loading...</p>
+    </div>
+  );
+};
+
+// Internal component for Empty State
+interface EmptySectionProps {
+  title: string;
+  description: string;
+  icon: keyof typeof Icons;
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
+  className?: string;
+}
+
+const EmptySection = ({
+  title,
+  description,
+  icon = 'fileText',
+  action,
+  className = ''
+}: EmptySectionProps) => {
+  const Icon = Icons[icon] || Icons.fileText;
+
+  return (
+    <div
+      className={`flex flex-col items-center justify-center px-4 py-12 text-center ${className}`}
+    >
+      <Icon className='text-muted-foreground mb-4 h-12 w-12' />
+      <h3 className='text-lg font-medium'>{title}</h3>
+      {description && (
+        <p className='text-muted-foreground mt-2 max-w-md text-sm'>
+          {description}
+        </p>
+      )}
+      {action && (
+        <Button onClick={action.onClick} className='mt-4'>
+          {action.label}
+        </Button>
+      )}
+    </div>
+  );
+};
 
 export default function DatabasesPage() {
   const router = useRouter();
@@ -64,9 +126,26 @@ export default function DatabasesPage() {
     pageIndex: 0,
     pageSize: 10,
     searchText: '',
-    searchColumns: ['name', 'title', 'description'],
+    searchColumns: ['name', 'displayName', 'description'],
     orderBy: 'createdDateTime',
     direction: 'desc'
+  });
+
+  // Create database state
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [newDatabase, setNewDatabase] = useState<Partial<MixDatabase>>({
+    name: '',
+    displayName: '',
+    description: '',
+    status: 'Published',
+    specificulture: 'en-us',
+    cultures: ['en-us'],
+    priority: 0,
+    isPublic: true,
+    enableApi: true,
+    enableRls: false,
+    maxRecords: 1000
   });
 
   useEffect(() => {
@@ -127,13 +206,66 @@ export default function DatabasesPage() {
     }
   };
 
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setNewDatabase((prev) => ({ ...prev, [name]: value }));
+
+    // Auto-generate system name from display name if name is empty
+    if (name === 'displayName' && !newDatabase.name) {
+      const systemName = value
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '_')
+        .replace(/_+/g, '_')
+        .replace(/^_|_$/g, '');
+      setNewDatabase((prev) => ({ ...prev, name: systemName }));
+    }
+  };
+
+  const handleSelectChange = (name: string, value: string) => {
+    setNewDatabase((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const createDatabase = async () => {
+    if (!newDatabase.name) {
+      toast({
+        title: 'Validation Error',
+        description: 'Database name is required',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    try {
+      setCreating(true);
+      const createdDatabase = await MixDbService.createDatabase(newDatabase);
+      toast({
+        title: 'Success',
+        description: 'Database created successfully'
+      });
+      setCreateDialogOpen(false);
+      fetchDatabases();
+
+      // Navigate to the newly created database
+      router.push(`/dashboard/mixdb/databases/${createdDatabase.id}`);
+    } catch (error) {
+      console.error('Error creating database:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to create database. Please try again.',
+        variant: 'destructive'
+      });
+    } finally {
+      setCreating(false);
+    }
+  };
+
   return (
     <div className='space-y-6'>
       <div className='flex items-center justify-between'>
         <h2 className='text-xl font-semibold'>Database Management</h2>
-        <Button
-          onClick={() => router.push('/dashboard/mixdb/databases/create')}
-        >
+        <Button onClick={() => setCreateDialogOpen(true)}>
           <Icons.plus className='mr-2 h-4 w-4' />
           Create Database
         </Button>
@@ -191,7 +323,7 @@ export default function DatabasesPage() {
               icon='database'
               action={{
                 label: 'Create Database',
-                onClick: () => router.push('/dashboard/mixdb/databases/create')
+                onClick: () => setCreateDialogOpen(true)
               }}
             />
           ) : (
@@ -213,10 +345,10 @@ export default function DatabasesPage() {
                     </TableHead>
                     <TableHead
                       className='cursor-pointer'
-                      onClick={() => handleSort('title')}
+                      onClick={() => handleSort('displayName')}
                     >
-                      Title{' '}
-                      {request.orderBy === 'title' &&
+                      Display Name{' '}
+                      {request.orderBy === 'displayName' &&
                         (request.direction === 'asc' ? (
                           <Icons.arrowUp className='ml-2 inline h-4 w-4' />
                         ) : (
@@ -225,10 +357,10 @@ export default function DatabasesPage() {
                     </TableHead>
                     <TableHead
                       className='cursor-pointer'
-                      onClick={() => handleSort('type')}
+                      onClick={() => handleSort('status')}
                     >
-                      Type{' '}
-                      {request.orderBy === 'type' &&
+                      Status{' '}
+                      {request.orderBy === 'status' &&
                         (request.direction === 'asc' ? (
                           <Icons.arrowUp className='ml-2 inline h-4 w-4' />
                         ) : (
@@ -256,8 +388,10 @@ export default function DatabasesPage() {
                       <TableCell className='font-medium'>
                         {database.name}
                       </TableCell>
-                      <TableCell>{database.title}</TableCell>
-                      <TableCell>{database.type}</TableCell>
+                      <TableCell>
+                        {database.displayName || database.name}
+                      </TableCell>
+                      <TableCell>{database.status}</TableCell>
                       <TableCell>
                         {new Date(
                           database.createdDateTime
@@ -404,6 +538,130 @@ export default function DatabasesPage() {
           )}
         </CardFooter>
       </Card>
+
+      {/* Create Database Dialog */}
+      <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+        <DialogContent className='sm:max-w-[550px]'>
+          <DialogHeader>
+            <DialogTitle>Create Database</DialogTitle>
+            <DialogDescription>
+              Create a new MixDB database to store and manage your data.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className='grid gap-4 py-4'>
+            <div className='grid grid-cols-4 items-center gap-4'>
+              <Label htmlFor='displayName' className='text-right'>
+                Display Name <span className='text-red-500'>*</span>
+              </Label>
+              <Input
+                id='displayName'
+                name='displayName'
+                className='col-span-3'
+                value={newDatabase.displayName || ''}
+                onChange={handleInputChange}
+                placeholder='Customer Database'
+              />
+            </div>
+
+            <div className='grid grid-cols-4 items-center gap-4'>
+              <Label htmlFor='name' className='text-right'>
+                System Name <span className='text-red-500'>*</span>
+              </Label>
+              <Input
+                id='name'
+                name='name'
+                className='col-span-3 font-mono'
+                value={newDatabase.name || ''}
+                onChange={handleInputChange}
+                placeholder='customer_database'
+              />
+              <div className='text-muted-foreground col-span-3 col-start-2 text-xs'>
+                Used in API routes and code. Use lowercase letters, numbers, and
+                underscores only.
+              </div>
+            </div>
+
+            <div className='grid grid-cols-4 items-center gap-4'>
+              <Label htmlFor='description' className='text-right'>
+                Description
+              </Label>
+              <Textarea
+                id='description'
+                name='description'
+                className='col-span-3'
+                value={newDatabase.description || ''}
+                onChange={handleInputChange}
+                placeholder='A database to store customer information'
+                rows={3}
+              />
+            </div>
+
+            <div className='grid grid-cols-4 items-center gap-4'>
+              <Label htmlFor='status' className='text-right'>
+                Status
+              </Label>
+              <Select
+                value={newDatabase.status}
+                onValueChange={(value) => handleSelectChange('status', value)}
+              >
+                <SelectTrigger id='status' className='col-span-3'>
+                  <SelectValue placeholder='Select status' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value='Published'>Published</SelectItem>
+                  <SelectItem value='Draft'>Draft</SelectItem>
+                  <SelectItem value='Archived'>Archived</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className='grid grid-cols-4 items-center gap-4'>
+              <Label htmlFor='isPublic' className='text-right'>
+                Public Access
+              </Label>
+              <Select
+                value={newDatabase.isPublic ? 'true' : 'false'}
+                onValueChange={(value) => handleSelectChange('isPublic', value)}
+              >
+                <SelectTrigger id='isPublic' className='col-span-3'>
+                  <SelectValue placeholder='Select public access' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value='true'>Public</SelectItem>
+                  <SelectItem value='false'>Private</SelectItem>
+                </SelectContent>
+              </Select>
+              <div className='text-muted-foreground col-span-3 col-start-2 text-xs'>
+                Public databases can be accessed without authentication
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant='outline'
+              onClick={() => setCreateDialogOpen(false)}
+              disabled={creating}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={createDatabase}
+              disabled={creating || !newDatabase.name}
+            >
+              {creating ? (
+                <>
+                  <Icons.spinner className='mr-2 h-4 w-4 animate-spin' />
+                  Creating...
+                </>
+              ) : (
+                'Create Database'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

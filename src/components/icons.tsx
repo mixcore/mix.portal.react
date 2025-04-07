@@ -17,6 +17,7 @@ import {
   IconEye as IconView,
   IconFile,
   IconFileText,
+  IconFilter,
   IconGitBranch,
   IconHelpCircle,
   IconLink,
@@ -120,5 +121,6 @@ export const Icons = {
   gitBranch: IconGitBranch,
   save: IconSave,
   table: IconTable,
-  book: IconBook
+  book: IconBook,
+  filter: IconFilter
 };

@@ -250,7 +250,7 @@ export default function MixDbDashboard() {
             <Button
               variant='outline'
               className='justify-start'
-              onClick={() => router.push('/dashboard/mixdb/databases/create')}
+              onClick={() => router.push('/dashboard/mixdb/databases')}
             >
               <Icons.database className='mr-2 h-4 w-4' />
               Create Database
@@ -258,7 +258,7 @@ export default function MixDbDashboard() {
             <Button
               variant='outline'
               className='justify-start'
-              onClick={() => router.push('/dashboard/mixdb/forms/create')}
+              onClick={() => router.push('/dashboard/mixdb/forms')}
             >
               <Icons.form className='mr-2 h-4 w-4' />
               Create Form
@@ -331,10 +331,12 @@ export default function MixDbDashboard() {
                       </Badge>
                     </div>
                     <p className='text-muted-foreground mt-1 line-clamp-2 text-sm'>
-                      {db.description || db.title || 'No description provided'}
+                      {db.description ||
+                        db.displayName ||
+                        'No description provided'}
                     </p>
                     <div className='text-muted-foreground mt-2 flex justify-between text-xs'>
-                      <div>Type: {db.type}</div>
+                      <div>Status: {db.status}</div>
                       <div>
                         Created:{' '}
                         {new Date(db.createdDateTime).toLocaleDateString()}
@@ -352,9 +354,7 @@ export default function MixDbDashboard() {
                   </p>
                   <Button
                     className='mt-4'
-                    onClick={() =>
-                      router.push('/dashboard/mixdb/databases/create')
-                    }
+                    onClick={() => router.push('/dashboard/mixdb/databases')}
                   >
                     Create Database
                   </Button>
@@ -511,7 +511,7 @@ export default function MixDbDashboard() {
                 </p>
                 <Button
                   className='mt-4'
-                  onClick={() => router.push('/dashboard/mixdb/forms/create')}
+                  onClick={() => router.push('/dashboard/mixdb/forms')}
                 >
                   Create Form
                 </Button>

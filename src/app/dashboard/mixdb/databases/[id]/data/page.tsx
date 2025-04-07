@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import {
   Table,
@@ -59,6 +59,32 @@ import {
 import { Icons } from '@/components/icons';
 import { LoadingSection } from '@/components/loading-section';
 import { Request } from '@/types';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui/tooltip';
+import { useHotkeys } from 'react-hotkeys-hook';
+import { useVirtualizer, VirtualItem } from '@tanstack/react-virtual';
+
+// Define a custom loading component for this page
+const PageLoadingSection = ({ children }: { children?: React.ReactNode }) => (
+  <div className='flex items-center justify-center p-8'>
+    <Icons.spinner className='text-primary h-8 w-8 animate-spin' />
+    {children}
+  </div>
+);
+
+// New interface for advanced filtering
+interface FilterCondition {
+  field: string;
+  operator: string;
+  value: string;
+  conjunction: 'and' | 'or';
+}
 
 const formatValue = (
   value: string | null,
@@ -138,9 +164,27 @@ export default function DatabaseDataPage() {
   const [selectedItem, setSelectedItem] = useState<MixDatabaseData | null>(
     null
   );
+  const [editingItem, setEditingItem] = useState<MixDatabaseData | null>(null);
+  const [editValues, setEditValues] = useState<Record<string, any>>({});
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [newItem, setNewItem] = useState<Record<string, any>>({});
   const [filter, setFilter] = useState<string>('');
+  const [showAdvancedFilter, setShowAdvancedFilter] = useState(false);
+  const [filterConditions, setFilterConditions] = useState<FilterCondition[]>([
+    { field: '', operator: 'contains', value: '', conjunction: 'and' }
+  ]);
+  const [isExporting, setIsExporting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+  const rowVirtualizer = useVirtualizer({
+    count: data.length,
+    getScrollElement: () => tableContainerRef.current,
+    estimateSize: () => 48, // approximate row height
+    overscan: 10
+  });
 
   useEffect(() => {
     if (databaseId) {
@@ -273,15 +317,120 @@ export default function DatabaseDataPage() {
     }
   };
 
+  // Advanced filter handlers
+  const addFilterCondition = () => {
+    setFilterConditions([
+      ...filterConditions,
+      { field: '', operator: 'contains', value: '', conjunction: 'and' }
+    ]);
+  };
+
+  const removeFilterCondition = (index: number) => {
+    if (filterConditions.length > 1) {
+      const newConditions = [...filterConditions];
+      newConditions.splice(index, 1);
+      setFilterConditions(newConditions);
+    }
+  };
+
+  const updateFilterCondition = (
+    index: number,
+    field: keyof FilterCondition,
+    value: string
+  ) => {
+    const newConditions = [...filterConditions];
+    newConditions[index] = {
+      ...newConditions[index],
+      [field]: value
+    };
+    setFilterConditions(newConditions);
+  };
+
+  const applyAdvancedFilter = () => {
+    // Build advanced filter query
+    const filterQuery = filterConditions
+      .filter((condition) => condition.field && condition.value)
+      .map((condition) => {
+        return {
+          field: condition.field,
+          operator: condition.operator,
+          value: condition.value,
+          conjunction: condition.conjunction
+        };
+      });
+
+    // Apply the filter
+    setRequest((prev) => ({
+      ...prev,
+      pageIndex: 0,
+      searchText: filter,
+      advancedFilters: filterQuery.length > 0 ? filterQuery : undefined
+    }));
+
+    // Close advanced filter dialog
+    setShowAdvancedFilter(false);
+  };
+
   const exportData = async (format: 'csv' | 'json' | 'excel') => {
     if (!database?.name) return;
 
     try {
-      // In a real implementation, we would call the API here
-      // For now, we'll just simulate a download
-      alert(`Exporting data as ${format.toUpperCase()}...`);
+      setIsExporting(true);
+
+      // Call the export service
+      const result = await MixDbService.exportDatabase(database.name, {
+        ...request,
+        format
+      });
+
+      // Create a download link
+      const blob = new Blob([result.data], {
+        type:
+          format === 'json'
+            ? 'application/json'
+            : format === 'csv'
+              ? 'text/csv'
+              : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      });
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${database.name}_export.${format}`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
     } catch (error) {
       console.error(`Error exporting data as ${format}:`, error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleImport = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const processImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !database?.name) return;
+
+    try {
+      // Upload the file
+      await MixDbService.importDatabase(database.name, file);
+
+      // Refresh data
+      fetchData();
+    } catch (error) {
+      console.error('Error importing data:', error);
+    } finally {
+      // Reset the file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
@@ -295,8 +444,153 @@ export default function DatabaseDataPage() {
     }));
   };
 
+  // Handle editing record
+  const handleEditItem = (item: MixDatabaseData) => {
+    // Initialize edit values from the current data
+    const initialValues: Record<string, any> = {};
+    item.data.forEach((dataValue) => {
+      initialValues[dataValue.mixDatabaseColumnName] = dataValue.value;
+    });
+
+    setEditingItem(item);
+    setEditValues(initialValues);
+    setIsEditing(true);
+  };
+
+  const handleEditValueChange = (columnName: string, value: any) => {
+    setEditValues((prev) => ({ ...prev, [columnName]: value }));
+  };
+
+  const saveEditedItem = async () => {
+    if (!editingItem || !database?.name) return;
+
+    try {
+      setIsSaving(true);
+
+      // Convert the flat object to MixDatabaseData with dataValues
+      const dataValues: MixDatabaseDataValue[] = [];
+
+      Object.entries(editValues).forEach(([key, value]) => {
+        const column = columns.find((c) => c.name === key);
+        if (column) {
+          // Find the original data value to preserve its ID
+          const originalValue = editingItem.data.find(
+            (d) => d.mixDatabaseColumnName === key
+          );
+
+          dataValues.push({
+            id: originalValue?.id || 0,
+            specificulture: editingItem.specificulture,
+            mixDatabaseColumnId: column.id,
+            mixDatabaseColumnName: column.name,
+            dataType: column.dataType,
+            value: String(value),
+            status: 'Published',
+            priority: originalValue?.priority || 0,
+            createdDateTime:
+              originalValue?.createdDateTime || new Date().toISOString()
+          });
+        }
+      });
+
+      const updatedData: MixDatabaseData = {
+        ...editingItem,
+        data: dataValues
+      };
+
+      // Update the data
+      await MixDbService.updateData(database.name, updatedData);
+
+      // Close dialog and refresh data
+      setIsEditing(false);
+      setEditingItem(null);
+      fetchData();
+    } catch (error) {
+      console.error('Error updating item:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const deleteRecord = async (id: number) => {
+    if (!database?.name) return;
+
+    try {
+      setIsDeleting(true);
+
+      // Call the API to delete the record
+      await MixDbService.deleteData(database.name, id);
+
+      // Close dialog and refresh data
+      setSelectedItem(null);
+      fetchData();
+    } catch (error) {
+      console.error('Error deleting record:', error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  // Keyboard shortcuts
+  useHotkeys(
+    'ctrl+f, cmd+f',
+    (event: KeyboardEvent) => {
+      event.preventDefault();
+      const inputEl = document.querySelector(
+        'input[placeholder="Filter records..."]'
+      ) as HTMLInputElement;
+      if (inputEl) {
+        inputEl.focus();
+      }
+    },
+    []
+  );
+
+  useHotkeys(
+    'ctrl+n, cmd+n',
+    (event: KeyboardEvent) => {
+      event.preventDefault();
+      handleAddItem();
+    },
+    []
+  );
+
+  useHotkeys(
+    'ctrl+e, cmd+e',
+    (event: KeyboardEvent) => {
+      event.preventDefault();
+      if (selectedItem) {
+        handleEditItem(selectedItem);
+      }
+    },
+    [selectedItem]
+  );
+
+  useHotkeys(
+    'ctrl+h, cmd+h',
+    (event: KeyboardEvent) => {
+      event.preventDefault();
+      setShowAdvancedFilter(true);
+    },
+    []
+  );
+
+  useHotkeys(
+    'escape',
+    () => {
+      if (showAdvancedFilter) {
+        setShowAdvancedFilter(false);
+      } else if (isEditing) {
+        setIsEditing(false);
+      } else if (selectedItem) {
+        setSelectedItem(null);
+      }
+    },
+    [showAdvancedFilter, isEditing, selectedItem]
+  );
+
   if (loading && !database) {
-    return <LoadingSection />;
+    return <PageLoadingSection />;
   }
 
   if (!database) {
@@ -341,6 +635,16 @@ export default function DatabaseDataPage() {
             </Button>
           </div>
 
+          <Button
+            variant='outline'
+            size='sm'
+            onClick={() => setShowAdvancedFilter(true)}
+            className='h-9'
+          >
+            <Icons.filter className='mr-2 h-3.5 w-3.5' />
+            Advanced Filter
+          </Button>
+
           <Select
             value={String(request.pageSize)}
             onValueChange={(value) =>
@@ -364,11 +668,42 @@ export default function DatabaseDataPage() {
         </div>
 
         <div className='flex items-center gap-2'>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant='outline' size='sm' onClick={handleImport}>
+                  <Icons.upload className='mr-2 h-4 w-4' />
+                  Import
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Import data from CSV, JSON, or Excel</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <input
+            type='file'
+            ref={fileInputRef}
+            onChange={processImport}
+            className='hidden'
+            accept='.csv,.json,.xlsx'
+          />
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant='outline' size='sm'>
-                <Icons.download className='mr-2 h-4 w-4' />
-                Export
+              <Button variant='outline' size='sm' disabled={isExporting}>
+                {isExporting ? (
+                  <>
+                    <Icons.spinner className='mr-2 h-4 w-4 animate-spin' />
+                    Exporting...
+                  </>
+                ) : (
+                  <>
+                    <Icons.download className='mr-2 h-4 w-4' />
+                    Export
+                  </>
+                )}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
@@ -408,8 +743,128 @@ export default function DatabaseDataPage() {
         </div>
       </div>
 
+      {/* Advanced Filter Dialog */}
+      <Dialog open={showAdvancedFilter} onOpenChange={setShowAdvancedFilter}>
+        <DialogContent className='sm:max-w-[650px]'>
+          <DialogHeader>
+            <DialogTitle>Advanced Filter</DialogTitle>
+            <DialogDescription>
+              Build a complex query to filter records in the {database?.name}{' '}
+              database.
+            </DialogDescription>
+          </DialogHeader>
+          <div className='max-h-[60vh] overflow-y-auto py-4'>
+            {filterConditions.map((condition, index) => (
+              <div key={index} className='mb-4 rounded-md border p-4'>
+                {index > 0 && (
+                  <div className='mb-4 flex items-center'>
+                    <Select
+                      value={condition.conjunction}
+                      onValueChange={(value) =>
+                        updateFilterCondition(index, 'conjunction', value)
+                      }
+                    >
+                      <SelectTrigger className='w-[100px]'>
+                        <SelectValue placeholder='AND' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='and'>AND</SelectItem>
+                        <SelectItem value='or'>OR</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+                <div className='flex flex-col gap-4 md:flex-row md:items-center'>
+                  <Select
+                    value={condition.field}
+                    onValueChange={(value) =>
+                      updateFilterCondition(index, 'field', value)
+                    }
+                  >
+                    <SelectTrigger className='w-full md:w-[180px]'>
+                      <SelectValue placeholder='Select field' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {columns.map((column) => (
+                        <SelectItem key={column.id} value={column.name}>
+                          {column.displayName || column.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select
+                    value={condition.operator}
+                    onValueChange={(value) =>
+                      updateFilterCondition(index, 'operator', value)
+                    }
+                  >
+                    <SelectTrigger className='w-full md:w-[150px]'>
+                      <SelectValue placeholder='Select operator' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value='contains'>Contains</SelectItem>
+                      <SelectItem value='equals'>Equals</SelectItem>
+                      <SelectItem value='startsWith'>Starts with</SelectItem>
+                      <SelectItem value='endsWith'>Ends with</SelectItem>
+                      <SelectItem value='greaterThan'>Greater than</SelectItem>
+                      <SelectItem value='lessThan'>Less than</SelectItem>
+                      <SelectItem value='empty'>Is empty</SelectItem>
+                      <SelectItem value='notEmpty'>Is not empty</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <div className='relative flex-1'>
+                    <Input
+                      placeholder='Value'
+                      value={condition.value}
+                      onChange={(e) =>
+                        updateFilterCondition(index, 'value', e.target.value)
+                      }
+                      disabled={
+                        condition.operator === 'empty' ||
+                        condition.operator === 'notEmpty'
+                      }
+                    />
+                    {index > 0 && (
+                      <Button
+                        variant='ghost'
+                        size='sm'
+                        className='absolute top-0 -right-9 h-full text-red-500'
+                        onClick={() => removeFilterCondition(index)}
+                      >
+                        <Icons.trash className='h-4 w-4' />
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            <Button
+              variant='outline'
+              size='sm'
+              onClick={addFilterCondition}
+              className='w-full'
+            >
+              <Icons.plus className='mr-2 h-4 w-4' />
+              Add Condition
+            </Button>
+          </div>
+          <DialogFooter>
+            <Button
+              variant='outline'
+              onClick={() => setShowAdvancedFilter(false)}
+            >
+              Cancel
+            </Button>
+            <Button onClick={applyAdvancedFilter}>Apply Filter</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {loading ? (
-        <LoadingSection />
+        <PageLoadingSection />
       ) : data.length === 0 ? (
         <div className='flex flex-col items-center justify-center rounded-md border py-8 text-center'>
           <Icons.database className='text-muted-foreground/50 h-12 w-12' />
@@ -426,7 +881,11 @@ export default function DatabaseDataPage() {
         <>
           <div className='overflow-hidden rounded-md border'>
             <TabsContent value='table' className='m-0'>
-              <div className='overflow-x-auto'>
+              <div
+                className='overflow-x-auto'
+                ref={tableContainerRef}
+                style={{ height: 'calc(100vh - 340px)', minHeight: '400px' }}
+              >
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -454,57 +913,79 @@ export default function DatabaseDataPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {data.map((item) => (
-                      <TableRow key={item.id}>
-                        {columns.map((column) => {
-                          const dataValue = item.data.find(
-                            (d) => d.mixDatabaseColumnName === column.name
-                          );
-                          return (
-                            <TableCell key={`${item.id}-${column.id}`}>
-                              {dataValue ? (
-                                formatValue(dataValue.value, dataValue.dataType)
-                              ) : (
-                                <span className='text-muted-foreground italic'>
-                                  null
-                                </span>
-                              )}
-                            </TableCell>
-                          );
-                        })}
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                variant='ghost'
-                                size='sm'
-                                className='h-8 w-8 p-0'
-                              >
-                                <span className='sr-only'>Open menu</span>
-                                <Icons.ellipsisVertical className='h-4 w-4' />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align='end'>
-                              <DropdownMenuItem
-                                onClick={() => setSelectedItem(item)}
-                              >
-                                <Icons.view className='mr-2 h-4 w-4' />
-                                View Details
-                              </DropdownMenuItem>
-                              <DropdownMenuItem>
-                                <Icons.pencil className='mr-2 h-4 w-4' />
-                                Edit Record
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem className='text-red-600'>
-                                <Icons.trash className='mr-2 h-4 w-4' />
-                                Delete Record
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                    {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+                      const item = data[virtualRow.index];
+                      return (
+                        <TableRow
+                          key={item.id}
+                          style={{
+                            height: `${virtualRow.size}px`,
+                            transform: `translateY(${virtualRow.start}px)`
+                          }}
+                          className='absolute w-full'
+                          onDoubleClick={() => setSelectedItem(item)}
+                        >
+                          {columns.map((column) => {
+                            const dataValue = item.data.find(
+                              (d) => d.mixDatabaseColumnName === column.name
+                            );
+                            return (
+                              <TableCell key={`${item.id}-${column.id}`}>
+                                {dataValue ? (
+                                  formatValue(
+                                    dataValue.value,
+                                    dataValue.dataType
+                                  )
+                                ) : (
+                                  <span className='text-muted-foreground italic'>
+                                    null
+                                  </span>
+                                )}
+                              </TableCell>
+                            );
+                          })}
+                          <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  variant='ghost'
+                                  size='sm'
+                                  className='h-8 w-8 p-0'
+                                >
+                                  <span className='sr-only'>Open menu</span>
+                                  <Icons.ellipsisVertical className='h-4 w-4' />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align='end'>
+                                <DropdownMenuItem
+                                  onClick={() => setSelectedItem(item)}
+                                >
+                                  <Icons.view className='mr-2 h-4 w-4' />
+                                  View Details
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => handleEditItem(item)}
+                                >
+                                  <Icons.pencil className='mr-2 h-4 w-4' />
+                                  Edit Record
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                  className='text-red-600'
+                                  onClick={() => {
+                                    setSelectedItem(item);
+                                    setIsDeleting(true);
+                                  }}
+                                >
+                                  <Icons.trash className='mr-2 h-4 w-4' />
+                                  Delete Record
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </div>
@@ -517,9 +998,25 @@ export default function DatabaseDataPage() {
             </TabsContent>
           </div>
 
-          <div className='flex items-center justify-between'>
-            <div className='text-muted-foreground text-sm'>
-              Showing {data.length} of {paging.totalItems} records
+          <div className='flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between'>
+            <div className='flex flex-col gap-1'>
+              <div className='text-muted-foreground text-sm'>
+                Showing {data.length} of {paging.totalItems} records
+              </div>
+              <div className='text-muted-foreground text-xs'>
+                <kbd className='bg-muted rounded-md px-1.5 py-0.5 text-[10px]'>
+                  Ctrl/⌘+F
+                </kbd>{' '}
+                Search &nbsp;
+                <kbd className='bg-muted rounded-md px-1.5 py-0.5 text-[10px]'>
+                  Ctrl/⌘+N
+                </kbd>{' '}
+                New record &nbsp;
+                <kbd className='bg-muted rounded-md px-1.5 py-0.5 text-[10px]'>
+                  Ctrl/⌘+H
+                </kbd>{' '}
+                Advanced filter
+              </div>
             </div>
 
             <Pagination>
@@ -714,8 +1211,8 @@ export default function DatabaseDataPage() {
       {/* View Record Dialog */}
       {selectedItem && (
         <Dialog
-          open={!!selectedItem}
-          onOpenChange={() => setSelectedItem(null)}
+          open={!!selectedItem && !isDeleting}
+          onOpenChange={(open) => !open && setSelectedItem(null)}
         >
           <DialogContent className='sm:max-w-[600px]'>
             <DialogHeader>
@@ -816,7 +1313,15 @@ export default function DatabaseDataPage() {
               </Alert>
             </div>
             <DialogFooter className='flex justify-between sm:justify-between'>
-              <Button variant='destructive' size='sm' className='mr-auto'>
+              <Button
+                variant='destructive'
+                size='sm'
+                className='mr-auto'
+                onClick={() => {
+                  setIsDeleting(true);
+                  setSelectedItem(null);
+                }}
+              >
                 <Icons.trash className='mr-2 h-4 w-4' />
                 Delete
               </Button>
@@ -824,7 +1329,7 @@ export default function DatabaseDataPage() {
                 <Button variant='outline' onClick={() => setSelectedItem(null)}>
                   Close
                 </Button>
-                <Button>
+                <Button onClick={() => handleEditItem(selectedItem)}>
                   <Icons.pencil className='mr-2 h-4 w-4' />
                   Edit
                 </Button>
@@ -833,6 +1338,204 @@ export default function DatabaseDataPage() {
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Edit Record Dialog */}
+      <Dialog
+        open={isEditing}
+        onOpenChange={(open) => !open && setIsEditing(false)}
+      >
+        <DialogContent className='sm:max-w-[600px]'>
+          <DialogHeader>
+            <DialogTitle>Edit Record</DialogTitle>
+            <DialogDescription>
+              Edit record #{editingItem?.id} from {database?.name} database.
+            </DialogDescription>
+          </DialogHeader>
+          <div className='grid max-h-[60vh] gap-4 overflow-y-auto py-4'>
+            {columns.map((column) => (
+              <div
+                key={column.id}
+                className='grid grid-cols-4 items-center gap-4'
+              >
+                <Label htmlFor={`edit-${column.name}`} className='text-right'>
+                  {column.displayName || column.name}
+                  {column.isRequire && (
+                    <span className='ml-1 text-red-500'>*</span>
+                  )}
+                </Label>
+                <div className='col-span-3'>
+                  {column.dataType === 'Boolean' ? (
+                    <Switch
+                      id={`edit-${column.name}`}
+                      checked={Boolean(editValues[column.name] === 'true')}
+                      onCheckedChange={(checked) =>
+                        handleEditValueChange(column.name, checked.toString())
+                      }
+                    />
+                  ) : column.dataType === 'Text' ||
+                    column.dataType === 'MultilineText' ? (
+                    <Input
+                      id={`edit-${column.name}`}
+                      value={editValues[column.name] || ''}
+                      onChange={(e) =>
+                        handleEditValueChange(column.name, e.target.value)
+                      }
+                      placeholder={`Enter ${column.displayName || column.name}`}
+                      required={column.isRequire}
+                    />
+                  ) : column.dataType === 'Integer' ||
+                    column.dataType === 'Double' ? (
+                    <Input
+                      id={`edit-${column.name}`}
+                      type='number'
+                      value={editValues[column.name] || 0}
+                      onChange={(e) =>
+                        handleEditValueChange(column.name, e.target.value)
+                      }
+                      required={column.isRequire}
+                    />
+                  ) : column.dataType === 'DateTime' ||
+                    column.dataType === 'Date' ? (
+                    <Input
+                      id={`edit-${column.name}`}
+                      type='datetime-local'
+                      value={
+                        editValues[column.name]
+                          ? new Date(editValues[column.name])
+                              .toISOString()
+                              .slice(0, 16)
+                          : ''
+                      }
+                      onChange={(e) =>
+                        handleEditValueChange(column.name, e.target.value)
+                      }
+                      required={column.isRequire}
+                    />
+                  ) : column.dataType === 'Json' ? (
+                    <div className='flex flex-col gap-2'>
+                      <textarea
+                        id={`edit-${column.name}`}
+                        className='h-[100px] w-full rounded-md border p-2 font-mono text-sm'
+                        value={editValues[column.name] || '{}'}
+                        onChange={(e) =>
+                          handleEditValueChange(column.name, e.target.value)
+                        }
+                      />
+                      {(() => {
+                        try {
+                          JSON.parse(editValues[column.name] || '{}');
+                          return null;
+                        } catch (e) {
+                          return (
+                            <p className='text-xs text-red-500'>
+                              Invalid JSON format
+                            </p>
+                          );
+                        }
+                      })()}
+                    </div>
+                  ) : column.dataType === 'Reference' ? (
+                    <Select
+                      value={editValues[column.name] || ''}
+                      onValueChange={(value) =>
+                        handleEditValueChange(column.name, value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder='Select reference' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='placeholder'>
+                          Placeholder Reference
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <Input
+                      id={`edit-${column.name}`}
+                      value={editValues[column.name] || ''}
+                      onChange={(e) =>
+                        handleEditValueChange(column.name, e.target.value)
+                      }
+                      placeholder={`Enter ${column.displayName || column.name}`}
+                      required={column.isRequire}
+                    />
+                  )}
+                  {column.regexPattern && (
+                    <p className='text-muted-foreground mt-1 text-xs'>
+                      {column.regexErrorMessage ||
+                        `Must match pattern: ${column.regexPattern}`}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+          <DialogFooter>
+            <Button variant='outline' onClick={() => setIsEditing(false)}>
+              Cancel
+            </Button>
+            <Button type='submit' onClick={saveEditedItem} disabled={isSaving}>
+              {isSaving ? (
+                <>
+                  <Icons.spinner className='mr-2 h-4 w-4 animate-spin' />
+                  Saving...
+                </>
+              ) : (
+                'Save Changes'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={isDeleting}
+        onOpenChange={(open) => !open && setIsDeleting(false)}
+      >
+        <DialogContent className='sm:max-w-[425px]'>
+          <DialogHeader>
+            <DialogTitle>Confirm Deletion</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this record? This action cannot be
+              undone.
+            </DialogDescription>
+          </DialogHeader>
+          <div className='py-4'>
+            <Alert variant='destructive'>
+              <AlertDescription>
+                Deleting this record will permanently remove it from the
+                database.
+              </AlertDescription>
+            </Alert>
+          </div>
+          <DialogFooter>
+            <Button variant='outline' onClick={() => setIsDeleting(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant='destructive'
+              onClick={() => {
+                if (selectedItem) {
+                  deleteRecord(selectedItem.id);
+                }
+                setIsDeleting(false);
+              }}
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <>
+                  <Icons.spinner className='mr-2 h-4 w-4 animate-spin' />
+                  Deleting...
+                </>
+              ) : (
+                'Delete Record'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

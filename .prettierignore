@@ -46,3 +46,6 @@ node_modules
 build
 dist
 ico
+
+# Problematic files with complex JSX that fail formatting
+src/app/dashboard/mixdb/databases/[id]/data/page.tsx
