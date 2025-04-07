@@ -47,20 +47,19 @@ export const columns: ColumnDef<Product>[] = [
       <DataTableColumnHeader column={column} title='Category' />
     ),
     cell: ({ cell }) => {
-      const status = cell.getValue<Product['category']>();
-      const Icon = status === 'active' ? CheckCircle2 : XCircle;
+      const category = cell.getValue<Product['category']>();
+      const option = CATEGORY_OPTIONS.find((opt) => opt.value === category);
 
       return (
         <Badge variant='outline' className='capitalize'>
-          <Icon />
-          {status}
+          {option?.label || category}
         </Badge>
       );
     },
     enableColumnFilter: true,
     meta: {
-      label: 'categories',
-      variant: 'multiSelect',
+      label: 'Category',
+      variant: 'select',
       options: CATEGORY_OPTIONS
     }
   },

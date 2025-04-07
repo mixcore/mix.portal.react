@@ -12,13 +12,7 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
+import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Product } from '@/constants/mock-api';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -135,24 +129,17 @@ export default function ProductForm({
                   <FormItem>
                     <FormLabel>Category</FormLabel>
                     <Select
-                      onValueChange={(value) => field.onChange(value)}
-                      value={field.value[field.value.length - 1]}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder='Select categories' />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value='beauty'>Beauty Products</SelectItem>
-                        <SelectItem value='electronics'>Electronics</SelectItem>
-                        <SelectItem value='clothing'>Clothing</SelectItem>
-                        <SelectItem value='home'>Home & Garden</SelectItem>
-                        <SelectItem value='sports'>
-                          Sports & Outdoors
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
+                      options={[
+                        { value: 'beauty', label: 'Beauty Products' },
+                        { value: 'electronics', label: 'Electronics' },
+                        { value: 'clothing', label: 'Clothing' },
+                        { value: 'home', label: 'Home & Garden' },
+                        { value: 'sports', label: 'Sports & Outdoors' }
+                      ]}
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder='Select categories'
+                    />
                     <FormMessage />
                   </FormItem>
                 )}

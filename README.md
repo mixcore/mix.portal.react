@@ -107,3 +107,53 @@ You should now be able to access the application at http://localhost:3000.
 > After cloning or forking the repository, be cautious when pulling or syncing with the latest changes, as this may result in breaking conflicts.
 
 Cheers! 🥂
+
+## Documentation
+
+The project documentation has been reorganized into a clear, structured format located in the `docs/` directory:
+
+```
+docs/
+├── MIGRATION-GUIDE.md       # Main entry point and overview
+├── guides/                  # Detailed development guides
+│   ├── API-GUIDE.md         # API integration guidelines
+│   ├── ANGULAR-TO-REACT-PATTERNS.md  # Migration patterns
+│   ├── CODING-STANDARDS.md  # Coding standards & best practices
+│   └── ...
+├── tracking/                # Progress tracking documents
+│   ├── IMPLEMENTATION-PLAN.md # Overall implementation plan
+│   ├── PROGRESS-TRACKER.md  # Detailed status tracking
+│   └── ...
+└── reference/               # Reference documentation
+    ├── COMPONENT-REGISTRY.md # Component library catalog
+    └── ...
+```
+
+### Getting Started with Documentation
+
+If you're new to the project or returning after a break, start with these documents:
+
+1. [Migration Guide](./docs/MIGRATION-GUIDE.md) - Overview of the migration project and current status
+2. [Implementation Plan](./docs/tracking/IMPLEMENTATION-PLAN.md) - Current phase and scheduled tasks
+3. [Progress Tracker](./docs/tracking/PROGRESS-TRACKER.md) - Detailed status of components and features
+
+### Helper Scripts
+
+We've provided helper scripts to streamline the migration process:
+
+```bash
+# View migration status
+./docs/migration.sh status
+
+# Show component implementation status
+./docs/migration.sh component-status
+
+# Show API integration status
+./docs/migration.sh api-status
+
+# Create a new component from template
+./docs/migration.sh create-component ComponentName
+
+# Create a new page from template
+./docs/migration.sh create-page path/to/page
+```
