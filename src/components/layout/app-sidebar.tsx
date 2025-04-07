@@ -171,20 +171,16 @@ export default function AppSidebar() {
               <SidebarMenuButton 
                 isActive={isActive} 
                 className='w-full justify-between'
+                tooltip={isCollapsed ? item.title : undefined}
               >
                 <div className='flex items-center'>
-                  <div className='relative'>
-                    <Icon />
-                    {isCollapsed && isActive && (
-                      <div className='bg-primary absolute -top-1 -right-1 h-2 w-2 rounded-full'></div>
-                    )}
-                  </div>
+                  <Icon className="h-4 w-4" />
                   <span>{item.title}</span>
                 </div>
-                <Icons.chevronRight className='group-data-[state=open]/collapsible:rotate-90 h-4 w-4 shrink-0 transition-transform duration-200' />
+                <Icons.chevronRight className='ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
               </SidebarMenuButton>
             </CollapsibleTrigger>
-            <CollapsibleContent asChild>
+            <CollapsibleContent>
               <SidebarMenuSub>
                 {item.items.map(subItem => {
                   const SubIcon = subItem.icon ? Icons[subItem.icon] : Icons.dashboard;
@@ -208,13 +204,13 @@ export default function AppSidebar() {
                               className='w-full justify-between'
                             >
                               <div className='flex items-center'>
-                                <SubIcon />
+                                <SubIcon className="h-4 w-4" />
                                 <span>{subItem.title}</span>
                               </div>
-                              <Icons.chevronRight className='group-data-[state=open]/subcollapsible:rotate-90 h-3 w-3 shrink-0 transition-transform duration-200' />
+                              <Icons.chevronRight className='ml-auto h-3 w-3 transition-transform duration-200 group-data-[state=open]/subcollapsible:rotate-90' />
                             </SidebarMenuSubButton>
                           </CollapsibleTrigger>
-                          <CollapsibleContent className='pl-4 mt-1'>
+                          <CollapsibleContent>
                             {subItem.items.map(tertiaryItem => (
                               <div key={tertiaryItem.title} className='py-1'>
                                 <Link
@@ -243,7 +239,7 @@ export default function AppSidebar() {
                         isActive={pathname?.includes(subItem.url)}
                       >
                         <Link href={subItem.url}>
-                          <SubIcon />
+                          <SubIcon className="h-4 w-4" />
                           <span>{subItem.title}</span>
                         </Link>
                       </SidebarMenuSubButton>
@@ -262,16 +258,11 @@ export default function AppSidebar() {
       <SidebarMenuItem key={item.title}>
         <SidebarMenuButton
           asChild
-          tooltip={item.title}
+          tooltip={isCollapsed ? item.title : undefined}
           isActive={pathname === item.url}
         >
           <Link href={item.url || '#'}>
-            <div className='relative'>
-              <Icon />
-              {isCollapsed && pathname === item.url && (
-                <div className='bg-primary absolute -top-1 -right-1 h-2 w-2 rounded-full'></div>
-              )}
-            </div>
+            <Icon className="h-4 w-4" />
             <span>{item.title}</span>
           </Link>
         </SidebarMenuButton>
@@ -303,18 +294,9 @@ export default function AppSidebar() {
     // Get the display name or use the ID if not found
     categoryName = categoryDisplayNames[categoryId] || categoryId;
     
-    const shortLabel = categoryName.substring(0, 3);
-    
     return (
       <SidebarGroup key={categoryId}>
-        <div className='flex items-center'>
-          <SidebarGroupLabel>{categoryName}</SidebarGroupLabel>
-          {isCollapsed && (
-            <span className='text-muted-foreground flex h-4 w-8 items-center justify-center text-[9px] font-bold uppercase'>
-              {shortLabel}
-            </span>
-          )}
-        </div>
+        <SidebarGroupLabel>{categoryName}</SidebarGroupLabel>
         <SidebarMenu>
           {items.map(renderNavItem)}
         </SidebarMenu>
@@ -324,8 +306,8 @@ export default function AppSidebar() {
 
   return (
     <Sidebar collapsible='icon'>
-      <SidebarHeader className='pb-2'>
-        <div className='flex items-center gap-2 px-2 py-1'>
+      <SidebarHeader className='pb-0'>
+        <div className='flex items-center gap-2 px-3 py-2'>
           <TooltipProvider delayDuration={200}>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -394,86 +376,13 @@ export default function AppSidebar() {
             </DropdownMenu>
           </div>
         </div>
-        
-        {/* App Context Icons */}
-        <div className='flex flex-wrap gap-1 px-2 py-2 mt-1 border-t'>
-          <div className="flex flex-col w-full mb-1">
-            <span className="text-xs font-medium text-muted-foreground">
-              Categories
-            </span>
-          </div>
-          <div className="flex flex-wrap gap-1">
-            {availableContexts.map((context) => {
-              const isActive = context.id === activeContextId;
-              // Safely handle icon lookup
-              let ContextIcon = Icons.dashboard;
-              if (context.icon && typeof context.icon === 'string' && context.icon in Icons) {
-                ContextIcon = Icons[context.icon as keyof typeof Icons];
-              }
-              return (
-                <TooltipProvider key={context.id}>
-                  <Tooltip delayDuration={200}>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant={isActive ? 'default' : 'ghost'}
-                        size="icon"
-                        className={cn(
-                          'h-8 w-8',
-                          isActive ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
-                        )}
-                        onClick={() => setActiveContextId(context.id)}
-                      >
-                        <ContextIcon className="h-4 w-4" />
-                        <span className="sr-only">{context.name}</span>
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="right">
-                      <p className="font-medium">{context.name}</p>
-                      {context.description && (
-                        <p className="text-xs text-muted-foreground">{context.description}</p>
-                      )}
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              );
-            })}
-            <TooltipProvider>
-              <Tooltip delayDuration={200}>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                    onClick={() => router.push('/dashboard/settings/app-contexts')}
-                  >
-                    <IconSettings className="h-4 w-4" />
-                    <span className="sr-only">Settings</span>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="right">
-                  <p>Manage app contexts</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        </div>
       </SidebarHeader>
 
-      <SidebarContent className='overflow-x-hidden'>
-        <div className="border-b border-border px-2 pb-2 mb-4">
-          {!isCollapsed && activeContext && (
-            <div className="flex items-center space-x-2 mb-1">
-              {activeContext.icon && typeof activeContext.icon === 'string' && activeContext.icon in Icons ? (
-                React.createElement(Icons[activeContext.icon as keyof typeof Icons], { 
-                  className: "h-4 w-4 text-primary" 
-                })
-              ) : (
-                <Icons.dashboard className="h-4 w-4 text-primary" />
-              )}
-              <span className="font-medium text-sm">{activeContext.name}</span>
-            </div>
-          )}
-        </div>
+      <SidebarContent className='px-3 py-2'>
+        {!isCollapsed && activeContext && (
+          <div className="flex items-center space-x-2 mb-4 border-b">
+          </div>
+        )}
 
         {/* Display second level menu items directly */}
         {Object.entries(navCategories)
@@ -491,146 +400,171 @@ export default function AppSidebar() {
               return [];
             }
             
-            // Extract second level items and convert to top level
-            return items.map(item => {
-              // If the item has its own items (third level), we need to render those
-              if (item.items && item.items.length > 0) {
-                const Icon = item.icon ? Icons[item.icon] : Icons.dashboard;
-                const isActive = item.items.some(subItem => pathname?.includes(subItem.url));
-                
-                return (
-                  <SidebarGroup key={item.title}>
-                    <div className='flex items-center'>
-                      <SidebarGroupLabel>
-                        <div className="flex items-center space-x-2">
-                          {item.icon && (
-                            <Icon className="h-4 w-4 text-muted-foreground" />
-                          )}
-                          <span>{item.title}</span>
-                        </div>
-                      </SidebarGroupLabel>
-                      {isCollapsed && (
-                        <span className='text-muted-foreground flex h-4 w-8 items-center justify-center text-[9px] font-bold uppercase'>
-                          {item.title.substring(0, 3)}
-                        </span>
-                      )}
-                    </div>
-                    <SidebarMenu>
-                      {item.items.map(subItem => {
-                        const SubIcon = subItem.icon ? Icons[subItem.icon] : Icons.dashboard;
-                        
-                        // Check if the subItem has its own items (third level)
-                        if (subItem.items && subItem.items.length > 0) {
-                          const isSubActive = pathname?.includes(subItem.url);
-                          
-                          return (
-                            <Collapsible
-                              key={subItem.title}
-                              defaultOpen={isSubActive}
-                              className="w-full"
-                            >
-                              <SidebarMenuItem>
-                                <CollapsibleTrigger asChild>
-                                  <SidebarMenuButton
-                                    isActive={isSubActive}
-                                    className="w-full justify-between"
-                                  >
-                                    <div className="flex items-center">
-                                      <div className="relative">
-                                        <SubIcon className="h-4 w-4" />
-                                        {isCollapsed && isSubActive && (
-                                          <div className="bg-primary absolute -top-1 -right-1 h-2 w-2 rounded-full"></div>
-                                        )}
-                                      </div>
-                                      <span>{subItem.title}</span>
-                                    </div>
-                                    <Icons.chevronRight className="group-data-[state=open]:rotate-90 h-4 w-4 shrink-0 transition-transform duration-200" />
-                                  </SidebarMenuButton>
-                                </CollapsibleTrigger>
-                                <CollapsibleContent className="pl-8 pt-2 space-y-1">
-                                  {subItem.items.map(tertiaryItem => (
-                                    <Link
-                                      key={tertiaryItem.title}
-                                      href={tertiaryItem.url}
-                                      className={cn(
-                                        "flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md py-1.5 px-2",
-                                        pathname === tertiaryItem.url && "bg-accent text-foreground font-medium"
-                                      )}
+            // Map context IDs to display names
+            const categoryDisplayNames: Record<string, string> = {
+              'general': 'General',
+              'website': 'Website',
+              'sales': 'Sales',
+              'finance': 'Finance',
+              'inventory': 'Inventory & Manufacturing',
+              'hr': 'Human Resources',
+              'marketing': 'Marketing',
+              'services': 'Services',
+              'productivity': 'Productivity',
+              'customization': 'Customization'
+            };
+            
+            // Group items by their category
+            return [
+              <SidebarGroup key={categoryId}>
+                <SidebarGroupLabel>
+                  {categoryDisplayNames[categoryId] || categoryId}
+                </SidebarGroupLabel>
+                <SidebarMenu>
+                  {items.map(item => {
+                    const Icon = item.icon ? Icons[item.icon] : Icons.dashboard;
+                    
+                    // If item has children
+                    if (item.items && item.items.length > 0) {
+                      const isActive = item.items.some(subItem => 
+                        pathname?.includes(subItem.url)
+                      );
+                      
+                      return (
+                        <Collapsible
+                          key={item.title}
+                          asChild
+                          defaultOpen={isActive}
+                          className='group/collapsible'
+                        >
+                          <SidebarMenuItem>
+                            <CollapsibleTrigger asChild>
+                              <SidebarMenuButton 
+                                isActive={isActive}
+                                tooltip={isCollapsed ? item.title : undefined}
+                              >
+                                <Icon className="h-4 w-4" />
+                                <span>{item.title}</span>
+                                <Icons.chevronRight className='ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
+                              </SidebarMenuButton>
+                            </CollapsibleTrigger>
+                            <CollapsibleContent>
+                              <SidebarMenuSub>
+                                {item.items.map(subItem => (
+                                  <SidebarMenuSubItem key={subItem.title}>
+                                    <SidebarMenuSubButton
+                                      asChild
+                                      isActive={pathname?.includes(subItem.url)}
                                     >
-                                      <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground mr-2"></div>
-                                      {tertiaryItem.title}
-                                    </Link>
-                                  ))}
-                                </CollapsibleContent>
-                              </SidebarMenuItem>
-                            </Collapsible>
-                          );
-                        }
-                        
-                        // Regular menu item without dropdown
-                        return (
-                          <SidebarMenuItem key={subItem.title}>
-                            <SidebarMenuButton
-                              asChild
-                              tooltip={subItem.title}
-                              isActive={pathname === subItem.url}
-                            >
-                              <Link href={subItem.url || '#'}>
-                                <div className='relative'>
-                                  <SubIcon className="h-4 w-4" />
-                                  {isCollapsed && pathname === subItem.url && (
-                                    <div className='bg-primary absolute -top-1 -right-1 h-2 w-2 rounded-full'></div>
-                                  )}
-                                </div>
-                                <span>{subItem.title}</span>
-                              </Link>
-                            </SidebarMenuButton>
+                                      <Link href={subItem.url}>
+                                        <span>{subItem.title}</span>
+                                      </Link>
+                                    </SidebarMenuSubButton>
+                                  </SidebarMenuSubItem>
+                                ))}
+                              </SidebarMenuSub>
+                            </CollapsibleContent>
                           </SidebarMenuItem>
-                        );
-                      })}
-                    </SidebarMenu>
-                  </SidebarGroup>
-                );
-              }
-              
-              // Simple second level item with no children
-              const Icon = item.icon ? Icons[item.icon] : Icons.dashboard;
-              return (
-                <SidebarGroup key={item.title}>
-                  <SidebarMenu>
-                    <SidebarMenuItem>
-                      <SidebarMenuButton
-                        asChild
-                        tooltip={item.title}
-                        isActive={pathname === item.url}
-                      >
-                        <Link href={item.url || '#'}>
-                          <div className='relative'>
+                        </Collapsible>
+                      );
+                    }
+                    
+                    // Simple item without children
+                    return (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton
+                          asChild
+                          tooltip={isCollapsed ? item.title : undefined}
+                          isActive={pathname === item.url}
+                        >
+                          <Link href={item.url || '#'}>
                             <Icon className="h-4 w-4" />
-                            {isCollapsed && pathname === item.url && (
-                              <div className='bg-primary absolute -top-1 -right-1 h-2 w-2 rounded-full'></div>
-                            )}
-                          </div>
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  </SidebarMenu>
-                </SidebarGroup>
-              );
-            });
+                            <span>{item.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  })}
+                </SidebarMenu>
+              </SidebarGroup>
+            ];
           })}
       </SidebarContent>
 
-      <SidebarFooter>
-        <SidebarMenu>
+      <SidebarFooter className="border-t">
+        <div className='p-3'>
+          {/*<div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-medium text-muted-foreground">
+              Categories
+            </span>
+          </div>*/}
+          <div className="flex items-center gap-1.5 w-full overflow-hidden">
+            <div className="flex items-center gap-1.5 flex-1 overflow-hidden">
+              {availableContexts.map((context) => {
+                const isActive = context.id === activeContextId;
+                // Safely handle icon lookup
+                let ContextIcon = Icons.dashboard;
+                if (context.icon && typeof context.icon === 'string' && context.icon in Icons) {
+                  ContextIcon = Icons[context.icon as keyof typeof Icons];
+                }
+                return (
+                  <TooltipProvider key={context.id}>
+                    <Tooltip delayDuration={200}>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant={isActive ? 'default' : 'ghost'}
+                          size="icon"
+                          className={cn(
+                            'h-7 w-7 rounded-md flex-shrink-0',
+                            isActive ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
+                          )}
+                          onClick={() => setActiveContextId(context.id)}
+                        >
+                          <ContextIcon className="h-3.5 w-3.5" />
+                          <span className="sr-only">{context.name}</span>
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="text-xs">
+                        <p className="font-medium">{context.name}</p>
+                        {/* {context.description && (
+                          <p className="text-xs text-muted-foreground">{context.description}</p>
+                        )} */}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                );
+              })}
+            </div>
+            <TooltipProvider>
+              <Tooltip delayDuration={200}>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 rounded-md text-muted-foreground hover:text-foreground flex-shrink-0"
+                    onClick={() => router.push('/dashboard/settings/app-contexts')}
+                  >
+                    <IconSettings className="h-3.5 w-3.5" />
+                    <span className="sr-only">Settings</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right" className="text-xs">
+                  <p>Manage app contexts</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        </div>
+        
+        <SidebarMenu className="border-t px-2 py-2">
           <SidebarMenuItem>
             <SidebarMenuButton
               size='lg'
               onClick={() => router.push('/dashboard/profile')}
+              className="rounded-md"
             >
               <UserAvatarProfile
-                className='h-8 w-8 rounded-lg'
+                className='h-7 w-7 rounded-md'
                 showInfo={!isCollapsed}
                 user={mockUser}
               />
