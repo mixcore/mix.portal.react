@@ -36,7 +36,8 @@ import {
   IconLayout,
   IconPalette,
   IconCode,
-  IconBuilding
+  IconBuilding,
+  IconTag
 } from '@tabler/icons-react';
 
 export type Icon = React.ComponentType<IconProps>;
@@ -78,5 +79,6 @@ export const Icons = {
   palette: IconPalette,
   code: IconCode,
   userPen: IconUserEdit,
-  building: IconBuilding
+  building: IconBuilding,
+  tag: IconTag
 };

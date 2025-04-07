@@ -45,6 +45,12 @@ export const navItems: NavItem[] = [
         url: '/dashboard/media',
         icon: 'media',
         shortcut: ['m', 'd']
+      },
+      {
+        title: 'Tags',
+        url: '/dashboard/tags',
+        icon: 'tag',
+        shortcut: ['t', 'g']
       }
     ]
   },

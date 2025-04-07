@@ -238,7 +238,8 @@ export default function AppSidebar() {
                   defaultOpen={
                     pathname?.includes('/dashboard/posts') ||
                     pathname?.includes('/dashboard/pages') ||
-                    pathname?.includes('/dashboard/media')
+                    pathname?.includes('/dashboard/media') ||
+                    pathname?.includes('/dashboard/tags')
                   }
                   className='group/collapsible'
                 >
@@ -250,7 +251,8 @@ export default function AppSidebar() {
                           {isCollapsed &&
                             (pathname?.includes('/dashboard/posts') ||
                               pathname?.includes('/dashboard/pages') ||
-                              pathname?.includes('/dashboard/media')) && (
+                              pathname?.includes('/dashboard/media') ||
+                              pathname?.includes('/dashboard/tags')) && (
                               <div className='bg-primary absolute -top-1 -right-1 h-2 w-2 rounded-full'></div>
                             )}
                         </div>
@@ -267,7 +269,9 @@ export default function AppSidebar() {
                               href={subItem.url}
                               className={cn(
                                 'hover:bg-muted flex w-full items-center justify-between gap-2 rounded-md px-2 py-1',
-                                pathname?.includes(subItem.url) &&
+                                (pathname?.includes(subItem.url) ||
+                                  (subItem.title === 'Tags' &&
+                                    pathname?.includes('/dashboard/tags'))) &&
                                   'bg-muted font-medium'
                               )}
                             >
