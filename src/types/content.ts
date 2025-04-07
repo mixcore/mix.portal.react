@@ -1,21 +1,15 @@
 export enum MixContentStatus {
-  Deleted = -1,
-  Draft = 0,
+  Draft = 2,
   Published = 1,
-  Schedule = 2,
-  Preview = 3
+  Archived = 3,
+  Deleted = 4
 }
 
 export interface BaseContent {
-  id: number;
-  createdDateTime: string;
-  lastModified?: string;
+  id: string;
+  createdDateTime?: string;
   createdBy?: string;
+  modifiedDateTime?: string;
   modifiedBy?: string;
-  priority: number;
-  status: MixContentStatus;
-  isDeleted: boolean;
-  tenantId: number;
-  specificulture?: string;
-  isPublic: boolean;
+  status?: MixContentStatus;
 }

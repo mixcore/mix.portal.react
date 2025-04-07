@@ -7,6 +7,7 @@ This document serves as a prompt reference for working on the Mixcore applicatio
 We have organized the migration documentation into a clear, structured format:
 
 ```
+mix-app/                     # angulajs source code
 docs/
 ├── MIGRATION-GUIDE.md       # Main entry point and overview
 ├── guides/                  # Detailed development guides

@@ -56,7 +56,15 @@ const nextConfig = {
       };
     }
     return config;
-  }
+  },
+  // Enable React strict mode for development
+  reactStrictMode: true,
+  
+  // Add trailing slashes to URLs
+  trailingSlash: false,
+  
+  // Custom rewrites to handle route groups
+ 
 };
 
 module.exports = nextConfig;

@@ -33,7 +33,7 @@ These components handle the layout and structure of the application.
 | Component | Path | Status | Purpose | Last Updated |
 |-----------|------|--------|---------|-------------|
 | Root Layout | `src/app/layout.tsx` | ✅ Complete | Base application layout | 2023-04-10 |
-| Dashboard Layout | `src/app/(dashboard)/layout.tsx` | ✅ Complete | Admin dashboard layout | 2023-04-15 |
+| Dashboard Layout | `src/app/dashboard/layout.tsx` | ✅ Complete | Admin dashboard layout | 2023-04-15 |
 | Auth Layout | `src/app/(auth)/layout.tsx` | ✅ Complete | Authentication pages layout | 2023-04-10 |
 | Main Navigation | `src/components/layout/MainNav.tsx` | ✅ Complete | Primary navigation | 2023-04-15 |
 | Mobile Menu | `src/components/layout/MobileNav.tsx` | ✅ Complete | Mobile navigation | 2023-04-15 |

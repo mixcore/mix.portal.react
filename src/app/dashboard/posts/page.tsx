@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
-import { Edit, Trash, Eye, MoreHorizontal } from 'lucide-react';
+import { Edit, Trash, Eye, MoreHorizontal, Plus } from 'lucide-react';
 
 import { DataTable } from '@/components/ui/data-table';
 import { Button } from '@/components/ui/button';
@@ -21,12 +21,16 @@ import { Heading } from '@/components/ui/heading';
 import { postService } from '@/services/post';
 import { Post, PostQueryParams } from '@/types/post';
 import { MixContentStatus } from '@/types/content';
+import { Separator } from '@/components/ui/separator';
+import { AlertModal } from '@/components/modals/alert-modal';
 
 export default function PostsPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [totalItems, setTotalItems] = useState(0);
   const [pageCount, setPageCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -39,7 +43,7 @@ export default function PostsPage() {
 
   // Create status label component
   const StatusBadge = ({ status }: { status: MixContentStatus }) => {
-    switch (status) {
+    switch (Number(status)) {
       case MixContentStatus.Published:
         return <Badge className='bg-green-500'>Published</Badge>;
       case MixContentStatus.Draft:
@@ -57,10 +61,6 @@ export default function PostsPage() {
 
   // Define table columns
   const columns: ColumnDef<Post>[] = [
-    {
-      accessorKey: 'id',
-      header: 'ID'
-    },
     {
       accessorKey: 'title',
       header: 'Title',
@@ -91,37 +91,39 @@ export default function PostsPage() {
         const post = row.original;
 
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant='ghost' className='h-8 w-8 p-0'>
-                <span className='sr-only'>Open menu</span>
-                <MoreHorizontal className='h-4 w-4' />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align='end'>
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => router.push(`/dashboard/posts/${post.id}`)}
-              >
-                <Eye className='mr-2 h-4 w-4' />
-                View
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => router.push(`/dashboard/posts/${post.id}/edit`)}
-              >
-                <Edit className='mr-2 h-4 w-4' />
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                className='text-destructive focus:text-destructive'
-                onClick={() => handleDelete(post.id)}
-              >
-                <Trash className='mr-2 h-4 w-4' />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="text-right">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuItem
+                  onClick={() => router.push(`/dashboard/posts/${post.id}`)}
+                >
+                  <Eye className="mr-2 h-4 w-4" />
+                  View
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => router.push(`/dashboard/posts/${post.id}/edit`)}
+                >
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="text-destructive focus:text-destructive"
+                  onClick={() => setDeleteId(post.id)}
+                >
+                  <Trash className="mr-2 h-4 w-4" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         );
       }
     }
@@ -162,10 +164,12 @@ export default function PostsPage() {
   };
 
   // Handle post deletion
-  const handleDelete = async (id: number) => {
-    // TODO: Add confirmation dialog
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    
     try {
-      await postService.deletePost(id);
+      setIsDeleteLoading(true);
+      await postService.deletePost(deleteId);
 
       // Refetch posts after deletion
       fetchPosts({
@@ -175,6 +179,9 @@ export default function PostsPage() {
       });
     } catch (error) {
       console.error('Error deleting post:', error);
+    } finally {
+      setIsDeleteLoading(false);
+      setDeleteId(null);
     }
   };
 
@@ -188,30 +195,46 @@ export default function PostsPage() {
   }, [pageIndex, pageSize, search]);
 
   return (
-    <div className='space-y-6'>
-      <div className='flex items-center justify-between'>
-        <Heading
-          title='Post Management'
-          description='Manage your blog posts and content.'
-        />
-        <Button onClick={() => router.push('/dashboard/posts/new')}>
-          Add New Post
-        </Button>
-      </div>
-
-      <DataTable
-        columns={columns}
-        data={posts}
-        totalItems={totalItems}
-        pageCount={pageCount}
-        pageIndex={pageIndex}
-        pageSize={pageSize}
-        searchKey='title'
-        searchPlaceholder='Search posts...'
-        onPaginationChange={handlePaginationChange}
-        onSearchChange={handleSearchChange}
-        isLoading={isLoading}
+    <>
+      <AlertModal 
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        loading={isDeleteLoading}
+        title="Delete Post"
+        description="Are you sure you want to delete this post? This action cannot be undone."
       />
-    </div>
+      
+      <div className="px-1 py-2 md:px-4 md:py-3 lg:px-6 lg:py-4">
+        <div className="flex items-center justify-between mb-6">
+          <Heading
+            title="Post Management"
+            description="Manage your blog posts and content"
+          />
+          <Button onClick={() => router.push('/dashboard/posts/new')}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add New Post
+          </Button>
+        </div>
+        
+        <Separator className="my-4" />
+        
+        <div className="rounded-md border bg-card">
+          <DataTable
+            columns={columns}
+            data={posts}
+            totalItems={totalItems}
+            pageCount={pageCount}
+            pageIndex={pageIndex}
+            pageSize={pageSize}
+            searchKey="title"
+            searchPlaceholder="Search by post title..."
+            onPaginationChange={handlePaginationChange}
+            onSearchChange={handleSearchChange}
+            isLoading={isLoading}
+          />
+        </div>
+      </div>
+    </>
   );
 }

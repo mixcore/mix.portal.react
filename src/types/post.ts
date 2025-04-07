@@ -1,31 +1,44 @@
-import { MixContentStatus } from './content';
+import { BaseContent, MixContentStatus } from './content';
 
-export interface Post {
-  id: number;
-  createdDateTime: string;
-  lastModified?: string;
-  createdBy?: string;
-  modifiedBy?: string;
-  priority: number;
-  status: MixContentStatus;
-  isDeleted: boolean;
-  tenantId: number;
-  specificulture?: string;
-  icon?: string;
-  isPublic: boolean;
-  parentId: number;
-  mixCultureId: number;
-  title?: string;
+export interface Post extends BaseContent {
+  title: string;
   excerpt?: string;
   content?: string;
-  layoutId?: number;
-  templateId?: number;
   image?: string;
-  source?: string;
+  seoTitle?: string;
   seoDescription?: string;
   seoKeywords?: string;
-  seoName?: string;
+  icon?: string;
+  parentId: number;
+  mixCultureId: number;
+}
+
+export interface PostCreateDto {
+  title: string;
+  excerpt?: string;
+  content?: string;
+  status: MixContentStatus;
+  isPublic?: boolean;
+  image?: string;
   seoTitle?: string;
+  seoDescription?: string;
+  seoKeywords?: string;
+  specificulture?: string;
+  priority?: number;
+}
+
+export interface PostUpdateDto extends PostCreateDto {
+  id: number;
+}
+
+export interface PostQueryParams {
+  pageIndex?: number;
+  pageSize?: number;
+  search?: string;
+  status?: MixContentStatus;
+  isPublic?: boolean;
+  fromDate?: string;
+  toDate?: string;
 }
 
 export interface PostListResponse {
@@ -34,15 +47,4 @@ export interface PostListResponse {
   totalPages: number;
   pageIndex: number;
   pageSize: number;
-}
-
-export interface PostQueryParams {
-  pageIndex?: number;
-  pageSize?: number;
-  search?: string;
-  status?: MixContentStatus;
-  from?: string;
-  to?: string;
-  orderBy?: string;
-  direction?: 'asc' | 'desc';
 }

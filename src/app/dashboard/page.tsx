@@ -1,5 +1,14 @@
-import { redirect } from 'next/navigation';
+'use client';
 
-export default async function Dashboard() {
-  redirect('/dashboard/overview');
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+
+export default function DashboardPage() {
+  const router = useRouter();
+  
+  useEffect(() => {
+    router.push('/dashboard/overview');
+  }, [router]);
+  
+  return null;
 }
