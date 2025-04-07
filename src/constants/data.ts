@@ -70,6 +70,21 @@ export const navItems: NavItem[] = [
     ]
   },
   {
+    title: 'Management',
+    url: '#',
+    icon: 'settings',
+    isActive: false,
+    shortcut: ['m', 'g'],
+    items: [
+      {
+        title: 'Tenants',
+        url: '/dashboard/tenants',
+        icon: 'building',
+        shortcut: ['t', 'n']
+      }
+    ]
+  },
+  {
     title: 'Product',
     url: '/dashboard/product',
     icon: 'product',
