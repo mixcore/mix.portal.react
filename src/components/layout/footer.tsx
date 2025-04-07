@@ -1,44 +1,32 @@
-import Link from 'next/link';
-import { ThemeToggle } from '@/components/theme-toggle';
+import React from 'react';
+import { Separator } from '@/components/ui/separator';
 
-export function Footer() {
+export default function Footer() {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="border-t py-6 md:py-0">
-      <div className="container flex flex-col items-center justify-between gap-4 md:h-16 md:flex-row">
-        <p className="text-center text-sm leading-loose text-muted-foreground md:text-left">
-          Built with{' '}
-          <a
-            href="https://nextjs.org"
-            target="_blank"
-            rel="noreferrer"
-            className="font-medium underline underline-offset-4"
-          >
-            Next.js
-          </a>{' '}
-          and{' '}
-          <a
-            href="https://tailwindcss.com"
-            target="_blank"
-            rel="noreferrer"
-            className="font-medium underline underline-offset-4"
-          >
-            Tailwind CSS
+    <footer className='border-t px-6 py-3'>
+      <div className='text-muted-foreground flex flex-col items-center justify-between gap-3 text-sm md:flex-row'>
+        <div>
+          <p>© {currentYear} Mixcore CMS. Version 1.0.0</p>
+        </div>
+        <div className='flex items-center gap-4'>
+          <a href='#' className='hover:text-foreground transition-colors'>
+            Documentation
           </a>
-          . The source code is available on{' '}
+          <Separator orientation='vertical' className='h-4' />
+          <a href='#' className='hover:text-foreground transition-colors'>
+            Support
+          </a>
+          <Separator orientation='vertical' className='h-4' />
           <a
-            href="https://github.com/mixcore/mix.core"
-            target="_blank"
-            rel="noreferrer"
-            className="font-medium underline underline-offset-4"
+            href='https://github.com/mixcore/mix.portal.react'
+            className='hover:text-foreground transition-colors'
           >
             GitHub
           </a>
-          .
-        </p>
-        <div className="flex items-center gap-4">
-          <ThemeToggle />
         </div>
       </div>
     </footer>
   );
-} 
+}
