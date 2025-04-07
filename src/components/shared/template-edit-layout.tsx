@@ -270,128 +270,151 @@ export function TemplateEditLayout({
   };
 
   return (
-    <div className='container mx-auto space-y-4 pb-4'>
+    <div className='container mx-auto max-w-7xl space-y-6 pb-4'>
       {/* Header */}
-      <div className='bg-background sticky top-0 z-10 flex items-center justify-between border-b py-4'>
+      <div className='bg-background bg-background/90 sticky top-0 z-10 flex flex-col items-start justify-between gap-4 border-b py-4 backdrop-blur-sm md:flex-row md:items-center'>
         <div className='flex items-center space-x-4'>
-          <Button variant='ghost' size='icon' onClick={handleBack}>
+          <Button
+            variant='ghost'
+            size='icon'
+            onClick={handleBack}
+            className='hover:bg-muted rounded-full'
+          >
             <ArrowLeftIcon className='h-5 w-5' />
           </Button>
           <div>
             <h1 className='text-2xl font-bold tracking-tight'>{title}</h1>
-            <p className='text-muted-foreground text-sm'>
+            <p className='text-muted-foreground max-w-[300px] truncate text-sm md:max-w-md'>
               {template?.fileFolder}
             </p>
           </div>
         </div>
 
-        <div className='flex items-center gap-2'>
-          <Tabs
-            value={activeTab}
-            onValueChange={setActiveTab}
-            className='hidden md:flex'
-          >
-            <TabsList>
-              <TabsTrigger value='editor'>
-                <CodeIcon className='mr-2 h-4 w-4' />
-                Editor
-              </TabsTrigger>
-              <TabsTrigger value='preview'>
-                <LayoutIcon className='mr-2 h-4 w-4' />
-                Preview
-              </TabsTrigger>
-              <TabsTrigger value='history'>
-                <HistoryIcon className='mr-2 h-4 w-4' />
-                History
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+        <div className='flex w-full items-center justify-between gap-2 md:w-auto md:justify-end'>
+          <div className='flex-1 md:hidden'>
+            <Select value={activeTab} onValueChange={setActiveTab}>
+              <SelectTrigger className='w-full'>
+                <SelectValue placeholder='Select Tab' />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value='editor'>Editor</SelectItem>
+                <SelectItem value='preview'>Preview</SelectItem>
+                <SelectItem value='history'>History</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant='outline'
-                  size='icon'
-                  onClick={() => setSettingsOpen(true)}
-                >
-                  <SettingsIcon className='h-4 w-4' />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Settings</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <div className='hidden md:flex'>
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className='grid w-[280px] grid-cols-3'>
+                <TabsTrigger value='editor' className='flex items-center'>
+                  <CodeIcon className='mr-2 h-4 w-4' />
+                  Editor
+                </TabsTrigger>
+                <TabsTrigger value='preview' className='flex items-center'>
+                  <LayoutIcon className='mr-2 h-4 w-4' />
+                  Preview
+                </TabsTrigger>
+                <TabsTrigger value='history' className='flex items-center'>
+                  <HistoryIcon className='mr-2 h-4 w-4' />
+                  History
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
 
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant='outline'
-                  size='icon'
-                  onClick={handleDuplicate}
-                  disabled={isLoading || !template?.id}
-                >
-                  <CopyIcon className='h-4 w-4' />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Duplicate Template</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant='outline'
-                  size='icon'
-                  onClick={handlePreview}
-                  disabled={isLoading || !template?.id}
-                >
-                  <EyeIcon className='h-4 w-4' />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Preview</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
-          {!isNew && (
+          <div className='flex items-center gap-2'>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
                     variant='outline'
                     size='icon'
-                    onClick={() => setShowDeleteDialog(true)}
-                    disabled={isLoading || !template?.id}
+                    onClick={() => setSettingsOpen(true)}
+                    className='h-9 w-9 rounded-full'
                   >
-                    <Trash2Icon className='text-destructive h-4 w-4' />
+                    <SettingsIcon className='h-4 w-4' />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>Delete</TooltipContent>
+                <TooltipContent>Settings</TooltipContent>
               </Tooltip>
             </TooltipProvider>
-          )}
 
-          <Button
-            onClick={handleSave}
-            disabled={isLoading || isSaving}
-            className='w-24'
-          >
-            {isSaving ? (
-              <RefreshCwIcon className='mr-2 h-4 w-4 animate-spin' />
-            ) : (
-              <SaveIcon className='mr-2 h-4 w-4' />
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant='outline'
+                    size='icon'
+                    onClick={handleDuplicate}
+                    disabled={isLoading || !template?.id}
+                    className='h-9 w-9 rounded-full'
+                  >
+                    <CopyIcon className='h-4 w-4' />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Duplicate Template</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant='outline'
+                    size='icon'
+                    onClick={handlePreview}
+                    disabled={isLoading || !template?.id}
+                    className='h-9 w-9 rounded-full'
+                  >
+                    <EyeIcon className='h-4 w-4' />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Preview</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            {!isNew && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant='outline'
+                      size='icon'
+                      onClick={() => setShowDeleteDialog(true)}
+                      disabled={isLoading || !template?.id}
+                      className='h-9 w-9 rounded-full'
+                    >
+                      <Trash2Icon className='text-destructive h-4 w-4' />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             )}
-            Save
-          </Button>
+
+            <Button
+              onClick={handleSave}
+              disabled={isLoading || isSaving}
+              size='sm'
+              className='ml-2 h-9 gap-1.5'
+            >
+              {isSaving ? (
+                <RefreshCwIcon className='h-4 w-4 animate-spin' />
+              ) : (
+                <SaveIcon className='h-4 w-4' />
+              )}
+              <span className='ml-1 hidden sm:inline'>Save</span>
+            </Button>
+          </div>
         </div>
       </div>
 
       <Tabs value={activeTab} className='w-full'>
         <TabsContent value='editor' className='m-0 outline-none'>
-          <div className='grid grid-cols-1 gap-4 md:grid-cols-12'>
+          <div className='grid grid-cols-1 gap-4'>
             {/* Main Editor */}
-            <div className='md:col-span-12'>
+            <div>
               {isLoading ? (
                 <div className='bg-muted h-96 animate-pulse rounded-md' />
               ) : (
@@ -411,11 +434,11 @@ export function TemplateEditLayout({
         </TabsContent>
 
         <TabsContent value='preview' className='m-0 outline-none'>
-          <Card>
-            <CardContent className='p-4'>
+          <Card className='overflow-hidden rounded-lg border shadow-sm'>
+            <CardContent className='p-0'>
               {template ? (
-                <div className='relative rounded-md border'>
-                  <div className='bg-muted flex items-center justify-between border-b p-2'>
+                <div className='relative'>
+                  <div className='bg-muted flex items-center justify-between border-b p-3'>
                     <div className='flex items-center space-x-2'>
                       <LayoutIcon className='h-4 w-4' />
                       <span className='text-sm font-medium'>Preview</span>
@@ -441,7 +464,7 @@ export function TemplateEditLayout({
                       </Button>
                     </div>
                   </div>
-                  <div className='h-[70vh] overflow-auto bg-white p-4 dark:bg-gray-900'>
+                  <div className='h-[75vh] overflow-auto bg-white p-4 dark:bg-gray-900'>
                     <div className='flex h-full items-center justify-center'>
                       <div className='text-center'>
                         <FileTextIcon className='text-muted-foreground mx-auto mb-4 h-16 w-16' />
@@ -463,20 +486,25 @@ export function TemplateEditLayout({
         </TabsContent>
 
         <TabsContent value='history' className='m-0 outline-none'>
-          <Card>
-            <CardContent className='p-4'>
-              <div className='mb-4 flex items-center justify-between'>
-                <h3 className='text-lg font-medium'>Version History</h3>
+          <Card className='overflow-hidden rounded-lg border shadow-sm'>
+            <CardContent className='p-6'>
+              <div className='mb-6 flex items-center justify-between'>
+                <div className='space-y-1'>
+                  <h3 className='text-lg font-medium'>Version History</h3>
+                  <p className='text-muted-foreground text-sm'>
+                    Track and restore previous versions
+                  </p>
+                </div>
                 <Button variant='outline' size='sm'>
                   <GitBranchIcon className='mr-2 h-4 w-4' />
                   Compare Versions
                 </Button>
               </div>
-              <div className='space-y-2'>
+              <div className='space-y-3'>
                 {versions.map((version) => (
                   <div
                     key={version.id}
-                    className={`flex items-center justify-between rounded-md border p-3 ${
+                    className={`flex items-center justify-between rounded-lg border p-4 ${
                       version.isActive ? 'border-primary bg-primary/5' : ''
                     }`}
                   >
