@@ -72,7 +72,15 @@ export default function AppSidebar() {
   const { state } = useSidebar();
   const isCollapsed = state === 'collapsed';
   const router = useRouter();
-  const { filteredNavItems } = useNavigationContext();
+  const { 
+    filteredNavItems, 
+    activeContextId, 
+    availableContexts,
+    setActiveContextId 
+  } = useNavigationContext();
+  
+  // Get active context
+  const activeContext = availableContexts.find(c => c.id === activeContextId);
 
   // Mock user data
   const mockUser = {
@@ -155,7 +163,7 @@ export default function AppSidebar() {
         <Collapsible
           key={item.title}
           asChild
-          defaultOpen={isActive}
+          defaultOpen={isActive || !isCollapsed}
           className='group/collapsible'
         >
           <SidebarMenuItem>
@@ -180,6 +188,54 @@ export default function AppSidebar() {
               <SidebarMenuSub>
                 {item.items.map(subItem => {
                   const SubIcon = subItem.icon ? Icons[subItem.icon] : Icons.dashboard;
+                  
+                  // Check if this subitem has further items
+                  if (subItem.items && subItem.items.length > 0) {
+                    // Nested collapsible for third level navigation
+                    const isSubActive = pathname?.includes(subItem.url);
+                    
+                    return (
+                      <Collapsible
+                        key={subItem.title}
+                        asChild
+                        defaultOpen={isSubActive}
+                        className='group/subcollapsible w-full'
+                      >
+                        <SidebarMenuSubItem>
+                          <CollapsibleTrigger asChild>
+                            <SidebarMenuSubButton
+                              isActive={isSubActive}
+                              className='w-full justify-between'
+                            >
+                              <div className='flex items-center'>
+                                <SubIcon />
+                                <span>{subItem.title}</span>
+                              </div>
+                              <Icons.chevronRight className='group-data-[state=open]/subcollapsible:rotate-90 h-3 w-3 shrink-0 transition-transform duration-200' />
+                            </SidebarMenuSubButton>
+                          </CollapsibleTrigger>
+                          <CollapsibleContent className='pl-4 mt-1'>
+                            {subItem.items.map(tertiaryItem => (
+                              <div key={tertiaryItem.title} className='py-1'>
+                                <Link
+                                  href={tertiaryItem.url}
+                                  className={cn(
+                                    'flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md py-1.5 px-2',
+                                    pathname === tertiaryItem.url && 'bg-accent text-foreground font-medium'
+                                  )}
+                                >
+                                  <div className='w-1.5 h-1.5 rounded-full bg-muted-foreground mr-2'></div>
+                                  {tertiaryItem.title}
+                                </Link>
+                              </div>
+                            ))}
+                          </CollapsibleContent>
+                        </SidebarMenuSubItem>
+                      </Collapsible>
+                    );
+                  }
+                  
+                  // Regular subitem without further nesting
                   return (
                     <SidebarMenuSubItem key={subItem.title}>
                       <SidebarMenuSubButton
@@ -339,82 +395,249 @@ export default function AppSidebar() {
           </div>
         </div>
         
-        {/* Add Context and Persona Selector */}
-        {!isCollapsed && (
-          <div className='px-4 py-2 mt-2'>
-            <ContextSelector />
+        {/* App Context Icons */}
+        <div className='flex flex-wrap gap-1 px-2 py-2 mt-1 border-t'>
+          <div className="flex flex-col w-full mb-1">
+            <span className="text-xs font-medium text-muted-foreground">
+              Categories
+            </span>
           </div>
-        )}
+          <div className="flex flex-wrap gap-1">
+            {availableContexts.map((context) => {
+              const isActive = context.id === activeContextId;
+              // Safely handle icon lookup
+              let ContextIcon = Icons.dashboard;
+              if (context.icon && typeof context.icon === 'string' && context.icon in Icons) {
+                ContextIcon = Icons[context.icon as keyof typeof Icons];
+              }
+              return (
+                <TooltipProvider key={context.id}>
+                  <Tooltip delayDuration={200}>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant={isActive ? 'default' : 'ghost'}
+                        size="icon"
+                        className={cn(
+                          'h-8 w-8',
+                          isActive ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
+                        )}
+                        onClick={() => setActiveContextId(context.id)}
+                      >
+                        <ContextIcon className="h-4 w-4" />
+                        <span className="sr-only">{context.name}</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                      <p className="font-medium">{context.name}</p>
+                      {context.description && (
+                        <p className="text-xs text-muted-foreground">{context.description}</p>
+                      )}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              );
+            })}
+            <TooltipProvider>
+              <Tooltip delayDuration={200}>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                    onClick={() => router.push('/dashboard/settings/app-contexts')}
+                  >
+                    <IconSettings className="h-4 w-4" />
+                    <span className="sr-only">Settings</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>Manage app contexts</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        </div>
       </SidebarHeader>
 
       <SidebarContent className='overflow-x-hidden'>
-        {/* Render navigation categories */}
-        {Object.entries(navCategories).map(([categoryId, items]) => 
-          renderNavCategory(categoryId, items)
-        )}
+        <div className="border-b border-border px-2 pb-2 mb-4">
+          {!isCollapsed && activeContext && (
+            <div className="flex items-center space-x-2 mb-1">
+              {activeContext.icon && typeof activeContext.icon === 'string' && activeContext.icon in Icons ? (
+                React.createElement(Icons[activeContext.icon as keyof typeof Icons], { 
+                  className: "h-4 w-4 text-primary" 
+                })
+              ) : (
+                <Icons.dashboard className="h-4 w-4 text-primary" />
+              )}
+              <span className="font-medium text-sm">{activeContext.name}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Display second level menu items directly */}
+        {Object.entries(navCategories)
+          .flatMap(([categoryId, items]) => {
+            // Skip if no items
+            if (!items || items.length === 0) {
+              return [];
+            }
+            
+            // Only show items for active context or general items
+            const shouldShow = categoryId === 'general' || 
+                               (activeContextId && (categoryId === activeContextId || categoryId === 'all'));
+            
+            if (!shouldShow) {
+              return [];
+            }
+            
+            // Extract second level items and convert to top level
+            return items.map(item => {
+              // If the item has its own items (third level), we need to render those
+              if (item.items && item.items.length > 0) {
+                const Icon = item.icon ? Icons[item.icon] : Icons.dashboard;
+                const isActive = item.items.some(subItem => pathname?.includes(subItem.url));
+                
+                return (
+                  <SidebarGroup key={item.title}>
+                    <div className='flex items-center'>
+                      <SidebarGroupLabel>
+                        <div className="flex items-center space-x-2">
+                          {item.icon && (
+                            <Icon className="h-4 w-4 text-muted-foreground" />
+                          )}
+                          <span>{item.title}</span>
+                        </div>
+                      </SidebarGroupLabel>
+                      {isCollapsed && (
+                        <span className='text-muted-foreground flex h-4 w-8 items-center justify-center text-[9px] font-bold uppercase'>
+                          {item.title.substring(0, 3)}
+                        </span>
+                      )}
+                    </div>
+                    <SidebarMenu>
+                      {item.items.map(subItem => {
+                        const SubIcon = subItem.icon ? Icons[subItem.icon] : Icons.dashboard;
+                        
+                        // Check if the subItem has its own items (third level)
+                        if (subItem.items && subItem.items.length > 0) {
+                          const isSubActive = pathname?.includes(subItem.url);
+                          
+                          return (
+                            <Collapsible
+                              key={subItem.title}
+                              defaultOpen={isSubActive}
+                              className="w-full"
+                            >
+                              <SidebarMenuItem>
+                                <CollapsibleTrigger asChild>
+                                  <SidebarMenuButton
+                                    isActive={isSubActive}
+                                    className="w-full justify-between"
+                                  >
+                                    <div className="flex items-center">
+                                      <div className="relative">
+                                        <SubIcon className="h-4 w-4" />
+                                        {isCollapsed && isSubActive && (
+                                          <div className="bg-primary absolute -top-1 -right-1 h-2 w-2 rounded-full"></div>
+                                        )}
+                                      </div>
+                                      <span>{subItem.title}</span>
+                                    </div>
+                                    <Icons.chevronRight className="group-data-[state=open]:rotate-90 h-4 w-4 shrink-0 transition-transform duration-200" />
+                                  </SidebarMenuButton>
+                                </CollapsibleTrigger>
+                                <CollapsibleContent className="pl-8 pt-2 space-y-1">
+                                  {subItem.items.map(tertiaryItem => (
+                                    <Link
+                                      key={tertiaryItem.title}
+                                      href={tertiaryItem.url}
+                                      className={cn(
+                                        "flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md py-1.5 px-2",
+                                        pathname === tertiaryItem.url && "bg-accent text-foreground font-medium"
+                                      )}
+                                    >
+                                      <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground mr-2"></div>
+                                      {tertiaryItem.title}
+                                    </Link>
+                                  ))}
+                                </CollapsibleContent>
+                              </SidebarMenuItem>
+                            </Collapsible>
+                          );
+                        }
+                        
+                        // Regular menu item without dropdown
+                        return (
+                          <SidebarMenuItem key={subItem.title}>
+                            <SidebarMenuButton
+                              asChild
+                              tooltip={subItem.title}
+                              isActive={pathname === subItem.url}
+                            >
+                              <Link href={subItem.url || '#'}>
+                                <div className='relative'>
+                                  <SubIcon className="h-4 w-4" />
+                                  {isCollapsed && pathname === subItem.url && (
+                                    <div className='bg-primary absolute -top-1 -right-1 h-2 w-2 rounded-full'></div>
+                                  )}
+                                </div>
+                                <span>{subItem.title}</span>
+                              </Link>
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        );
+                      })}
+                    </SidebarMenu>
+                  </SidebarGroup>
+                );
+              }
+              
+              // Simple second level item with no children
+              const Icon = item.icon ? Icons[item.icon] : Icons.dashboard;
+              return (
+                <SidebarGroup key={item.title}>
+                  <SidebarMenu>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        tooltip={item.title}
+                        isActive={pathname === item.url}
+                      >
+                        <Link href={item.url || '#'}>
+                          <div className='relative'>
+                            <Icon className="h-4 w-4" />
+                            {isCollapsed && pathname === item.url && (
+                              <div className='bg-primary absolute -top-1 -right-1 h-2 w-2 rounded-full'></div>
+                            )}
+                          </div>
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </SidebarMenu>
+                </SidebarGroup>
+              );
+            });
+          })}
       </SidebarContent>
 
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton
-                  size='lg'
-                  className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
-                >
-                  <UserAvatarProfile
-                    className='h-8 w-8 rounded-lg'
-                    showInfo={!isCollapsed}
-                    user={mockUser}
-                  />
-                  {!isCollapsed && (
-                    <IconChevronsDown className='ml-auto size-4' />
-                  )}
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className='w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg'
-                side='bottom'
-                align='end'
-                sideOffset={4}
-              >
-                <DropdownMenuLabel className='p-0 font-normal'>
-                  <div className='px-1 py-1.5'>
-                    <UserAvatarProfile
-                      className='h-8 w-8 rounded-lg'
-                      showInfo
-                      user={mockUser}
-                    />
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-
-                <DropdownMenuGroup>
-                  <DropdownMenuItem
-                    onClick={() => router.push('/dashboard/profile')}
-                  >
-                    <IconUserCircle className='mr-2 h-4 w-4' />
-                    Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <IconCreditCard className='mr-2 h-4 w-4' />
-                    Billing
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <IconBell className='mr-2 h-4 w-4' />
-                    Notifications
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => router.push('/security/login')}
-                >
-                  <IconLogout className='mr-2 h-4 w-4' />
-                  <span>Sign Out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <SidebarMenuButton
+              size='lg'
+              onClick={() => router.push('/dashboard/profile')}
+            >
+              <UserAvatarProfile
+                className='h-8 w-8 rounded-lg'
+                showInfo={!isCollapsed}
+                user={mockUser}
+              />
+              {!isCollapsed && (
+                <IconUserCircle className='ml-auto h-4 w-4 text-muted-foreground' />
+              )}
+            </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>

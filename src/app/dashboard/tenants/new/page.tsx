@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronLeft, Check } from 'lucide-react';
+import { ChevronLeft, Check, LayoutGridIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -74,6 +74,7 @@ const tenantFormSchema = z.object({
   }),
   isCustomBranding: z.boolean().default(false),
   isMultiRegion: z.boolean().default(false),
+  enabledContexts: z.array(z.string()).default([]),
   notes: z.string().optional(),
 });
 
@@ -86,6 +87,19 @@ export default function NewTenantPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isCancelOpen, setIsCancelOpen] = useState(false);
   
+  // Add app contexts data
+  const [availableAppContexts] = useState([
+    { id: 'website', name: 'Website', description: 'Website, eCommerce and online content' },
+    { id: 'sales', name: 'Sales', description: 'CRM, Sales and Point of Sale' },
+    { id: 'finance', name: 'Finance', description: 'Accounting, Invoicing and Documents' },
+    { id: 'inventory', name: 'Inventory', description: 'Inventory & Manufacturing' },
+    { id: 'hr', name: 'HR', description: 'Human Resources management' },
+    { id: 'marketing', name: 'Marketing', description: 'Marketing campaigns and Events' },
+    { id: 'services', name: 'Services', description: 'Projects, Timesheet and Helpdesk' },
+    { id: 'productivity', name: 'Productivity', description: 'Discuss, Approvals and Knowledge' },
+    { id: 'customization', name: 'Customization', description: 'Studio and app customization' }
+  ]);
+
   // Define form with react-hook-form
   const form = useForm<TenantFormValues>({
     resolver: zodResolver(tenantFormSchema),
@@ -100,6 +114,7 @@ export default function NewTenantPage() {
       billingMode: 'monthly',
       isCustomBranding: false,
       isMultiRegion: false,
+      enabledContexts: [],
       notes: '',
     },
   });
@@ -454,6 +469,68 @@ export default function NewTenantPage() {
                             <FormDescription>
                               Deploy tenant data across multiple geographic regions
                             </FormDescription>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="enabledContexts"
+                      render={() => (
+                        <FormItem>
+                          <div className="mb-4">
+                            <FormLabel className="text-base">App Contexts</FormLabel>
+                            <FormDescription>
+                              Select which app contexts should be available for this tenant
+                            </FormDescription>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {availableAppContexts.map((context) => (
+                              <FormField
+                                key={context.id}
+                                control={form.control}
+                                name="enabledContexts"
+                                render={({ field }) => {
+                                  return (
+                                    <FormItem
+                                      key={context.id}
+                                      className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"
+                                    >
+                                      <FormControl>
+                                        <Checkbox
+                                          checked={field.value?.includes(context.id)}
+                                          onCheckedChange={(checked) => {
+                                            const currentValues = [...field.value || []];
+                                            
+                                            if (checked) {
+                                              // Add the value if it's not already in the array
+                                              if (!currentValues.includes(context.id)) {
+                                                field.onChange([...currentValues, context.id]);
+                                              }
+                                            } else {
+                                              // Remove the value if it's in the array
+                                              field.onChange(
+                                                currentValues.filter((value) => value !== context.id)
+                                              );
+                                            }
+                                          }}
+                                          disabled={isLoading}
+                                        />
+                                      </FormControl>
+                                      <div className="space-y-1 leading-none">
+                                        <FormLabel className="font-medium">
+                                          {context.name}
+                                        </FormLabel>
+                                        <FormDescription className="text-xs">
+                                          {context.description}
+                                        </FormDescription>
+                                      </div>
+                                    </FormItem>
+                                  );
+                                }}
+                              />
+                            ))}
                           </div>
                         </FormItem>
                       )}

@@ -345,7 +345,39 @@ export const contextNavItems: NavItem[] = [
         icon: 'page',
         shortcut: ['p', 'g'],
         contextId: 'website',
-        appId: 'website'
+        appId: 'website',
+        items: [
+          {
+            title: 'Recent Pages',
+            url: '/dashboard/pages/recent',
+            contextId: 'website',
+            appId: 'website'
+          },
+          {
+            title: 'Published',
+            url: '/dashboard/pages/published',
+            contextId: 'website',
+            appId: 'website'
+          },
+          {
+            title: 'Drafts',
+            url: '/dashboard/pages/drafts',
+            contextId: 'website',
+            appId: 'website'
+          },
+          {
+            title: 'Templates',
+            url: '/dashboard/pages/templates',
+            contextId: 'website',
+            appId: 'website'
+          },
+          {
+            title: 'SEO Settings',
+            url: '/dashboard/pages/seo',
+            contextId: 'website',
+            appId: 'website'
+          }
+        ]
       },
       {
         title: 'eCommerce',
@@ -353,7 +385,51 @@ export const contextNavItems: NavItem[] = [
         icon: 'product',
         shortcut: ['e', 'c'],
         contextId: 'website',
-        appId: 'ecommerce'
+        appId: 'ecommerce',
+        items: [
+          {
+            title: 'Products',
+            url: '/dashboard/ecommerce/products',
+            contextId: 'website',
+            appId: 'ecommerce'
+          },
+          {
+            title: 'Orders',
+            url: '/dashboard/ecommerce/orders',
+            contextId: 'website',
+            appId: 'ecommerce'
+          },
+          {
+            title: 'Customers',
+            url: '/dashboard/ecommerce/customers',
+            contextId: 'website',
+            appId: 'ecommerce'
+          },
+          {
+            title: 'Inventory',
+            url: '/dashboard/ecommerce/inventory',
+            contextId: 'website',
+            appId: 'ecommerce'
+          },
+          {
+            title: 'Discounts',
+            url: '/dashboard/ecommerce/discounts',
+            contextId: 'website',
+            appId: 'ecommerce'
+          },
+          {
+            title: 'Payment Methods',
+            url: '/dashboard/ecommerce/payments',
+            contextId: 'website',
+            appId: 'ecommerce'
+          },
+          {
+            title: 'Shipping Options',
+            url: '/dashboard/ecommerce/shipping',
+            contextId: 'website',
+            appId: 'ecommerce'
+          }
+        ]
       },
       {
         title: 'Blog',
@@ -361,7 +437,45 @@ export const contextNavItems: NavItem[] = [
         icon: 'post',
         shortcut: ['b', 'l'],
         contextId: 'website',
-        appId: 'blog'
+        appId: 'blog',
+        items: [
+          {
+            title: 'All Posts',
+            url: '/dashboard/posts/all',
+            contextId: 'website',
+            appId: 'blog'
+          },
+          {
+            title: 'Categories',
+            url: '/dashboard/posts/categories',
+            contextId: 'website',
+            appId: 'blog'
+          },
+          {
+            title: 'Tags',
+            url: '/dashboard/posts/tags',
+            contextId: 'website',
+            appId: 'blog'
+          },
+          {
+            title: 'Comments',
+            url: '/dashboard/posts/comments',
+            contextId: 'website',
+            appId: 'blog'
+          },
+          {
+            title: 'Analytics',
+            url: '/dashboard/posts/analytics',
+            contextId: 'website',
+            appId: 'blog'
+          },
+          {
+            title: 'Schedules',
+            url: '/dashboard/posts/schedules',
+            contextId: 'website',
+            appId: 'blog'
+          }
+        ]
       },
       {
         title: 'Forum',
@@ -369,7 +483,39 @@ export const contextNavItems: NavItem[] = [
         icon: 'form',
         shortcut: ['f', 'r'],
         contextId: 'website',
-        appId: 'forum'
+        appId: 'forum',
+        items: [
+          {
+            title: 'Topics',
+            url: '/dashboard/forum/topics',
+            contextId: 'website',
+            appId: 'forum'
+          },
+          {
+            title: 'Categories',
+            url: '/dashboard/forum/categories',
+            contextId: 'website',
+            appId: 'forum'
+          },
+          {
+            title: 'Moderation',
+            url: '/dashboard/forum/moderation',
+            contextId: 'website',
+            appId: 'forum'
+          },
+          {
+            title: 'Reports',
+            url: '/dashboard/forum/reports',
+            contextId: 'website',
+            appId: 'forum'
+          },
+          {
+            title: 'Settings',
+            url: '/dashboard/forum/settings',
+            contextId: 'website',
+            appId: 'forum'
+          }
+        ]
       },
       {
         title: 'eLearning',
@@ -377,7 +523,39 @@ export const contextNavItems: NavItem[] = [
         icon: 'book',
         shortcut: ['e', 'l'],
         contextId: 'website',
-        appId: 'learning'
+        appId: 'learning',
+        items: [
+          {
+            title: 'Courses',
+            url: '/dashboard/learning/courses',
+            contextId: 'website',
+            appId: 'learning'
+          },
+          {
+            title: 'Lessons',
+            url: '/dashboard/learning/lessons',
+            contextId: 'website',
+            appId: 'learning'
+          },
+          {
+            title: 'Students',
+            url: '/dashboard/learning/students',
+            contextId: 'website',
+            appId: 'learning'
+          },
+          {
+            title: 'Certificates',
+            url: '/dashboard/learning/certificates',
+            contextId: 'website',
+            appId: 'learning'
+          },
+          {
+            title: 'Analytics',
+            url: '/dashboard/learning/analytics',
+            contextId: 'website',
+            appId: 'learning'
+          }
+        ]
       },
       {
         title: 'Live Chat',
@@ -385,7 +563,39 @@ export const contextNavItems: NavItem[] = [
         icon: 'help',
         shortcut: ['l', 'c'],
         contextId: 'website',
-        appId: 'chat'
+        appId: 'chat',
+        items: [
+          {
+            title: 'Conversations',
+            url: '/dashboard/chat/conversations',
+            contextId: 'website',
+            appId: 'chat'
+          },
+          {
+            title: 'Agents',
+            url: '/dashboard/chat/agents',
+            contextId: 'website',
+            appId: 'chat'
+          },
+          {
+            title: 'Canned Responses',
+            url: '/dashboard/chat/responses',
+            contextId: 'website',
+            appId: 'chat'
+          },
+          {
+            title: 'Analytics',
+            url: '/dashboard/chat/analytics',
+            contextId: 'website',
+            appId: 'chat'
+          },
+          {
+            title: 'Settings',
+            url: '/dashboard/chat/settings',
+            contextId: 'website',
+            appId: 'chat'
+          }
+        ]
       }
     ]
   },
@@ -407,7 +617,45 @@ export const contextNavItems: NavItem[] = [
         icon: 'user',
         shortcut: ['c', 'r'],
         contextId: 'sales',
-        appId: 'crm'
+        appId: 'crm',
+        items: [
+          {
+            title: 'Leads',
+            url: '/dashboard/crm/leads',
+            contextId: 'sales',
+            appId: 'crm'
+          },
+          {
+            title: 'Opportunities',
+            url: '/dashboard/crm/opportunities',
+            contextId: 'sales',
+            appId: 'crm'
+          },
+          {
+            title: 'Contacts',
+            url: '/dashboard/crm/contacts',
+            contextId: 'sales',
+            appId: 'crm'
+          },
+          {
+            title: 'Companies',
+            url: '/dashboard/crm/companies',
+            contextId: 'sales',
+            appId: 'crm'
+          },
+          {
+            title: 'Activities',
+            url: '/dashboard/crm/activities',
+            contextId: 'sales',
+            appId: 'crm'
+          },
+          {
+            title: 'Pipeline Analytics',
+            url: '/dashboard/crm/pipeline',
+            contextId: 'sales',
+            appId: 'crm'
+          }
+        ]
       },
       {
         title: 'Sales',
@@ -415,7 +663,45 @@ export const contextNavItems: NavItem[] = [
         icon: 'billing',
         shortcut: ['s', 'o'],
         contextId: 'sales',
-        appId: 'sales'
+        appId: 'sales',
+        items: [
+          {
+            title: 'Orders',
+            url: '/dashboard/sales/orders',
+            contextId: 'sales',
+            appId: 'sales'
+          },
+          {
+            title: 'Quotations',
+            url: '/dashboard/sales/quotations',
+            contextId: 'sales',
+            appId: 'sales'
+          },
+          {
+            title: 'Invoices',
+            url: '/dashboard/sales/invoices',
+            contextId: 'sales',
+            appId: 'sales'
+          },
+          {
+            title: 'Negotiations',
+            url: '/dashboard/sales/negotiations',
+            contextId: 'sales',
+            appId: 'sales'
+          },
+          {
+            title: 'Sales Teams',
+            url: '/dashboard/sales/teams',
+            contextId: 'sales',
+            appId: 'sales'
+          },
+          {
+            title: 'Performance',
+            url: '/dashboard/sales/performance',
+            contextId: 'sales',
+            appId: 'sales'
+          }
+        ]
       },
       {
         title: 'Point of Sale',
@@ -423,7 +709,45 @@ export const contextNavItems: NavItem[] = [
         icon: 'product',
         shortcut: ['p', 'o'],
         contextId: 'sales',
-        appId: 'pos'
+        appId: 'pos',
+        items: [
+          {
+            title: 'Dashboard',
+            url: '/dashboard/pos/dashboard',
+            contextId: 'sales',
+            appId: 'pos'
+          },
+          {
+            title: 'Sessions',
+            url: '/dashboard/pos/sessions',
+            contextId: 'sales',
+            appId: 'pos'
+          },
+          {
+            title: 'Products',
+            url: '/dashboard/pos/products',
+            contextId: 'sales',
+            appId: 'pos'
+          },
+          {
+            title: 'Payment Methods',
+            url: '/dashboard/pos/payments',
+            contextId: 'sales',
+            appId: 'pos'
+          },
+          {
+            title: 'Receipts',
+            url: '/dashboard/pos/receipts',
+            contextId: 'sales',
+            appId: 'pos'
+          },
+          {
+            title: 'Discounts',
+            url: '/dashboard/pos/discounts',
+            contextId: 'sales',
+            appId: 'pos'
+          }
+        ]
       },
       {
         title: 'Subscriptions',
@@ -431,7 +755,39 @@ export const contextNavItems: NavItem[] = [
         icon: 'refresh',
         shortcut: ['s', 'u'],
         contextId: 'sales',
-        appId: 'subscriptions'
+        appId: 'subscriptions',
+        items: [
+          {
+            title: 'All Subscriptions',
+            url: '/dashboard/subscriptions/all',
+            contextId: 'sales',
+            appId: 'subscriptions'
+          },
+          {
+            title: 'Plans',
+            url: '/dashboard/subscriptions/plans',
+            contextId: 'sales',
+            appId: 'subscriptions'
+          },
+          {
+            title: 'Recurring Invoices',
+            url: '/dashboard/subscriptions/invoices',
+            contextId: 'sales',
+            appId: 'subscriptions'
+          },
+          {
+            title: 'Analytics',
+            url: '/dashboard/subscriptions/analytics',
+            contextId: 'sales',
+            appId: 'subscriptions'
+          },
+          {
+            title: 'Settings',
+            url: '/dashboard/subscriptions/settings',
+            contextId: 'sales',
+            appId: 'subscriptions'
+          }
+        ]
       }
     ]
   },
@@ -453,7 +809,45 @@ export const contextNavItems: NavItem[] = [
         icon: 'chart',
         shortcut: ['a', 'c'],
         contextId: 'finance',
-        appId: 'accounting'
+        appId: 'accounting',
+        items: [
+          {
+            title: 'Dashboard',
+            url: '/dashboard/accounting/dashboard',
+            contextId: 'finance',
+            appId: 'accounting'
+          },
+          {
+            title: 'Journal Entries',
+            url: '/dashboard/accounting/journals',
+            contextId: 'finance',
+            appId: 'accounting'
+          },
+          {
+            title: 'Chart of Accounts',
+            url: '/dashboard/accounting/accounts',
+            contextId: 'finance',
+            appId: 'accounting'
+          },
+          {
+            title: 'Reconciliation',
+            url: '/dashboard/accounting/reconciliation',
+            contextId: 'finance',
+            appId: 'accounting'
+          },
+          {
+            title: 'Financial Reports',
+            url: '/dashboard/accounting/reports',
+            contextId: 'finance',
+            appId: 'accounting'
+          },
+          {
+            title: 'Taxes',
+            url: '/dashboard/accounting/taxes',
+            contextId: 'finance',
+            appId: 'accounting'
+          }
+        ]
       },
       {
         title: 'Invoicing',
@@ -461,7 +855,45 @@ export const contextNavItems: NavItem[] = [
         icon: 'billing',
         shortcut: ['i', 'n'],
         contextId: 'finance',
-        appId: 'invoicing'
+        appId: 'invoicing',
+        items: [
+          {
+            title: 'Customer Invoices',
+            url: '/dashboard/invoicing/customer',
+            contextId: 'finance',
+            appId: 'invoicing'
+          },
+          {
+            title: 'Vendor Bills',
+            url: '/dashboard/invoicing/vendor',
+            contextId: 'finance',
+            appId: 'invoicing'
+          },
+          {
+            title: 'Recurring Invoices',
+            url: '/dashboard/invoicing/recurring',
+            contextId: 'finance',
+            appId: 'invoicing'
+          },
+          {
+            title: 'Payment Reminders',
+            url: '/dashboard/invoicing/reminders',
+            contextId: 'finance',
+            appId: 'invoicing'
+          },
+          {
+            title: 'Credit Notes',
+            url: '/dashboard/invoicing/credits',
+            contextId: 'finance',
+            appId: 'invoicing'
+          },
+          {
+            title: 'Invoice Templates',
+            url: '/dashboard/invoicing/templates',
+            contextId: 'finance',
+            appId: 'invoicing'
+          }
+        ]
       },
       {
         title: 'Expenses',
@@ -469,23 +901,39 @@ export const contextNavItems: NavItem[] = [
         icon: 'billing',
         shortcut: ['e', 'x'],
         contextId: 'finance',
-        appId: 'expenses'
-      },
-      {
-        title: 'Documents',
-        url: '/dashboard/documents',
-        icon: 'file',
-        shortcut: ['d', 'o'],
-        contextId: 'finance',
-        appId: 'documents'
-      },
-      {
-        title: 'Spreadsheets',
-        url: '/dashboard/spreadsheets',
-        icon: 'table',
-        shortcut: ['s', 'p'],
-        contextId: 'finance',
-        appId: 'spreadsheets'
+        appId: 'expenses',
+        items: [
+          {
+            title: 'Expense Reports',
+            url: '/dashboard/expenses/reports',
+            contextId: 'finance',
+            appId: 'expenses'
+          },
+          {
+            title: 'Approval Workflow',
+            url: '/dashboard/expenses/approval',
+            contextId: 'finance',
+            appId: 'expenses'
+          },
+          {
+            title: 'Categories',
+            url: '/dashboard/expenses/categories',
+            contextId: 'finance',
+            appId: 'expenses'
+          },
+          {
+            title: 'Reimbursements',
+            url: '/dashboard/expenses/reimbursements',
+            contextId: 'finance',
+            appId: 'expenses'
+          },
+          {
+            title: 'Analytics',
+            url: '/dashboard/expenses/analytics',
+            contextId: 'finance',
+            appId: 'expenses'
+          }
+        ]
       }
     ]
   },
@@ -735,7 +1183,7 @@ export const contextNavItems: NavItem[] = [
   },
   
   // Account - Available in all contexts
-  {
+  /*{
     title: 'Account',
     url: '#',
     icon: 'userPen',
@@ -762,5 +1210,5 @@ export const contextNavItems: NavItem[] = [
         shortcut: ['l', 'o']
       }
     ]
-  }
+  }*/
 ];

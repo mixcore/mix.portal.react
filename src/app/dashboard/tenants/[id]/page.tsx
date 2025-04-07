@@ -15,7 +15,8 @@ import {
   BanIcon,
   ChartBarIcon,
   ServerIcon,
-  CreditCardIcon
+  CreditCardIcon,
+  LayoutGridIcon
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -58,6 +59,7 @@ interface Tenant {
   billingMode: 'monthly' | 'yearly';
   isCustomBranding: boolean;
   isMultiRegion: boolean;
+  enabledContexts: string[];
   notes?: string;
   storageUsed: number;
   storageLimit: number;
@@ -85,6 +87,7 @@ const mockTenant: Tenant = {
   billingMode: 'yearly',
   isCustomBranding: true,
   isMultiRegion: false,
+  enabledContexts: ['website', 'sales', 'finance', 'hr'],
   notes: 'Key enterprise client with multiple departments using our platform.',
   storageUsed: 256, // in GB
   storageLimit: 500, // in GB
@@ -138,6 +141,19 @@ export default function TenantDetailPage() {
   const [showActivateDialog, setShowActivateDialog] = useState(false);
   const [isSuspending, setIsSuspending] = useState(false);
   const [isActivating, setIsActivating] = useState(false);
+
+  // Add mock data for app contexts
+  const [availableAppContexts] = useState([
+    { id: 'website', name: 'Website', description: 'Website, eCommerce and online content' },
+    { id: 'sales', name: 'Sales', description: 'CRM, Sales and Point of Sale' },
+    { id: 'finance', name: 'Finance', description: 'Accounting, Invoicing and Documents' },
+    { id: 'inventory', name: 'Inventory', description: 'Inventory & Manufacturing' },
+    { id: 'hr', name: 'HR', description: 'Human Resources management' },
+    { id: 'marketing', name: 'Marketing', description: 'Marketing campaigns and Events' },
+    { id: 'services', name: 'Services', description: 'Projects, Timesheet and Helpdesk' },
+    { id: 'productivity', name: 'Productivity', description: 'Discuss, Approvals and Knowledge' },
+    { id: 'customization', name: 'Customization', description: 'Studio and app customization' }
+  ]);
 
   // Fetch tenant data
   useEffect(() => {
@@ -778,6 +794,62 @@ export default function TenantDetailPage() {
                   >
                     <EditIcon className='mr-2 h-4 w-4' />
                     Edit Features
+                  </Button>
+                </CardFooter>
+              </Card>
+
+              {/* App Context Settings - New Card */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className='flex items-center gap-2'>
+                    <LayoutGridIcon className='h-5 w-5' />
+                    App Context Settings
+                  </CardTitle>
+                  <CardDescription>
+                    Configure which app contexts are enabled for this tenant
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className='space-y-6'>
+                  <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
+                    {availableAppContexts.map((context) => (
+                      <div 
+                        key={context.id} 
+                        className={`flex items-start gap-3 rounded-md border p-3 ${
+                          tenant.enabledContexts?.includes(context.id) 
+                            ? 'border-primary/50 bg-primary/5' 
+                            : 'border-muted bg-muted/10'
+                        }`}
+                      >
+                        <div
+                          className={`flex h-8 w-8 items-center justify-center rounded-md ${
+                            tenant.enabledContexts?.includes(context.id) 
+                              ? 'bg-primary/10 text-primary' 
+                              : 'bg-muted text-muted-foreground'
+                          }`}
+                        >
+                          {tenant.enabledContexts?.includes(context.id) ? (
+                            <CheckCircleIcon className='h-5 w-5' />
+                          ) : (
+                            <BanIcon className='h-5 w-5' />
+                          )}
+                        </div>
+                        <div>
+                          <div className='font-medium'>{context.name}</div>
+                          <div className='text-muted-foreground text-xs'>
+                            {context.description}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+                <CardFooter className='border-t pt-6'>
+                  <Button
+                    variant='outline'
+                    onClick={() => router.push(`/dashboard/tenants/${id}/edit-contexts`)}
+                  >
+                    <EditIcon className='mr-2 h-4 w-4' />
+                    Edit App Contexts
                   </Button>
                 </CardFooter>
               </Card>

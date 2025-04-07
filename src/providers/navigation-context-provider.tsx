@@ -13,6 +13,7 @@ type NavigationContextType = {
   availableContexts: typeof appContexts;
   availablePersonas: typeof personas;
   filteredNavItems: NavItem[];
+  tenantEnabledContexts: string[];
 };
 
 const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
@@ -23,20 +24,39 @@ export function NavigationContextProvider({ children }: { children: React.ReactN
   const [filteredNavItems, setFilteredNavItems] = useState<NavItem[]>([]);
   const [userRoles, setUserRoles] = useState<string[]>([]);
   const [userPermissions, setUserPermissions] = useState<string[]>([]);
+  const [tenantEnabledContexts, setTenantEnabledContexts] = useState<string[]>([]);
 
   // Load user roles and permissions
   useEffect(() => {
     const loadUserData = async () => {
       try {
+        // Load tenant enabled contexts from localStorage or API
+        // For this demo, we'll use localStorage
+        const savedEnabledContexts = localStorage.getItem('tenantEnabledContexts');
+        let enabledContexts: string[] = [];
+        
+        if (savedEnabledContexts) {
+          try {
+            enabledContexts = JSON.parse(savedEnabledContexts);
+          } catch (e) {
+            console.error('Error parsing tenant contexts:', e);
+          }
+        } else {
+          // Default to all contexts if none saved - in a real app, this would come from the tenant settings
+          enabledContexts = appContexts.map(c => c.id);
+        }
+        
+        setTenantEnabledContexts(enabledContexts);
+        
         // Get saved context and persona from localStorage if available
         const savedContextId = localStorage.getItem('activeContextId');
         const savedPersonaId = localStorage.getItem('activePersonaId');
         
-        if (savedContextId) {
+        if (savedContextId && enabledContexts.includes(savedContextId)) {
           setActiveContextId(savedContextId);
         } else {
-          // Default to first context if none saved
-          setActiveContextId(appContexts[0]?.id || null);
+          // Default to first enabled context if none saved or previous one is no longer enabled
+          setActiveContextId(enabledContexts[0] || null);
         }
         
         if (savedPersonaId) {
@@ -132,10 +152,9 @@ export function NavigationContextProvider({ children }: { children: React.ReactN
     filterNavItems();
   }, [activeContextId, activePersonaId, userRoles, userPermissions]);
 
-  // Filter available contexts based on user roles and permissions
+  // Filter available contexts based on tenant-enabled contexts
   const availableContexts = appContexts.filter(context => {
-    // If no specific role/permission filtering is needed, return all contexts
-    return true;
+    return tenantEnabledContexts.includes(context.id);
   });
 
   // Filter available personas based on user roles and permissions
@@ -153,7 +172,8 @@ export function NavigationContextProvider({ children }: { children: React.ReactN
         setActivePersonaId,
         availableContexts,
         availablePersonas,
-        filteredNavItems
+        filteredNavItems,
+        tenantEnabledContexts
       }}
     >
       {children}
@@ -161,10 +181,10 @@ export function NavigationContextProvider({ children }: { children: React.ReactN
   );
 }
 
-export const useNavigationContext = () => {
+export function useNavigationContext() {
   const context = useContext(NavigationContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useNavigationContext must be used within a NavigationContextProvider');
   }
   return context;
-}; 
+} 
