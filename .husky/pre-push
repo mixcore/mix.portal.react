@@ -1,5 +1,3 @@
-#!/usr/bin/env sh
-
 # Skip build check for now as it's causing permission issues
 # pnpm build
 pnpm lint
