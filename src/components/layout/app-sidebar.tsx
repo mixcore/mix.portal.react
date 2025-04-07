@@ -166,9 +166,19 @@ export default function AppSidebar() {
                   </DropdownMenuItem>
                 ))}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className='cursor-pointer'>
+                <DropdownMenuItem
+                  className='cursor-pointer'
+                  onClick={() => router.push('/dashboard/tenants/new')}
+                >
                   <IconPlus className='mr-2 h-4 w-4' />
                   Add new tenant
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className='cursor-pointer'
+                  onClick={() => router.push('/dashboard/tenants')}
+                >
+                  <Icons.building className='mr-2 h-4 w-4' />
+                  Manage tenants
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
