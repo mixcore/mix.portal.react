@@ -211,27 +211,57 @@ export const recentSalesData: SaleUser[] = [
 // App contexts define different application areas
 export const appContexts = [
   {
-    id: 'cms',
-    name: 'Content Management',
-    description: 'Manage content, pages, posts and media',
-    icon: 'post'
+    id: 'website',
+    name: 'Website',
+    description: 'Website, eCommerce and online content',
+    icon: 'fileText'
   },
   {
-    id: 'mixdb',
-    name: 'MixDB',
-    description: 'Database management, forms and analytics',
-    icon: 'database'
+    id: 'sales',
+    name: 'Sales',
+    description: 'CRM, Sales and Point of Sale',
+    icon: 'product'
   },
   {
-    id: 'design',
-    name: 'Design',
-    description: 'Templates, themes and UI components',
-    icon: 'palette'
+    id: 'finance',
+    name: 'Finance',
+    description: 'Accounting, Invoicing and Documents',
+    icon: 'billing'
   },
   {
-    id: 'admin',
-    name: 'Administration',
-    description: 'System settings, users, roles and permissions',
+    id: 'inventory',
+    name: 'Inventory & Manufacturing',
+    description: 'Manage stock, manufacturing and purchases',
+    icon: 'folder'
+  },
+  {
+    id: 'hr',
+    name: 'Human Resources',
+    description: 'Employees, Recruitment and Time Off',
+    icon: 'user'
+  },
+  {
+    id: 'marketing',
+    name: 'Marketing',
+    description: 'Marketing, Email campaigns and Events',
+    icon: 'file'
+  },
+  {
+    id: 'services',
+    name: 'Services',
+    description: 'Projects, Timesheet and Helpdesk',
+    icon: 'help'
+  },
+  {
+    id: 'productivity',
+    name: 'Productivity',
+    description: 'Discuss, Approvals and Knowledge',
+    icon: 'check'
+  },
+  {
+    id: 'customization',
+    name: 'Customization',
+    description: 'Studio and app customization',
     icon: 'settings'
   }
 ];
@@ -244,24 +274,44 @@ export const personas = [
     description: 'Full access to all system features'
   },
   {
-    id: 'content-manager',
-    name: 'Content Manager',
-    description: 'Manage content, posts, pages and media'
+    id: 'website-manager',
+    name: 'Website Manager',
+    description: 'Manage website, blog, pages and eCommerce'
   },
   {
-    id: 'designer',
-    name: 'Designer',
-    description: 'Manage templates and themes'
+    id: 'sales-manager',
+    name: 'Sales Manager',
+    description: 'Manage CRM, sales and POS'
+  },
+  {
+    id: 'finance-manager',
+    name: 'Finance Manager',
+    description: 'Manage accounting, invoicing and documents'
+  },
+  {
+    id: 'inventory-manager',
+    name: 'Inventory Manager',
+    description: 'Manage inventory, manufacturing and purchases'
+  },
+  {
+    id: 'hr-manager',
+    name: 'HR Manager',
+    description: 'Manage employees, recruitment and time off'
+  },
+  {
+    id: 'marketing-manager',
+    name: 'Marketing Manager',
+    description: 'Manage marketing, email campaigns and events'
+  },
+  {
+    id: 'service-manager',
+    name: 'Service Manager',
+    description: 'Manage projects, helpdesk and appointments'
   },
   {
     id: 'developer',
     name: 'Developer',
-    description: 'Technical development features'
-  },
-  {
-    id: 'analyst',
-    name: 'Analyst',
-    description: 'Data analytics and reporting'
+    description: 'Technical development and customization'
   }
 ];
 
@@ -278,158 +328,408 @@ export const contextNavItems: NavItem[] = [
     priority: 0
   },
   
-  // Content Management App
+  // Website Category
   {
-    title: 'Content',
-    url: '#',
-    icon: 'post',
+    title: 'Website',
+    url: '/dashboard/website',
+    icon: 'fileText',
     isActive: false,
-    shortcut: ['c', 'm'],
-    contextId: 'cms',
-    appId: 'cms',
-    personaIds: ['admin', 'content-manager'],
+    shortcut: ['w', 'b'],
+    contextId: 'website',
+    appId: 'website',
     priority: 10,
     items: [
-      {
-        title: 'Posts',
-        url: '/dashboard/posts',
-        icon: 'post',
-        shortcut: ['p', 's'],
-        contextId: 'cms',
-        appId: 'cms'
-      },
       {
         title: 'Pages',
         url: '/dashboard/pages',
         icon: 'page',
         shortcut: ['p', 'g'],
-        contextId: 'cms',
-        appId: 'cms'
+        contextId: 'website',
+        appId: 'website'
       },
       {
-        title: 'Media',
-        url: '/dashboard/media',
-        icon: 'media',
-        shortcut: ['m', 'd'],
-        contextId: 'cms',
-        appId: 'cms'
+        title: 'eCommerce',
+        url: '/dashboard/ecommerce',
+        icon: 'product',
+        shortcut: ['e', 'c'],
+        contextId: 'website',
+        appId: 'ecommerce'
       },
       {
-        title: 'Tags',
-        url: '/dashboard/tags',
-        icon: 'tag',
-        shortcut: ['t', 'g'],
-        contextId: 'cms',
-        appId: 'cms'
+        title: 'Blog',
+        url: '/dashboard/posts',
+        icon: 'post',
+        shortcut: ['b', 'l'],
+        contextId: 'website',
+        appId: 'blog'
+      },
+      {
+        title: 'Forum',
+        url: '/dashboard/forum',
+        icon: 'form',
+        shortcut: ['f', 'r'],
+        contextId: 'website',
+        appId: 'forum'
+      },
+      {
+        title: 'eLearning',
+        url: '/dashboard/learning',
+        icon: 'book',
+        shortcut: ['e', 'l'],
+        contextId: 'website',
+        appId: 'learning'
+      },
+      {
+        title: 'Live Chat',
+        url: '/dashboard/chat',
+        icon: 'help',
+        shortcut: ['l', 'c'],
+        contextId: 'website',
+        appId: 'chat'
       }
     ]
   },
   
-  // Design App
+  // Sales Category
   {
-    title: 'Design',
-    url: '#',
-    icon: 'palette',
+    title: 'Sales',
+    url: '/dashboard/sales',
+    icon: 'product',
     isActive: false,
-    shortcut: ['d', 's'],
-    contextId: 'design',
-    appId: 'design',
-    personaIds: ['admin', 'designer', 'developer'],
+    shortcut: ['s', 'l'],
+    contextId: 'sales',
+    appId: 'sales',
     priority: 20,
     items: [
       {
-        title: 'Templates',
-        url: '/dashboard/templates',
-        icon: 'code',
-        shortcut: ['t', 'e'],
-        contextId: 'design',
-        appId: 'design'
+        title: 'CRM',
+        url: '/dashboard/crm',
+        icon: 'user',
+        shortcut: ['c', 'r'],
+        contextId: 'sales',
+        appId: 'crm'
       },
       {
-        title: 'Themes',
-        url: '/dashboard/themes',
-        icon: 'palette',
-        shortcut: ['t', 'h'],
-        contextId: 'design',
-        appId: 'design'
+        title: 'Sales',
+        url: '/dashboard/sales/orders',
+        icon: 'billing',
+        shortcut: ['s', 'o'],
+        contextId: 'sales',
+        appId: 'sales'
+      },
+      {
+        title: 'Point of Sale',
+        url: '/dashboard/pos',
+        icon: 'product',
+        shortcut: ['p', 'o'],
+        contextId: 'sales',
+        appId: 'pos'
+      },
+      {
+        title: 'Subscriptions',
+        url: '/dashboard/subscriptions',
+        icon: 'refresh',
+        shortcut: ['s', 'u'],
+        contextId: 'sales',
+        appId: 'subscriptions'
       }
     ]
   },
   
-  // MixDb App
+  // Finance Category
   {
-    title: 'MixDb',
-    url: '/dashboard/mixdb',
-    icon: 'database',
+    title: 'Finance',
+    url: '/dashboard/finance',
+    icon: 'billing',
     isActive: false,
-    shortcut: ['m', 'd'],
-    contextId: 'mixdb',
-    appId: 'mixdb',
-    personaIds: ['admin', 'developer', 'analyst'],
+    shortcut: ['f', 'n'],
+    contextId: 'finance',
+    appId: 'finance',
     priority: 30,
     items: [
       {
-        title: 'Dashboard',
-        url: '/dashboard/mixdb',
-        icon: 'dashboard',
-        shortcut: ['m', 'o'],
-        contextId: 'mixdb',
-        appId: 'mixdb'
+        title: 'Accounting',
+        url: '/dashboard/accounting',
+        icon: 'chart',
+        shortcut: ['a', 'c'],
+        contextId: 'finance',
+        appId: 'accounting'
       },
       {
-        title: 'Databases',
-        url: '/dashboard/mixdb/databases',
-        icon: 'database',
-        shortcut: ['d', 'b'],
-        contextId: 'mixdb',
-        appId: 'mixdb'
+        title: 'Invoicing',
+        url: '/dashboard/invoicing',
+        icon: 'billing',
+        shortcut: ['i', 'n'],
+        contextId: 'finance',
+        appId: 'invoicing'
       },
       {
-        title: 'Form Builder',
-        url: '/dashboard/mixdb/forms',
-        icon: 'form',
-        shortcut: ['f', 'b'],
-        contextId: 'mixdb',
-        appId: 'mixdb'
+        title: 'Expenses',
+        url: '/dashboard/expenses',
+        icon: 'billing',
+        shortcut: ['e', 'x'],
+        contextId: 'finance',
+        appId: 'expenses'
+      },
+      {
+        title: 'Documents',
+        url: '/dashboard/documents',
+        icon: 'file',
+        shortcut: ['d', 'o'],
+        contextId: 'finance',
+        appId: 'documents'
+      },
+      {
+        title: 'Spreadsheets',
+        url: '/dashboard/spreadsheets',
+        icon: 'table',
+        shortcut: ['s', 'p'],
+        contextId: 'finance',
+        appId: 'spreadsheets'
       }
     ]
   },
   
-  // Management - Admin context
+  // Inventory & Manufacturing Category
   {
-    title: 'Management',
-    url: '#',
-    icon: 'settings',
+    title: 'Inventory',
+    url: '/dashboard/inventory',
+    icon: 'folder',
     isActive: false,
-    shortcut: ['m', 'g'],
-    contextId: 'admin',
-    appId: 'admin',
-    personaIds: ['admin'],
+    shortcut: ['i', 'v'],
+    contextId: 'inventory',
+    appId: 'inventory',
     priority: 40,
     items: [
       {
-        title: 'Tenants',
-        url: '/dashboard/tenants',
-        icon: 'building',
-        shortcut: ['t', 'n'],
-        contextId: 'admin',
-        appId: 'admin'
+        title: 'Inventory',
+        url: '/dashboard/inventory/stock',
+        icon: 'folder',
+        shortcut: ['i', 's'],
+        contextId: 'inventory',
+        appId: 'inventory'
       },
       {
-        title: 'Users',
-        url: '/dashboard/users',
-        icon: 'user',
-        shortcut: ['u', 's'],
-        contextId: 'admin',
-        appId: 'admin'
-      },
-      {
-        title: 'Roles',
-        url: '/dashboard/roles',
+        title: 'Manufacturing',
+        url: '/dashboard/manufacturing',
         icon: 'settings',
-        shortcut: ['r', 's'],
-        contextId: 'admin',
-        appId: 'admin'
+        shortcut: ['m', 'f'],
+        contextId: 'inventory',
+        appId: 'manufacturing'
+      },
+      {
+        title: 'Purchase',
+        url: '/dashboard/purchase',
+        icon: 'product',
+        shortcut: ['p', 'u'],
+        contextId: 'inventory',
+        appId: 'purchase'
+      },
+      {
+        title: 'Maintenance',
+        url: '/dashboard/maintenance',
+        icon: 'settings',
+        shortcut: ['m', 't'],
+        contextId: 'inventory',
+        appId: 'maintenance'
+      }
+    ]
+  },
+  
+  // Human Resources Category
+  {
+    title: 'HR',
+    url: '/dashboard/hr',
+    icon: 'user',
+    isActive: false,
+    shortcut: ['h', 'r'],
+    contextId: 'hr',
+    appId: 'hr',
+    priority: 50,
+    items: [
+      {
+        title: 'Employees',
+        url: '/dashboard/employees',
+        icon: 'user',
+        shortcut: ['e', 'm'],
+        contextId: 'hr',
+        appId: 'employees'
+      },
+      {
+        title: 'Recruitment',
+        url: '/dashboard/recruitment',
+        icon: 'userCircle',
+        shortcut: ['r', 'c'],
+        contextId: 'hr',
+        appId: 'recruitment'
+      },
+      {
+        title: 'Time Off',
+        url: '/dashboard/timeoff',
+        icon: 'userPen',
+        shortcut: ['t', 'o'],
+        contextId: 'hr',
+        appId: 'timeoff'
+      },
+      {
+        title: 'Appraisals',
+        url: '/dashboard/appraisals',
+        icon: 'chart',
+        shortcut: ['a', 'p'],
+        contextId: 'hr',
+        appId: 'appraisals'
+      }
+    ]
+  },
+  
+  // Marketing Category
+  {
+    title: 'Marketing',
+    url: '/dashboard/marketing',
+    icon: 'file',
+    isActive: false,
+    shortcut: ['m', 'k'],
+    contextId: 'marketing',
+    appId: 'marketing',
+    priority: 60,
+    items: [
+      {
+        title: 'Marketing Automation',
+        url: '/dashboard/marketing/automation',
+        icon: 'refresh',
+        shortcut: ['m', 'a'],
+        contextId: 'marketing',
+        appId: 'marketing'
+      },
+      {
+        title: 'Email Marketing',
+        url: '/dashboard/email',
+        icon: 'file',
+        shortcut: ['e', 'm'],
+        contextId: 'marketing',
+        appId: 'email'
+      },
+      {
+        title: 'Events',
+        url: '/dashboard/events',
+        icon: 'fileText',
+        shortcut: ['e', 'v'],
+        contextId: 'marketing',
+        appId: 'events'
+      },
+      {
+        title: 'Social Marketing',
+        url: '/dashboard/social',
+        icon: 'twitter',
+        shortcut: ['s', 'm'],
+        contextId: 'marketing',
+        appId: 'social'
+      }
+    ]
+  },
+  
+  // Services Category
+  {
+    title: 'Services',
+    url: '/dashboard/services',
+    icon: 'help',
+    isActive: false,
+    shortcut: ['s', 'v'],
+    contextId: 'services',
+    appId: 'services',
+    priority: 70,
+    items: [
+      {
+        title: 'Project',
+        url: '/dashboard/projects',
+        icon: 'folder',
+        shortcut: ['p', 'r'],
+        contextId: 'services',
+        appId: 'projects'
+      },
+      {
+        title: 'Timesheet',
+        url: '/dashboard/timesheet',
+        icon: 'check',
+        shortcut: ['t', 's'],
+        contextId: 'services',
+        appId: 'timesheet'
+      },
+      {
+        title: 'Helpdesk',
+        url: '/dashboard/helpdesk',
+        icon: 'help',
+        shortcut: ['h', 'd'],
+        contextId: 'services',
+        appId: 'helpdesk'
+      },
+      {
+        title: 'Appointments',
+        url: '/dashboard/appointments',
+        icon: 'media',
+        shortcut: ['a', 't'],
+        contextId: 'services',
+        appId: 'appointments'
+      }
+    ]
+  },
+  
+  // Productivity Category
+  {
+    title: 'Productivity',
+    url: '/dashboard/productivity',
+    icon: 'check',
+    isActive: false,
+    shortcut: ['p', 'd'],
+    contextId: 'productivity',
+    appId: 'productivity',
+    priority: 80,
+    items: [
+      {
+        title: 'Discuss',
+        url: '/dashboard/discuss',
+        icon: 'help',
+        shortcut: ['d', 'i'],
+        contextId: 'productivity',
+        appId: 'discuss'
+      },
+      {
+        title: 'Approvals',
+        url: '/dashboard/approvals',
+        icon: 'check',
+        shortcut: ['a', 'p'],
+        contextId: 'productivity',
+        appId: 'approvals'
+      },
+      {
+        title: 'Knowledge',
+        url: '/dashboard/knowledge',
+        icon: 'book',
+        shortcut: ['k', 'n'],
+        contextId: 'productivity',
+        appId: 'knowledge'
+      }
+    ]
+  },
+  
+  // Customization Category
+  {
+    title: 'Customization',
+    url: '/dashboard/customization',
+    icon: 'settings',
+    isActive: false,
+    shortcut: ['c', 'u'],
+    contextId: 'customization',
+    appId: 'customization',
+    priority: 90,
+    items: [
+      {
+        title: 'Studio',
+        url: '/dashboard/studio',
+        icon: 'settings',
+        shortcut: ['s', 't'],
+        contextId: 'customization',
+        appId: 'studio'
       }
     ]
   },

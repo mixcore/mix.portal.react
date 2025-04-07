@@ -62,7 +62,7 @@ import {
 } from '@/components/ui/tooltip';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
-import { RecentItems } from '@/components/recent-items';
+// import { RecentItems } from '@/components/recent-items';
 import { ContextSelector } from '@/components/layout/context-selector';
 import { useNavigationContext } from '@/providers/navigation-context-provider';
 
@@ -227,19 +227,25 @@ export default function AppSidebar() {
   const renderNavCategory = (categoryId: string, items: typeof filteredNavItems) => {
     if (!items || items.length === 0) return null;
     
-    // Get category display name
+    // Get category display name based on our new structure
     let categoryName = categoryId;
-    if (categoryId === 'general') {
-      categoryName = 'General';
-    } else if (categoryId === 'cms') {
-      categoryName = 'Content';
-    } else if (categoryId === 'mixdb') {
-      categoryName = 'MixDB';
-    } else if (categoryId === 'design') {
-      categoryName = 'Design';
-    } else if (categoryId === 'admin') {
-      categoryName = 'Management';
-    }
+    
+    // Map context IDs to display names
+    const categoryDisplayNames: Record<string, string> = {
+      'general': 'General',
+      'website': 'Website',
+      'sales': 'Sales',
+      'finance': 'Finance',
+      'inventory': 'Inventory & Manufacturing',
+      'hr': 'Human Resources',
+      'marketing': 'Marketing',
+      'services': 'Services',
+      'productivity': 'Productivity',
+      'customization': 'Customization'
+    };
+    
+    // Get the display name or use the ID if not found
+    categoryName = categoryDisplayNames[categoryId] || categoryId;
     
     const shortLabel = categoryName.substring(0, 3);
     
