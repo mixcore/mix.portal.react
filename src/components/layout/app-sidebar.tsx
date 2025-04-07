@@ -489,6 +489,108 @@ export default function AppSidebar() {
               </SidebarGroup>
             ];
           })}
+
+        {/* Third level child menu example */}
+        <SidebarGroup className="mt-4">
+          <SidebarGroupLabel>Advanced Navigation</SidebarGroupLabel>
+          <SidebarMenu>
+            <Collapsible
+              asChild
+              defaultOpen={false}
+              className='group/collapsible'
+            >
+              <SidebarMenuItem>
+                <CollapsibleTrigger asChild>
+                  <SidebarMenuButton 
+                    tooltip={isCollapsed ? "Developer Tools" : undefined}
+                  >
+                    <Icons.code className="h-4 w-4" />
+                    <span>Developer Tools</span>
+                    <Icons.chevronRight className='ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
+                  </SidebarMenuButton>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <SidebarMenuSub>
+                    <SidebarMenuSubItem>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuSubButton className="w-full justify-between">
+                          <span>API Management</span>
+                          <Icons.chevronRight className='ml-auto h-3 w-3 transition-transform duration-200 group-data-[state=open]:rotate-90' />
+                        </SidebarMenuSubButton>
+                      </CollapsibleTrigger>
+                      <Collapsible>
+                        <CollapsibleContent className="pl-8 pt-2 space-y-1">
+                          <Link
+                            href="/dashboard/developer/api/endpoints"
+                            className={cn(
+                              "flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md py-1.5 px-2",
+                              pathname === "/dashboard/developer/api/endpoints" && "bg-accent text-foreground font-medium"
+                            )}
+                          >
+                            <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground mr-2"></div>
+                            API Endpoints
+                          </Link>
+                          <Link
+                            href="/dashboard/developer/api/schemas"
+                            className={cn(
+                              "flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md py-1.5 px-2",
+                              pathname === "/dashboard/developer/api/schemas" && "bg-accent text-foreground font-medium"
+                            )}
+                          >
+                            <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground mr-2"></div>
+                            Data Schemas
+                          </Link>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    </SidebarMenuSubItem>
+                    <SidebarMenuSubItem>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuSubButton className="w-full justify-between">
+                          <span>Templates</span>
+                          <Icons.chevronRight className='ml-auto h-3 w-3 transition-transform duration-200 group-data-[state=open]:rotate-90' />
+                        </SidebarMenuSubButton>
+                      </CollapsibleTrigger>
+                      <Collapsible>
+                        <CollapsibleContent className="pl-8 pt-2 space-y-1">
+                          <Link
+                            href="/dashboard/developer/templates/pages"
+                            className={cn(
+                              "flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md py-1.5 px-2",
+                              pathname === "/dashboard/developer/templates/pages" && "bg-accent text-foreground font-medium"
+                            )}
+                          >
+                            <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground mr-2"></div>
+                            Page Templates
+                          </Link>
+                          <Link
+                            href="/dashboard/developer/templates/modules"
+                            className={cn(
+                              "flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md py-1.5 px-2",
+                              pathname === "/dashboard/developer/templates/modules" && "bg-accent text-foreground font-medium"
+                            )}
+                          >
+                            <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground mr-2"></div>
+                            Module Templates
+                          </Link>
+                          <Link
+                            href="/dashboard/developer/templates/blocks"
+                            className={cn(
+                              "flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md py-1.5 px-2",
+                              pathname === "/dashboard/developer/templates/blocks" && "bg-accent text-foreground font-medium"
+                            )}
+                          >
+                            <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground mr-2"></div>
+                            Content Blocks
+                          </Link>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    </SidebarMenuSubItem>
+                  </SidebarMenuSub>
+                </CollapsibleContent>
+              </SidebarMenuItem>
+            </Collapsible>
+          </SidebarMenu>
+        </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter className="border-t">
