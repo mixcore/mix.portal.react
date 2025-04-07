@@ -11,13 +11,27 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { ArrowLeft, Save } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { postService } from '@/services/post';
 import { MixContentStatus } from '@/types/content';
+import { FormRichTextEditor } from '@/components/forms/FormRichTextEditor';
 
 // Define form schema with Zod
 const formSchema = z.object({
@@ -25,7 +39,7 @@ const formSchema = z.object({
   excerpt: z.string().optional(),
   content: z.string().optional(),
   status: z.nativeEnum(MixContentStatus, {
-    required_error: 'Please select a status',
+    required_error: 'Please select a status'
   }),
   isPublic: z.boolean().default(true),
   image: z.string().optional(),
@@ -33,7 +47,7 @@ const formSchema = z.object({
   seoDescription: z.string().optional(),
   seoKeywords: z.string().optional(),
   specificulture: z.string().optional(),
-  priority: z.coerce.number().min(0).default(0),
+  priority: z.coerce.number().min(0).default(0)
 });
 
 type PostFormValues = z.infer<typeof formSchema>;
@@ -42,7 +56,7 @@ export default function CreatePostPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  
+
   // Default values for the form
   const defaultValues: PostFormValues = {
     title: '',
@@ -55,21 +69,21 @@ export default function CreatePostPage() {
     seoDescription: '',
     seoKeywords: '',
     specificulture: 'en-US',
-    priority: 0,
+    priority: 0
   };
-  
+
   const form = useForm<PostFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues,
+    defaultValues
   });
-  
+
   const onSubmit = async (data: PostFormValues) => {
     try {
       setIsLoading(true);
       await postService.createPost(data);
       toast({
         title: 'Success',
-        description: 'Post created successfully',
+        description: 'Post created successfully'
       });
       router.push('/dashboard/posts');
     } catch (error) {
@@ -77,102 +91,89 @@ export default function CreatePostPage() {
       toast({
         title: 'Error',
         description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
+        variant: 'destructive'
       });
     } finally {
       setIsLoading(false);
     }
   };
-  
+
   return (
     <>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <Button 
-            variant="outline" 
-            size="icon" 
+      <div className='flex items-center justify-between'>
+        <div className='flex items-center space-x-2'>
+          <Button
+            variant='outline'
+            size='icon'
             onClick={() => router.push('/dashboard/posts')}
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className='h-4 w-4' />
           </Button>
-          <Heading title="Create Post" description="Create a new blog post" />
+          <Heading title='Create Post' description='Create a new blog post' />
         </div>
-        <Button 
-          type="submit" 
+        <Button
+          type='submit'
           disabled={isLoading}
           onClick={form.handleSubmit(onSubmit)}
         >
-          <Save className="mr-2 h-4 w-4" />
+          <Save className='mr-2 h-4 w-4' />
           {isLoading ? 'Creating...' : 'Create Post'}
         </Button>
       </div>
-      
-      <Separator className="my-4" />
-      
+
+      <Separator className='my-4' />
+
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
           <Card>
-            <CardContent className="pt-6 space-y-4">
+            <CardContent className='space-y-4 pt-6'>
               <FormField
                 control={form.control}
-                name="title"
+                name='title'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Title</FormLabel>
                     <FormControl>
-                      <Input placeholder="Post title" {...field} />
+                      <Input placeholder='Post title' {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
-                name="excerpt"
+                name='excerpt'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Excerpt</FormLabel>
                     <FormControl>
-                      <Textarea 
-                        placeholder="Brief summary of the post" 
-                        className="resize-none" 
-                        rows={3} 
-                        {...field} 
+                      <Textarea
+                        placeholder='Brief summary of the post'
+                        className='resize-none'
+                        rows={3}
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
-              <FormField
-                control={form.control}
-                name="content"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Content</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        placeholder="Post content" 
-                        className="resize-none" 
-                        rows={10} 
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+
+              <FormRichTextEditor
+                name='content'
+                label='Content'
+                placeholder='Write your post content here...'
               />
             </CardContent>
           </Card>
-          
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+
+          <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
             <Card>
-              <CardContent className="pt-6 space-y-4">
+              <CardContent className='space-y-4 pt-6'>
                 <FormField
                   control={form.control}
-                  name="status"
+                  name='status'
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Status</FormLabel>
@@ -184,29 +185,43 @@ export default function CreatePostPage() {
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a status" />
+                            <SelectValue placeholder='Select a status' />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value={MixContentStatus.Draft.toString()}>Draft</SelectItem>
-                          <SelectItem value={MixContentStatus.Published.toString()}>Published</SelectItem>
-                          <SelectItem value={MixContentStatus.Schedule.toString()}>Scheduled</SelectItem>
-                          <SelectItem value={MixContentStatus.Preview.toString()}>Preview</SelectItem>
+                          <SelectItem value={MixContentStatus.Draft.toString()}>
+                            Draft
+                          </SelectItem>
+                          <SelectItem
+                            value={MixContentStatus.Published.toString()}
+                          >
+                            Published
+                          </SelectItem>
+                          <SelectItem
+                            value={MixContentStatus.Schedule.toString()}
+                          >
+                            Scheduled
+                          </SelectItem>
+                          <SelectItem
+                            value={MixContentStatus.Preview.toString()}
+                          >
+                            Preview
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
-                  name="isPublic"
+                  name='isPublic'
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                      <div className="space-y-0.5">
+                    <FormItem className='flex flex-row items-center justify-between rounded-lg border p-3'>
+                      <div className='space-y-0.5'>
                         <FormLabel>Public</FormLabel>
-                        <div className="text-sm text-muted-foreground">
+                        <div className='text-muted-foreground text-sm'>
                           Make this post publicly accessible
                         </div>
                       </div>
@@ -220,34 +235,37 @@ export default function CreatePostPage() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
-                  name="priority"
+                  name='priority'
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Priority</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="number" 
+                        <Input
+                          type='number'
                           min={0}
-                          placeholder="0" 
-                          {...field} 
+                          placeholder='0'
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
-                  name="image"
+                  name='image'
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Featured Image URL</FormLabel>
                       <FormControl>
-                        <Input placeholder="https://example.com/image.jpg" {...field} />
+                        <Input
+                          placeholder='https://example.com/image.jpg'
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -255,64 +273,67 @@ export default function CreatePostPage() {
                 />
               </CardContent>
             </Card>
-            
+
             <Card>
-              <CardContent className="pt-6 space-y-4">
+              <CardContent className='space-y-4 pt-6'>
                 <FormField
                   control={form.control}
-                  name="seoTitle"
+                  name='seoTitle'
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>SEO Title</FormLabel>
                       <FormControl>
-                        <Input placeholder="SEO optimized title" {...field} />
+                        <Input placeholder='SEO optimized title' {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
-                  name="seoDescription"
+                  name='seoDescription'
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>SEO Description</FormLabel>
                       <FormControl>
-                        <Textarea 
-                          placeholder="Meta description for SEO" 
-                          className="resize-none" 
-                          rows={3} 
-                          {...field} 
+                        <Textarea
+                          placeholder='Meta description for SEO'
+                          className='resize-none'
+                          rows={3}
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
-                  name="seoKeywords"
+                  name='seoKeywords'
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>SEO Keywords</FormLabel>
                       <FormControl>
-                        <Input placeholder="keyword1, keyword2, keyword3" {...field} />
+                        <Input
+                          placeholder='keyword1, keyword2, keyword3'
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
-                  name="specificulture"
+                  name='specificulture'
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Culture</FormLabel>
                       <FormControl>
-                        <Input placeholder="en-US" {...field} />
+                        <Input placeholder='en-US' {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -321,17 +342,17 @@ export default function CreatePostPage() {
               </CardContent>
             </Card>
           </div>
-          
-          <CardFooter className="flex justify-between border rounded-lg">
+
+          <CardFooter className='flex justify-between rounded-lg border'>
             <Button
-              type="button"
-              variant="outline"
+              type='button'
+              variant='outline'
               onClick={() => router.push('/dashboard/posts')}
               disabled={isLoading}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isLoading}>
+            <Button type='submit' disabled={isLoading}>
               {isLoading ? 'Creating...' : 'Create Post'}
             </Button>
           </CardFooter>
@@ -339,4 +360,4 @@ export default function CreatePostPage() {
       </Form>
     </>
   );
-} 
+}

@@ -57,7 +57,7 @@ These are more complex components used for specific features.
 | StatusBadge | `src/components/StatusBadge.tsx` | ✅ Complete | Badge | 2023-04-15 |
 | DateDisplay | `src/components/DateDisplay.tsx` | ✅ Complete | - | 2023-04-15 |
 | UserAvatar | `src/components/UserAvatar.tsx` | ❌ Not Started | Avatar | - |
-| RichTextEditor | `src/components/RichTextEditor/index.tsx` | ❌ Not Started | TBD | - |
+| RichTextEditor | `src/components/RichTextEditor/index.tsx` | ✅ Complete | @tiptap/react, @tiptap/starter-kit | 2023-04-27 |
 | FileUploader | `src/components/FileUploader.tsx` | ❌ Not Started | TBD | - |
 | FormBuilder | `src/components/FormBuilder/index.tsx` | ❌ Not Started | React Hook Form, Zod | - |
 | StatsCard | `src/components/StatsCard.tsx` | ✅ Complete | Card, Icons | 2023-04-15 |
@@ -81,6 +81,7 @@ These components are specifically designed for forms.
 | FormRadioGroup | `src/components/forms/FormRadioGroup.tsx` | ❌ Not Started | RadioGroup, Label | - |
 | FormSubmitButton | `src/components/forms/FormSubmitButton.tsx` | ✅ Complete | Button | 2023-04-15 |
 | FormError | `src/components/forms/FormError.tsx` | ✅ Complete | - | 2023-04-15 |
+| FormRichTextEditor | `src/components/forms/FormRichTextEditor.tsx` | ✅ Complete | RichTextEditor, React Hook Form | 2023-04-27 |
 
 ## Component Relationships
 

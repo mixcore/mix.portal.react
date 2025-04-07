@@ -5,7 +5,14 @@ import { useRouter, useParams } from 'next/navigation';
 import { format } from 'date-fns';
 import { Heading } from '@/components/ui/heading';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter
+} from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
@@ -15,12 +22,13 @@ import { Post } from '@/types/post';
 import { MixContentStatus } from '@/types/content';
 import { postService } from '@/services/post';
 import { AlertModal } from '@/components/modals/alert-modal';
+import { RichTextEditor } from '@/components/RichTextEditor';
 
 export default function PostDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
-  
+
   const [post, setPost] = useState<Post | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [openDeleteAlert, setOpenDeleteAlert] = useState(false);
@@ -41,7 +49,7 @@ export default function PostDetailPage() {
       toast({
         title: 'Error',
         description: 'Failed to load post details',
-        variant: 'destructive',
+        variant: 'destructive'
       });
     } finally {
       setIsLoading(false);
@@ -55,7 +63,7 @@ export default function PostDetailPage() {
         await postService.deletePost(post.id);
         toast({
           title: 'Success',
-          description: 'Post deleted successfully',
+          description: 'Post deleted successfully'
         });
         router.push('/dashboard/posts');
       }
@@ -64,7 +72,7 @@ export default function PostDetailPage() {
       toast({
         title: 'Error',
         description: 'Failed to delete post',
-        variant: 'destructive',
+        variant: 'destructive'
       });
     } finally {
       setIsLoading(false);
@@ -74,20 +82,20 @@ export default function PostDetailPage() {
 
   const getStatusBadge = (status?: MixContentStatus) => {
     if (status === undefined) return <Badge>Unknown</Badge>;
-    
+
     // Use number values instead of direct enum comparison
     const statusValue = Number(status);
-    
+
     if (statusValue === MixContentStatus.Published) {
-      return <Badge className="bg-green-500">Published</Badge>;
+      return <Badge className='bg-green-500'>Published</Badge>;
     } else if (statusValue === MixContentStatus.Draft) {
-      return <Badge variant="outline">Draft</Badge>;
+      return <Badge variant='outline'>Draft</Badge>;
     } else if (statusValue === MixContentStatus.Schedule) {
-      return <Badge className="bg-yellow-500">Scheduled</Badge>;
+      return <Badge className='bg-yellow-500'>Scheduled</Badge>;
     } else if (statusValue === MixContentStatus.Preview) {
-      return <Badge variant="secondary">Preview</Badge>;
+      return <Badge variant='secondary'>Preview</Badge>;
     } else if (statusValue === MixContentStatus.Deleted) {
-      return <Badge variant="destructive">Deleted</Badge>;
+      return <Badge variant='destructive'>Deleted</Badge>;
     } else {
       return <Badge>{status}</Badge>;
     }
@@ -95,18 +103,21 @@ export default function PostDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="flex h-[400px] w-full items-center justify-center">
-        <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-primary"></div>
+      <div className='flex h-[400px] w-full items-center justify-center'>
+        <div className='border-primary h-10 w-10 animate-spin rounded-full border-b-2'></div>
       </div>
     );
   }
 
   if (!post) {
     return (
-      <div className="flex flex-col items-center justify-center space-y-4 pt-10">
-        <p className="text-muted-foreground text-center">Post not found</p>
-        <Button variant="outline" onClick={() => router.push('/dashboard/posts')}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
+      <div className='flex flex-col items-center justify-center space-y-4 pt-10'>
+        <p className='text-muted-foreground text-center'>Post not found</p>
+        <Button
+          variant='outline'
+          onClick={() => router.push('/dashboard/posts')}
+        >
+          <ArrowLeft className='mr-2 h-4 w-4' />
           Return to Posts
         </Button>
       </div>
@@ -121,110 +132,135 @@ export default function PostDetailPage() {
         onConfirm={handleDelete}
         loading={isLoading}
       />
-      
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" size="icon" onClick={() => router.push('/dashboard/posts')}>
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <Heading title={post.title || 'Untitled Post'} description="View and manage post details" />
-        </div>
-        <div className="flex items-center space-x-2">
+
+      <div className='flex items-center justify-between'>
+        <div className='flex items-center space-x-2'>
           <Button
-            variant="outline"
+            variant='outline'
+            size='icon'
+            onClick={() => router.push('/dashboard/posts')}
+          >
+            <ArrowLeft className='h-4 w-4' />
+          </Button>
+          <Heading
+            title={post.title || 'Untitled Post'}
+            description='View and manage post details'
+          />
+        </div>
+        <div className='flex items-center space-x-2'>
+          <Button
+            variant='outline'
             onClick={() => router.push(`/dashboard/posts/${post.id}/edit`)}
           >
-            <Pencil className="mr-2 h-4 w-4" />
+            <Pencil className='mr-2 h-4 w-4' />
             Edit
           </Button>
           <Button
-            variant="destructive"
+            variant='destructive'
             onClick={() => setOpenDeleteAlert(true)}
           >
-            <Trash2 className="mr-2 h-4 w-4" />
+            <Trash2 className='mr-2 h-4 w-4' />
             Delete
           </Button>
         </div>
       </div>
-      
-      <Separator className="my-4" />
-      
-      <Tabs defaultValue="content" className="mt-6">
+
+      <Separator className='my-4' />
+
+      <Tabs defaultValue='content' className='mt-6'>
         <TabsList>
-          <TabsTrigger value="content">Content</TabsTrigger>
-          <TabsTrigger value="metadata">Metadata & SEO</TabsTrigger>
-          <TabsTrigger value="advanced">Advanced</TabsTrigger>
+          <TabsTrigger value='content'>Content</TabsTrigger>
+          <TabsTrigger value='metadata'>Metadata & SEO</TabsTrigger>
+          <TabsTrigger value='advanced'>Advanced</TabsTrigger>
         </TabsList>
-        
-        <TabsContent value="content" className="space-y-4 pt-4">
+
+        <TabsContent value='content' className='space-y-4 pt-4'>
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between">
+              <div className='flex items-center justify-between'>
                 <CardTitle>Post Content</CardTitle>
                 {getStatusBadge(post.status)}
               </div>
               <CardDescription>
-                Created {post.createdDateTime ? format(new Date(post.createdDateTime), 'PPP') : 'Unknown'} 
-                {post.lastModified && ` • Updated ${format(new Date(post.lastModified), 'PPP')}`}
+                Created{' '}
+                {post.createdDateTime
+                  ? format(new Date(post.createdDateTime), 'PPP')
+                  : 'Unknown'}
+                {post.lastModified &&
+                  ` • Updated ${format(new Date(post.lastModified), 'PPP')}`}
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className='space-y-4'>
               {post.image && (
-                <div className="mb-4 overflow-hidden rounded-md">
-                  <img 
-                    src={post.image} 
-                    alt={post.title || 'Post image'} 
-                    className="aspect-video w-full object-cover"
+                <div className='mb-4 overflow-hidden rounded-md'>
+                  <img
+                    src={post.image}
+                    alt={post.title || 'Post image'}
+                    className='aspect-video w-full object-cover'
                   />
                 </div>
               )}
-              
-              <div className="prose dark:prose-invert max-w-full">
-                <h1 className="text-3xl font-bold">{post.title}</h1>
-                {post.excerpt && <p className="text-lg text-muted-foreground">{post.excerpt}</p>}
+
+              <div className='prose dark:prose-invert max-w-full'>
+                <h1 className='text-3xl font-bold'>{post.title}</h1>
+                {post.excerpt && (
+                  <p className='text-muted-foreground text-lg'>
+                    {post.excerpt}
+                  </p>
+                )}
                 {post.content && (
-                  <div className="mt-4 whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: post.content }} />
+                  <div className='mt-4'>
+                    <RichTextEditor
+                      content={post.content}
+                      onChange={() => {}}
+                      readOnly={true}
+                    />
+                  </div>
                 )}
               </div>
             </CardContent>
           </Card>
         </TabsContent>
-        
-        <TabsContent value="metadata" className="space-y-4 pt-4">
+
+        <TabsContent value='metadata' className='space-y-4 pt-4'>
           <Card>
             <CardHeader>
               <CardTitle>SEO & Metadata</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
+            <CardContent className='space-y-4'>
+              <div className='grid gap-4 md:grid-cols-2'>
                 <div>
-                  <h3 className="mb-2 font-medium">SEO Title</h3>
-                  <p className="text-muted-foreground">{post.seoTitle || post.title || 'Not set'}</p>
+                  <h3 className='mb-2 font-medium'>SEO Title</h3>
+                  <p className='text-muted-foreground'>
+                    {post.seoTitle || post.title || 'Not set'}
+                  </p>
                 </div>
                 <div>
-                  <h3 className="mb-2 font-medium">SEO Description</h3>
-                  <p className="text-muted-foreground">{post.seoDescription || post.excerpt || 'Not set'}</p>
+                  <h3 className='mb-2 font-medium'>SEO Description</h3>
+                  <p className='text-muted-foreground'>
+                    {post.seoDescription || post.excerpt || 'Not set'}
+                  </p>
                 </div>
               </div>
-              
+
               <div>
-                <h3 className="mb-2 font-medium">Additional Properties</h3>
-                <div className="rounded-md border p-4">
-                  <div className="grid gap-3">
-                    <div className="grid grid-cols-2 items-center gap-4">
-                      <span className="font-medium">Priority:</span>
+                <h3 className='mb-2 font-medium'>Additional Properties</h3>
+                <div className='rounded-md border p-4'>
+                  <div className='grid gap-3'>
+                    <div className='grid grid-cols-2 items-center gap-4'>
+                      <span className='font-medium'>Priority:</span>
                       <span>{post.priority || 0}</span>
                     </div>
-                    <div className="grid grid-cols-2 items-center gap-4">
-                      <span className="font-medium">Public:</span>
+                    <div className='grid grid-cols-2 items-center gap-4'>
+                      <span className='font-medium'>Public:</span>
                       <span>{post.isPublic ? 'Yes' : 'No'}</span>
                     </div>
-                    <div className="grid grid-cols-2 items-center gap-4">
-                      <span className="font-medium">Created By:</span>
+                    <div className='grid grid-cols-2 items-center gap-4'>
+                      <span className='font-medium'>Created By:</span>
                       <span>{post.createdBy || 'Unknown'}</span>
                     </div>
-                    <div className="grid grid-cols-2 items-center gap-4">
-                      <span className="font-medium">Modified By:</span>
+                    <div className='grid grid-cols-2 items-center gap-4'>
+                      <span className='font-medium'>Modified By:</span>
                       <span>{post.modifiedBy || 'N/A'}</span>
                     </div>
                   </div>
@@ -233,42 +269,44 @@ export default function PostDetailPage() {
             </CardContent>
           </Card>
         </TabsContent>
-        
-        <TabsContent value="advanced" className="space-y-4 pt-4">
+
+        <TabsContent value='advanced' className='space-y-4 pt-4'>
           <Card>
             <CardHeader>
               <CardTitle>Advanced Settings</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
+            <CardContent className='space-y-4'>
+              <div className='grid gap-4 md:grid-cols-2'>
                 <div>
-                  <h3 className="mb-2 font-medium">Culture</h3>
-                  <p className="text-muted-foreground">{post.specificulture || 'Default'}</p>
+                  <h3 className='mb-2 font-medium'>Culture</h3>
+                  <p className='text-muted-foreground'>
+                    {post.specificulture || 'Default'}
+                  </p>
                 </div>
                 <div>
-                  <h3 className="mb-2 font-medium">Template</h3>
-                  <p className="text-muted-foreground">Default Template</p>
+                  <h3 className='mb-2 font-medium'>Template</h3>
+                  <p className='text-muted-foreground'>Default Template</p>
                 </div>
               </div>
-              
+
               <div>
-                <h3 className="mb-2 font-medium">System Information</h3>
-                <div className="rounded-md border p-4">
-                  <div className="grid gap-3">
-                    <div className="grid grid-cols-2 items-center gap-4">
-                      <span className="font-medium">ID:</span>
+                <h3 className='mb-2 font-medium'>System Information</h3>
+                <div className='rounded-md border p-4'>
+                  <div className='grid gap-3'>
+                    <div className='grid grid-cols-2 items-center gap-4'>
+                      <span className='font-medium'>ID:</span>
                       <span>{post.id}</span>
                     </div>
-                    <div className="grid grid-cols-2 items-center gap-4">
-                      <span className="font-medium">Parent ID:</span>
+                    <div className='grid grid-cols-2 items-center gap-4'>
+                      <span className='font-medium'>Parent ID:</span>
                       <span>{post.parentId || 'None'}</span>
                     </div>
-                    <div className="grid grid-cols-2 items-center gap-4">
-                      <span className="font-medium">Mix Culture ID:</span>
+                    <div className='grid grid-cols-2 items-center gap-4'>
+                      <span className='font-medium'>Mix Culture ID:</span>
                       <span>{post.mixCultureId || 'None'}</span>
                     </div>
-                    <div className="grid grid-cols-2 items-center gap-4">
-                      <span className="font-medium">Tenant ID:</span>
+                    <div className='grid grid-cols-2 items-center gap-4'>
+                      <span className='font-medium'>Tenant ID:</span>
                       <span>{post.tenantId || 'None'}</span>
                     </div>
                   </div>
@@ -280,4 +318,4 @@ export default function PostDetailPage() {
       </Tabs>
     </>
   );
-} 
+}
