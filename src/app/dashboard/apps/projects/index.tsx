@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import AppShell from './layouts/AppShell';
 import ProjectList from './components/ProjectList';
 import Task from './components/Task';
@@ -17,17 +18,67 @@ export interface ProjectsAppProps {
 }
 
 export function ProjectsApp(props: ProjectsAppProps) {
+  // Router and URL parameters
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  
+  // Get view and project ID from URL parameters
+  const viewParam = searchParams.get('view') as ViewType | null;
+  const projectIdParam = searchParams.get('projectId');
+  
   // Get app config
   const appConfig = getAppConfig();
   
-  // Set initial view from config
-  const initialView = appConfig.settings.enableFullScreenByDefault ? 'gantt' : 'projects';
+  // Set initial view based on URL parameter or config
+  const getInitialView = (): ViewType => {
+    if (viewParam && ['projects', 'tasks', 'gantt', 'calendar', 'board'].includes(viewParam)) {
+      return viewParam as ViewType;
+    }
+    return appConfig.settings.enableFullScreenByDefault ? 'gantt' : 'projects';
+  };
   
-  const [activeView, setActiveView] = useState<ViewType>(initialView as ViewType);
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [activeView, setActiveView] = useState<ViewType>(getInitialView());
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(projectIdParam || null);
   const isFluidLayout = useContainerStatus();
   const [isInitialized, setIsInitialized] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Update URL when view or project changes
+  useEffect(() => {
+    // Create new URLSearchParams object
+    const params = new URLSearchParams(searchParams.toString());
+    
+    // Set the view parameter
+    params.set('view', activeView);
+    
+    // Set or remove projectId parameter
+    if (selectedProjectId && activeView === 'tasks') {
+      params.set('projectId', selectedProjectId);
+    } else {
+      params.delete('projectId');
+    }
+    
+    // Update the URL without triggering navigation
+    const newUrl = `${pathname}?${params.toString()}`;
+    window.history.replaceState({}, '', newUrl);
+  }, [activeView, selectedProjectId, pathname]);
+  
+  // Sync with URL parameters when they change
+  useEffect(() => {
+    if (viewParam && viewParam !== activeView) {
+      setActiveView(viewParam as ViewType);
+    }
+    
+    if (projectIdParam !== selectedProjectId) {
+      setSelectedProjectId(projectIdParam);
+      
+      // If project ID is set but view isn't tasks, update view
+      if (projectIdParam && activeView !== 'tasks') {
+        setActiveView('tasks');
+      }
+    }
+  }, [viewParam, projectIdParam]);
   
   // Initialize app if needed
   useEffect(() => {
@@ -79,11 +130,20 @@ export function ProjectsApp(props: ProjectsAppProps) {
   const handleProjectClick = (projectId: string) => {
     setSelectedProjectId(projectId);
     setActiveView('tasks');
+    
+    // Update URL (will be handled by the effect)
   };
   
   // Handle view change
   const handleViewChange = (viewType: ViewType) => {
     setActiveView(viewType);
+    
+    // If changing away from tasks view, clear selected project
+    if (viewType !== 'tasks') {
+      setSelectedProjectId(null);
+    }
+    
+    // Update URL (will be handled by the effect)
   };
   
   // Set body class for fluid layout when this app is active
@@ -107,6 +167,19 @@ export function ProjectsApp(props: ProjectsAppProps) {
     localStorage.removeItem('mixcore_projects_initialized');
     setIsLoading(true);
     setIsInitialized(true);
+  };
+  
+  // Generate deep link for current view
+  const getDeepLink = (view: ViewType, projectId?: string): string => {
+    const baseUrl = pathname;
+    const params = new URLSearchParams();
+    
+    params.set('view', view);
+    if (projectId && view === 'tasks') {
+      params.set('projectId', projectId);
+    }
+    
+    return `${baseUrl}?${params.toString()}`;
   };
   
   // Show loading state while app is initializing
@@ -166,7 +239,22 @@ export function ProjectsApp(props: ProjectsAppProps) {
       case 'projects':
         return (
           <div className="projects-view h-full overflow-hidden flex flex-col">
-            <h2 className="text-xl font-semibold p-6 pb-2">All Projects</h2>
+            <div className="flex justify-between items-center p-6 pb-2">
+              <h2 className="text-xl font-semibold">All Projects</h2>
+              <div className="flex items-center space-x-2">
+                <button
+                  className="text-gray-600 hover:bg-gray-100 p-1 rounded"
+                  title="Copy Deep Link"
+                  onClick={() => {
+                    const deepLink = window.location.origin + getDeepLink('projects');
+                    navigator.clipboard.writeText(deepLink);
+                    // Could add a toast notification here
+                  }}
+                >
+                  <span className="material-icons-outlined text-sm">link</span>
+                </button>
+              </div>
+            </div>
             <div className="flex justify-between items-center px-6 mb-4">
               <div className="text-sm text-gray-600">
                 Showing {mockProjects.length} projects
@@ -192,14 +280,29 @@ export function ProjectsApp(props: ProjectsAppProps) {
         return (
           <div className="tasks-view h-full overflow-hidden flex flex-col">
             <div className="p-6">
-              <div className="flex items-center mb-4">
-                <button 
-                  className="text-blue-600 mr-2" 
-                  onClick={() => setActiveView('projects')}
-                >
-                  <span className="material-icons-outlined">arrow_back</span>
-                </button>
-                <h2 className="text-xl font-semibold">{selectedProject?.name || 'Project Tasks'}</h2>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center">
+                  <button 
+                    className="text-blue-600 mr-2" 
+                    onClick={() => handleViewChange('projects')}
+                  >
+                    <span className="material-icons-outlined">arrow_back</span>
+                  </button>
+                  <h2 className="text-xl font-semibold">{selectedProject?.name || 'Project Tasks'}</h2>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <button
+                    className="text-gray-600 hover:bg-gray-100 p-1 rounded"
+                    title="Copy Deep Link"
+                    onClick={() => {
+                      const deepLink = window.location.origin + getDeepLink('tasks', selectedProjectId || undefined);
+                      navigator.clipboard.writeText(deepLink);
+                      // Could add a toast notification here
+                    }}
+                  >
+                    <span className="material-icons-outlined text-sm">link</span>
+                  </button>
+                </div>
               </div>
               
               <div className="flex justify-between items-center mb-6">
@@ -234,6 +337,22 @@ export function ProjectsApp(props: ProjectsAppProps) {
       case 'gantt':
         return (
           <div className="gantt-view-container h-full overflow-hidden">
+            <div className="flex justify-between items-center p-3 bg-white border-b">
+              <h2 className="text-lg font-semibold pl-2">Gantt Timeline</h2>
+              <div className="flex items-center space-x-2">
+                <button
+                  className="text-gray-600 hover:bg-gray-100 p-1 rounded"
+                  title="Copy Deep Link"
+                  onClick={() => {
+                    const deepLink = window.location.origin + getDeepLink('gantt');
+                    navigator.clipboard.writeText(deepLink);
+                    // Could add a toast notification here
+                  }}
+                >
+                  <span className="material-icons-outlined text-sm">link</span>
+                </button>
+              </div>
+            </div>
             <div className="bg-white h-full overflow-hidden">
               <GanttView 
                 tasks={mockGanttTasks}
@@ -249,11 +368,25 @@ export function ProjectsApp(props: ProjectsAppProps) {
           <div className="board-view h-full overflow-hidden flex flex-col">
             <div className="p-6 flex justify-between items-center">
               <h2 className="text-xl font-semibold">Task Board</h2>
-              <button className="bg-blue-600 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-700 flex items-center">
-                <span className="material-icons-outlined text-sm mr-1">add</span>
-                New Task
-              </button>
+              <div className="flex items-center space-x-2">
+                <button
+                  className="text-gray-600 hover:bg-gray-100 p-1 rounded"
+                  title="Copy Deep Link"
+                  onClick={() => {
+                    const deepLink = window.location.origin + getDeepLink('board');
+                    navigator.clipboard.writeText(deepLink);
+                    // Could add a toast notification here
+                  }}
+                >
+                  <span className="material-icons-outlined text-sm">link</span>
+                </button>
+                <button className="bg-blue-600 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-700 flex items-center">
+                  <span className="material-icons-outlined text-sm mr-1">add</span>
+                  New Task
+                </button>
+              </div>
             </div>
+            
             <div className="flex-1 overflow-auto">
               <div className="flex gap-4 overflow-x-auto pb-4 px-6 h-full">
                 {/* Not Started column */}
@@ -386,18 +519,32 @@ export function ProjectsApp(props: ProjectsAppProps) {
             <div className="p-6 flex items-center justify-between">
               <h2 className="text-xl font-semibold">Calendar View</h2>
               <div className="flex items-center space-x-2">
-                <button className="border bg-white p-1 rounded hover:bg-gray-100">
-                  <span className="material-icons-outlined">chevron_left</span>
+                <button
+                  className="text-gray-600 hover:bg-gray-100 p-1 rounded"
+                  title="Copy Deep Link"
+                  onClick={() => {
+                    const deepLink = window.location.origin + getDeepLink('calendar');
+                    navigator.clipboard.writeText(deepLink);
+                    // Could add a toast notification here
+                  }}
+                >
+                  <span className="material-icons-outlined text-sm">link</span>
                 </button>
-                <span className="text-sm font-medium">October 2023</span>
-                <button className="border bg-white p-1 rounded hover:bg-gray-100">
-                  <span className="material-icons-outlined">chevron_right</span>
-                </button>
-                <button className="border bg-white px-3 py-1 rounded text-sm hover:bg-gray-100 ml-2">
-                  Today
-                </button>
+                <div className="flex items-center space-x-2">
+                  <button className="border bg-white p-1 rounded hover:bg-gray-100">
+                    <span className="material-icons-outlined">chevron_left</span>
+                  </button>
+                  <span className="text-sm font-medium">October 2023</span>
+                  <button className="border bg-white p-1 rounded hover:bg-gray-100">
+                    <span className="material-icons-outlined">chevron_right</span>
+                  </button>
+                  <button className="border bg-white px-3 py-1 rounded text-sm hover:bg-gray-100 ml-2">
+                    Today
+                  </button>
+                </div>
               </div>
             </div>
+            
             <div className="flex-1 px-6 pb-6 overflow-auto">
               <div className="bg-white rounded-lg shadow h-full p-4 flex flex-col">
                 <div className="grid grid-cols-7 gap-px bg-gray-200">

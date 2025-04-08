@@ -1,15 +1,115 @@
-# Mixcore Projects Mini-App
+# Projects Management Mini-App
 
-A Microsoft Project-like project management application for Mixcore CMS.
+This is a Microsoft Project-like project management application for Mixcore CMS. It provides comprehensive project management features including project listing, task management, Gantt charts, board views, and calendar views.
 
 ## Features
 
-- Project management with task tracking and status monitoring
-- Multiple views: Projects list, Task list, Gantt chart, Kanban board, Calendar
-- Fluid layout that adapts to the dashboard container size
-- Full-screen mode for detailed planning
-- Critical path analysis and dependency management
-- Team member assignment and progress tracking
+- Project dashboard with project listings and progress tracking
+- Task management with priorities, assignments, and status tracking
+- Gantt chart for timeline visualization
+- Kanban board for task management
+- Calendar view for scheduling
+- Full-width layout support
+- Deep linking and URL parameter support
+
+## Deep Linking Support
+
+The Projects app supports deep linking, allowing users to directly navigate to specific views and projects via URL parameters. This makes it easy to share links to specific projects or views with team members.
+
+### URL Parameters
+
+The following URL parameters are supported:
+
+- `view`: The view to display (projects, tasks, gantt, board, calendar)
+- `projectId`: The ID of the selected project (when in tasks view)
+
+### Example URLs
+
+- View all projects: `/dashboard/apps/projects?view=projects`
+- View a specific project's tasks: `/dashboard/apps/projects?view=tasks&projectId=p1`
+- View Gantt chart: `/dashboard/apps/projects?view=gantt`
+- View Kanban board: `/dashboard/apps/projects?view=board`
+- View calendar: `/dashboard/apps/projects?view=calendar`
+
+### Sharing Links
+
+The app provides several ways to share links:
+
+1. **Share button in header**: Copies the current view URL to clipboard
+2. **Copy View Link in view tabs**: Copies the current view URL
+3. **Link buttons in views**: Each view has a link button to copy a direct link to that view
+
+### Programmatic Deep Linking
+
+For developers, the app provides a utility function to generate deep links programmatically:
+
+```tsx
+// Get current state as deep link
+const deepLink = getDeepLink();
+
+// Get link to specific view
+const projectsLink = getDeepLink('projects');
+const tasksLink = getDeepLink('tasks', 'p1'); // With project ID
+const ganttLink = getDeepLink('gantt');
+```
+
+## Layout Modes
+
+The app supports two layout modes:
+
+1. **Normal View**: The app is displayed within the dashboard container
+2. **Full Width**: The app expands to use the full width of the screen
+
+The layout mode can be toggled using the button in the top-right corner of the app. The default layout mode is controlled by the `ui.layout.fluid` setting in the app configuration.
+
+## Implementation Details
+
+Deep linking is implemented using the Next.js router and URL parameters:
+
+- The app reads URL parameters on initial load and whenever they change
+- When changing views or selecting projects, the URL is updated using `history.replaceState`
+- The app syncs its internal state with URL parameters using React effects
+
+This approach ensures that:
+- URLs can be shared and bookmarked
+- Browser back/forward navigation works correctly
+- The app state is always in sync with the URL
+
+## Configuration
+
+Deep linking behavior can be configured in the app's configuration file:
+
+```json
+{
+  "settings": {
+    "enableFullScreenByDefault": false
+  },
+  "ui": {
+    "layout": {
+      "fluid": true
+    }
+  }
+}
+```
+
+- `enableFullScreenByDefault`: Controls whether the app uses full-screen mode by default
+- `ui.layout.fluid`: Controls whether the app uses fluid layout by default
+
+## Usage
+
+To use deep linking in your code:
+
+```tsx
+import { useSearchParams } from 'next/navigation';
+
+function MyComponent() {
+  const searchParams = useSearchParams();
+  const view = searchParams.get('view');
+  const projectId = searchParams.get('projectId');
+  
+  // Use parameters to control component state
+}
+```
 
 ## Installation
 

@@ -1,92 +1,159 @@
-import { Project } from '../components/ProjectList';
+import { Project } from '../components/ProjectItem';
 import { GanttTask } from '../components/GanttView';
 import { TaskProps } from '../components/Task';
 
 // Sample projects data
 export const mockProjects: Project[] = [
   {
-    id: 'p1',
-    name: 'Website Redesign',
-    description: 'Redesign the company website with modern UI/UX',
-    startDate: '2023-08-15',
-    dueDate: '2023-10-30',
-    progress: 65,
-    status: 'inProgress',
-    members: ['John Doe', 'Jane Smith', 'Robert Johnson', 'Lisa Wong'],
-    tasksCount: {
-      total: 24,
-      completed: 16
-    }
+    id: '1',
+    title: 'Website Redesign',
+    description: 'Complete overhaul of the company website with new branding and improved user experience',
+    status: 'active',
+    createdAt: new Date('2023-09-15').toISOString(),
+    updatedAt: new Date('2023-10-05').toISOString(),
+    dueDate: new Date('2023-12-31').toISOString(),
+    owner: {
+      id: 'user1',
+      name: 'Alex Johnson',
+      avatar: 'https://i.pravatar.cc/150?img=1'
+    },
+    collaborators: [
+      { id: 'user2', name: 'Sarah Wilson', avatar: 'https://i.pravatar.cc/150?img=2' },
+      { id: 'user3', name: 'Michael Brown', avatar: 'https://i.pravatar.cc/150?img=3' }
+    ],
+    tags: ['design', 'frontend', 'branding']
   },
   {
-    id: 'p2',
-    name: 'Mobile App Development',
-    description: 'Develop a mobile app for both Android and iOS platforms',
-    startDate: '2023-09-01',
-    dueDate: '2023-12-15',
-    progress: 32,
-    status: 'inProgress',
-    members: ['Mike Brown', 'Sarah Lee', 'Tom Wilson'],
-    tasksCount: {
-      total: 36,
-      completed: 12
-    }
+    id: '2',
+    title: 'Mobile App Development',
+    description: 'Create a cross-platform mobile application for iOS and Android',
+    status: 'active',
+    createdAt: new Date('2023-08-10').toISOString(),
+    updatedAt: new Date('2023-10-01').toISOString(),
+    dueDate: new Date('2024-02-15').toISOString(),
+    owner: {
+      id: 'user2',
+      name: 'Sarah Wilson',
+      avatar: 'https://i.pravatar.cc/150?img=2'
+    },
+    collaborators: [
+      { id: 'user4', name: 'David Chen', avatar: 'https://i.pravatar.cc/150?img=4' },
+      { id: 'user5', name: 'Emily Rodriguez', avatar: 'https://i.pravatar.cc/150?img=5' }
+    ],
+    tags: ['mobile', 'react native', 'api integration']
   },
   {
-    id: 'p3',
-    name: 'Marketing Campaign',
-    description: 'Q4 marketing campaign for new product launch',
-    startDate: '2023-10-01',
-    dueDate: '2023-12-31',
-    progress: 15,
-    status: 'inProgress',
-    members: ['Emily Davis', 'Alex Johnson'],
-    tasksCount: {
-      total: 18,
-      completed: 3
-    }
-  },
-  {
-    id: 'p4',
-    name: 'Database Migration',
-    description: 'Migrate from legacy database to new cloud solution',
-    startDate: '2023-07-10',
-    dueDate: '2023-08-30',
-    progress: 100,
+    id: '3',
+    title: 'Database Migration',
+    description: 'Migrate legacy database to a modern cloud-based solution with improved performance',
     status: 'completed',
-    members: ['David Miller', 'Julia Chen', 'Omar Hassan'],
-    tasksCount: {
-      total: 12,
-      completed: 12
-    }
+    createdAt: new Date('2023-07-05').toISOString(),
+    updatedAt: new Date('2023-09-20').toISOString(),
+    dueDate: new Date('2023-09-15').toISOString(),
+    owner: {
+      id: 'user3',
+      name: 'Michael Brown',
+      avatar: 'https://i.pravatar.cc/150?img=3'
+    },
+    collaborators: [
+      { id: 'user1', name: 'Alex Johnson', avatar: 'https://i.pravatar.cc/150?img=1' },
+      { id: 'user6', name: 'Lisa Wang', avatar: 'https://i.pravatar.cc/150?img=6' }
+    ],
+    tags: ['database', 'migration', 'cloud']
   },
   {
-    id: 'p5',
-    name: 'Product Training',
-    description: 'Train sales team on new product features',
-    startDate: '2023-11-05',
-    dueDate: '2023-11-15',
-    progress: 0,
-    status: 'notStarted',
-    members: ['Rachel Green', 'Mark Thompson'],
-    tasksCount: {
-      total: 8,
-      completed: 0
-    }
+    id: '4',
+    title: 'Customer Portal Enhancement',
+    description: 'Add new features and improve user experience for the customer self-service portal',
+    status: 'on_hold',
+    createdAt: new Date('2023-09-01').toISOString(),
+    updatedAt: new Date('2023-10-10').toISOString(),
+    dueDate: new Date('2024-01-15').toISOString(),
+    owner: {
+      id: 'user4',
+      name: 'David Chen',
+      avatar: 'https://i.pravatar.cc/150?img=4'
+    },
+    collaborators: [
+      { id: 'user2', name: 'Sarah Wilson', avatar: 'https://i.pravatar.cc/150?img=2' },
+      { id: 'user7', name: 'James Miller', avatar: 'https://i.pravatar.cc/150?img=7' }
+    ],
+    tags: ['ux', 'customer', 'portal']
   },
   {
-    id: 'p6',
-    name: 'Office Relocation',
-    description: 'Move to new office space downtown',
-    startDate: '2023-12-01',
-    dueDate: '2024-01-15',
-    progress: 5,
-    status: 'onHold',
-    members: ['Patricia Lopez', 'Steven Taylor', 'Karen White', 'James Martin'],
-    tasksCount: {
-      total: 20,
-      completed: 1
-    }
+    id: '5',
+    title: 'Security Audit',
+    description: 'Comprehensive security review and implementation of best practices',
+    status: 'active',
+    createdAt: new Date('2023-09-25').toISOString(),
+    updatedAt: new Date('2023-10-15').toISOString(),
+    dueDate: new Date('2023-11-30').toISOString(),
+    owner: {
+      id: 'user5',
+      name: 'Emily Rodriguez',
+      avatar: 'https://i.pravatar.cc/150?img=5'
+    },
+    collaborators: [
+      { id: 'user3', name: 'Michael Brown', avatar: 'https://i.pravatar.cc/150?img=3' },
+      { id: 'user8', name: 'Sophia Garcia', avatar: 'https://i.pravatar.cc/150?img=8' }
+    ],
+    tags: ['security', 'audit', 'compliance']
+  },
+  {
+    id: '6',
+    title: 'API Integration',
+    description: 'Integrate third-party services and build custom API endpoints',
+    status: 'canceled',
+    createdAt: new Date('2023-07-15').toISOString(),
+    updatedAt: new Date('2023-08-30').toISOString(),
+    dueDate: null,
+    owner: {
+      id: 'user6',
+      name: 'Lisa Wang',
+      avatar: 'https://i.pravatar.cc/150?img=6'
+    },
+    collaborators: [
+      { id: 'user4', name: 'David Chen', avatar: 'https://i.pravatar.cc/150?img=4' }
+    ],
+    tags: ['api', 'integration', 'backend']
+  },
+  {
+    id: '7',
+    title: 'Performance Optimization',
+    description: 'Improve application performance and page load times',
+    status: 'active',
+    createdAt: new Date('2023-09-10').toISOString(),
+    updatedAt: new Date('2023-10-12').toISOString(),
+    dueDate: new Date('2023-11-15').toISOString(),
+    owner: {
+      id: 'user7',
+      name: 'James Miller',
+      avatar: 'https://i.pravatar.cc/150?img=7'
+    },
+    collaborators: [
+      { id: 'user1', name: 'Alex Johnson', avatar: 'https://i.pravatar.cc/150?img=1' },
+      { id: 'user5', name: 'Emily Rodriguez', avatar: 'https://i.pravatar.cc/150?img=5' }
+    ],
+    tags: ['performance', 'optimization', 'frontend']
+  },
+  {
+    id: '8',
+    title: 'Content Management System',
+    description: 'Develop a custom CMS for marketing team to manage website content',
+    status: 'completed',
+    createdAt: new Date('2023-06-15').toISOString(),
+    updatedAt: new Date('2023-09-01').toISOString(),
+    dueDate: new Date('2023-08-31').toISOString(),
+    owner: {
+      id: 'user8',
+      name: 'Sophia Garcia',
+      avatar: 'https://i.pravatar.cc/150?img=8'
+    },
+    collaborators: [
+      { id: 'user2', name: 'Sarah Wilson', avatar: 'https://i.pravatar.cc/150?img=2' },
+      { id: 'user6', name: 'Lisa Wang', avatar: 'https://i.pravatar.cc/150?img=6' }
+    ],
+    tags: ['cms', 'content', 'marketing']
   }
 ];
 
@@ -309,4 +376,23 @@ export const mockGanttTasks: GanttTask[] = [
 ];
 
 export const ganttStartDate = new Date('2023-08-15');
-export const ganttEndDate = new Date('2023-11-05'); 
+export const ganttEndDate = new Date('2023-11-05');
+
+// Use this function to get projects with optional delay to simulate API calls
+export function getMockProjects(delay = 1000): Promise<Project[]> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(mockProjects);
+    }, delay);
+  });
+}
+
+// Use this to get a single project by ID
+export function getMockProjectById(id: string, delay = 500): Promise<Project | undefined> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const project = mockProjects.find(p => p.id === id);
+      resolve(project);
+    }, delay);
+  });
+} 

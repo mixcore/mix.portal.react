@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
 import useContainerStatus from '../hooks/useContainerStatus';
 import { getAppConfig } from '../app-loader';
 
@@ -19,6 +20,9 @@ export function AppShell({
   const [activeRibbonTab, setActiveRibbonTab] = useState('file');
   const [appHeight, setAppHeight] = useState(0);
   const appConfig = getAppConfig();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [shareTooltip, setShareTooltip] = useState('');
   
   const handleViewChange = (view: 'projects' | 'tasks' | 'gantt' | 'calendar' | 'board') => {
     if (onViewChange) {
@@ -93,6 +97,39 @@ export function AppShell({
     };
   }, [activeView, isFluidLayout]);
   
+  // Generate deep link for current state
+  const getDeepLink = (): string => {
+    // Create a new URLSearchParams with the current parameters
+    const params = new URLSearchParams(searchParams.toString());
+    
+    // Always include the current view
+    params.set('view', activeView);
+    
+    // Include projectId if we're in tasks view
+    const projectId = params.get('projectId');
+    if (activeView !== 'tasks' && projectId) {
+      params.delete('projectId');
+    }
+    
+    // Build the full URL
+    return `${window.location.origin}${pathname}?${params.toString()}`;
+  };
+  
+  // Copy current URL to clipboard
+  const copyDeepLink = () => {
+    const url = getDeepLink();
+    navigator.clipboard.writeText(url).then(
+      () => {
+        setShareTooltip('Link copied!');
+        setTimeout(() => setShareTooltip(''), 2000);
+      },
+      () => {
+        setShareTooltip('Failed to copy');
+        setTimeout(() => setShareTooltip(''), 2000);
+      }
+    );
+  };
+  
   return (
     <div className={`projects-app-shell flex flex-col ${isFluidLayout ? 'h-full overflow-hidden' : ''}`}>
       {/* MS Project-like header with app title and quick actions */}
@@ -104,12 +141,26 @@ export function AppShell({
             <h1 className="text-lg font-semibold">Mixcore Projects</h1>
           </div>
           <div className="flex items-center space-x-2">
+            <div className="relative">
+              <button 
+                className="text-sm px-3 py-1 rounded-md flex items-center bg-gray-100 text-gray-700 hover:bg-gray-200"
+                onClick={copyDeepLink}
+              >
+                <span className="material-icons-outlined text-sm mr-1">share</span>
+                Share
+              </button>
+              {shareTooltip && (
+                <div className="absolute top-full mt-1 right-0 bg-gray-800 text-white text-xs py-1 px-2 rounded shadow-lg">
+                  {shareTooltip}
+                </div>
+              )}
+            </div>
             <button 
               className={`text-sm px-3 py-1 rounded-md flex items-center ${isFluidLayout ? 'bg-amber-100 text-amber-800 hover:bg-amber-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
               onClick={toggleContainerClass}
             >
               <span className="material-icons-outlined text-sm mr-1">{isFluidLayout ? 'width_normal' : 'width_full'}</span>
-              {isFluidLayout ? 'Normal View' : 'Full Screen'}
+              {isFluidLayout ? 'Normal View' : 'Full Width'}
             </button>
           </div>
         </div>
@@ -166,6 +217,16 @@ export function AppShell({
                 <button className="flex flex-col items-center p-1 text-sm hover:bg-gray-200 rounded">
                   <span className="material-icons-outlined">print</span>
                   <span className="text-xs">Print</span>
+                </button>
+              </div>
+              <div className="ribbon-group px-2 border-r flex space-x-1">
+                <button className="flex flex-col items-center p-1 text-sm hover:bg-gray-200 rounded">
+                  <span className="material-icons-outlined">share</span>
+                  <span className="text-xs">Share</span>
+                </button>
+                <button className="flex flex-col items-center p-1 text-sm hover:bg-gray-200 rounded" onClick={copyDeepLink}>
+                  <span className="material-icons-outlined">link</span>
+                  <span className="text-xs">Copy Link</span>
                 </button>
               </div>
               <div className="ribbon-group px-2 flex space-x-1">
@@ -279,6 +340,17 @@ export function AppShell({
           <div className="px-3 py-1 border-r border-b text-gray-500 flex items-center">
             <span className="material-icons-outlined text-sm mr-1">folder</span>
             {activeView === 'projects' ? 'All Projects' : activeView === 'tasks' ? 'Task List' : activeView === 'gantt' ? 'Timeline' : activeView === 'board' ? 'Board View' : 'Calendar'}
+          </div>
+          
+          {/* Share button for the current view */}
+          <div className="ml-auto px-3 py-1 border-l border-b flex items-center">
+            <button
+              className="text-gray-600 hover:text-blue-600 flex items-center text-xs"
+              onClick={copyDeepLink}
+            >
+              <span className="material-icons-outlined text-xs mr-1">link</span>
+              Copy View Link
+            </button>
           </div>
         </div>
       </div>
