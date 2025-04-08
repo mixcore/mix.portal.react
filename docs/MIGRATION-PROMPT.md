@@ -79,6 +79,7 @@ The application now supports context-specific navigation based on app context, u
 - **Persona-Based Views**: Different users can have tailored experiences (Admin, Content Manager, Designer, etc.)
 - **Role and Permission Support**: Navigation adapts to user's assigned roles and permissions
 - **Priority-Based Ordering**: Menu items are displayed in priority order for better organization
+- **Apps CTA in Header**: Users can quickly switch between app contexts via a dropdown in the header
 
 ### Implementation
 
@@ -86,8 +87,9 @@ Context-specific navigation is implemented through:
 
 1. **NavItem Extensions**: The NavItem interface now includes `contextId`, `appId`, `personaIds`, `roleIds`, etc.
 2. **Context Provider**: The `NavigationContextProvider` manages the active context and persona
-3. **Context Selector**: Users can switch between contexts and personas via the sidebar
+3. **Context Selector**: Users can switch between contexts and personas via the sidebar and header
 4. **Filtered Items**: The sidebar dynamically renders navigation based on the active context
+5. **Header Apps CTA**: Provides a convenient way to switch between app contexts from any page
 
 ### Example Usage
 
