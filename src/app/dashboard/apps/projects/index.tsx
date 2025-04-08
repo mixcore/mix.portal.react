@@ -40,8 +40,9 @@ export function ProjectsApp(props: ProjectsAppProps) {
                 Showing {mockProjects.length} projects
               </div>
               <div>
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-700">
-                  + New Project
+                <button className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-700 flex items-center">
+                  <span className="material-icons-outlined text-sm mr-1">add</span>
+                  New Project
                 </button>
               </div>
             </div>
@@ -64,7 +65,7 @@ export function ProjectsApp(props: ProjectsAppProps) {
                   className="text-blue-600 mr-2" 
                   onClick={() => setActiveView('projects')}
                 >
-                  ← Projects
+                  <span className="material-icons-outlined">arrow_back</span>
                 </button>
                 <h2 className="text-xl font-semibold">{selectedProject?.name || 'Project Tasks'}</h2>
               </div>
@@ -74,8 +75,9 @@ export function ProjectsApp(props: ProjectsAppProps) {
                   {mockTasks.length} tasks · Due {selectedProject?.dueDate}
                 </div>
                 <div>
-                  <button className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-700">
-                    + Add Task
+                  <button className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-700 flex items-center">
+                    <span className="material-icons-outlined text-sm mr-1">add_task</span>
+                    Add Task
                   </button>
                 </div>
               </div>
@@ -113,17 +115,37 @@ export function ProjectsApp(props: ProjectsAppProps) {
       case 'board':
         return (
           <div className="board-view h-full overflow-hidden flex flex-col">
-            <h2 className="text-xl font-semibold p-6 mb-2">Task Board</h2>
+            <div className="p-6 flex justify-between items-center">
+              <h2 className="text-xl font-semibold">Task Board</h2>
+              <button className="bg-blue-600 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-700 flex items-center">
+                <span className="material-icons-outlined text-sm mr-1">add</span>
+                New Task
+              </button>
+            </div>
             <div className="flex-1 overflow-auto">
-              <div className="flex gap-4 overflow-x-auto pb-4 px-6">
+              <div className="flex gap-4 overflow-x-auto pb-4 px-6 h-full">
                 {/* Not Started column */}
                 <div className="board-column min-w-[320px] bg-white rounded-lg shadow max-h-full flex flex-col">
-                  <div className="p-3 bg-gray-100 border-b font-medium sticky top-0">Not Started</div>
-                  <div className="p-2 overflow-auto">
+                  <div className="p-3 bg-gray-50 border-b font-medium sticky top-0 flex justify-between items-center">
+                    <div className="flex items-center">
+                      <span className="h-3 w-3 bg-gray-300 rounded-full mr-2"></span>
+                      <span>Not Started</span>
+                    </div>
+                    <span className="text-xs text-gray-500 px-2 py-1 bg-gray-100 rounded">
+                      {mockTasks.filter(task => task.status === 'notStarted').length}
+                    </span>
+                  </div>
+                  <div className="p-2 overflow-auto flex-1">
                     {mockTasks.filter(task => task.status === 'notStarted').map(task => (
-                      <div key={task.id} className="bg-white p-3 mb-2 rounded border shadow-sm">
-                        <div className="font-medium mb-2">{task.name}</div>
-                        <div className="text-sm text-gray-600 mb-2">Due: {task.dueDate}</div>
+                      <div key={task.id} className="bg-white p-3 mb-2 rounded border shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                        <div className="font-medium mb-2 flex items-center">
+                          {task.name}
+                          {task.priority === 'high' && <span className="ml-2 text-red-500 material-icons-outlined text-sm">priority_high</span>}
+                        </div>
+                        <div className="text-sm text-gray-600 mb-2 flex items-center">
+                          <span className="material-icons-outlined text-xs mr-1">event</span>
+                          {task.dueDate}
+                        </div>
                         <div className="flex justify-between items-center">
                           <span className={`text-xs px-2 py-0.5 rounded-full ${
                             task.priority === 'high' ? 'bg-red-100 text-red-800' : 
@@ -145,25 +167,41 @@ export function ProjectsApp(props: ProjectsAppProps) {
                 
                 {/* In Progress column */}
                 <div className="board-column min-w-[320px] bg-white rounded-lg shadow max-h-full flex flex-col">
-                  <div className="p-3 bg-blue-50 border-b font-medium text-blue-800 sticky top-0">In Progress</div>
-                  <div className="p-2 overflow-auto">
+                  <div className="p-3 bg-blue-50 border-b font-medium text-blue-800 sticky top-0 flex justify-between items-center">
+                    <div className="flex items-center">
+                      <span className="h-3 w-3 bg-blue-500 rounded-full mr-2"></span>
+                      <span>In Progress</span>
+                    </div>
+                    <span className="text-xs text-blue-700 px-2 py-1 bg-blue-100 rounded">
+                      {mockTasks.filter(task => task.status === 'inProgress').length}
+                    </span>
+                  </div>
+                  <div className="p-2 overflow-auto flex-1">
                     {mockTasks.filter(task => task.status === 'inProgress').map(task => (
-                      <div key={task.id} className="bg-white p-3 mb-2 rounded border shadow-sm">
-                        <div className="font-medium mb-2">{task.name}</div>
-                        <div className="text-sm text-gray-600 mb-2">Due: {task.dueDate}</div>
+                      <div key={task.id} className="bg-white p-3 mb-2 rounded border shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                        <div className="font-medium mb-2 flex items-center">
+                          {task.name}
+                          {task.priority === 'high' && <span className="ml-2 text-red-500 material-icons-outlined text-sm">priority_high</span>}
+                        </div>
+                        <div className="text-sm text-gray-600 mb-2 flex items-center">
+                          <span className="material-icons-outlined text-xs mr-1">event</span>
+                          {task.dueDate}
+                        </div>
                         <div className="flex justify-between items-center">
-                          <span className={`text-xs px-2 py-0.5 rounded-full ${
-                            task.priority === 'high' ? 'bg-red-100 text-red-800' : 
-                            task.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' : 
-                            'bg-green-100 text-green-800'
-                          }`}>
-                            {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
-                          </span>
+                          <div className="text-xs text-gray-500">
+                            {task.progress}% complete
+                          </div>
                           {task.assignedTo && (
                             <div className="h-6 w-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold">
                               {task.assignedTo.slice(0, 2).toUpperCase()}
                             </div>
                           )}
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-1 mt-2">
+                          <div 
+                            className="bg-blue-600 h-1 rounded-full" 
+                            style={{ width: `${task.progress}%` }}
+                          ></div>
                         </div>
                       </div>
                     ))}
@@ -172,22 +210,31 @@ export function ProjectsApp(props: ProjectsAppProps) {
                 
                 {/* Completed column */}
                 <div className="board-column min-w-[320px] bg-white rounded-lg shadow max-h-full flex flex-col">
-                  <div className="p-3 bg-green-50 border-b font-medium text-green-800 sticky top-0">Completed</div>
-                  <div className="p-2 overflow-auto">
+                  <div className="p-3 bg-green-50 border-b font-medium text-green-800 sticky top-0 flex justify-between items-center">
+                    <div className="flex items-center">
+                      <span className="h-3 w-3 bg-green-500 rounded-full mr-2"></span>
+                      <span>Completed</span>
+                    </div>
+                    <span className="text-xs text-green-700 px-2 py-1 bg-green-100 rounded">
+                      {mockTasks.filter(task => task.status === 'completed').length}
+                    </span>
+                  </div>
+                  <div className="p-2 overflow-auto flex-1">
                     {mockTasks.filter(task => task.status === 'completed').map(task => (
-                      <div key={task.id} className="bg-white p-3 mb-2 rounded border shadow-sm">
-                        <div className="font-medium mb-2">{task.name}</div>
-                        <div className="text-sm text-gray-600 mb-2">Due: {task.dueDate}</div>
+                      <div key={task.id} className="bg-white p-3 mb-2 rounded border shadow-sm hover:shadow-md transition-shadow cursor-pointer opacity-80">
+                        <div className="font-medium mb-2 flex items-center line-through text-gray-500">
+                          {task.name}
+                        </div>
+                        <div className="text-sm text-gray-400 mb-2 flex items-center">
+                          <span className="material-icons-outlined text-xs mr-1">event</span>
+                          {task.dueDate}
+                        </div>
                         <div className="flex justify-between items-center">
-                          <span className={`text-xs px-2 py-0.5 rounded-full ${
-                            task.priority === 'high' ? 'bg-red-100 text-red-800' : 
-                            task.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' : 
-                            'bg-green-100 text-green-800'
-                          }`}>
-                            {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-800">
+                            100% Complete
                           </span>
                           {task.assignedTo && (
-                            <div className="h-6 w-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold">
+                            <div className="h-6 w-6 rounded-full bg-gray-400 text-white flex items-center justify-center text-xs font-bold">
                               {task.assignedTo.slice(0, 2).toUpperCase()}
                             </div>
                           )}
@@ -204,10 +251,53 @@ export function ProjectsApp(props: ProjectsAppProps) {
       case 'calendar':
         return (
           <div className="calendar-view h-full overflow-hidden flex flex-col">
-            <h2 className="text-xl font-semibold p-6 mb-4">Calendar View</h2>
-            <div className="flex-1 flex items-center justify-center">
-              <div className="bg-white p-6 rounded-lg shadow text-center">
-                <p className="text-gray-500">Calendar view is under development</p>
+            <div className="p-6 flex items-center justify-between">
+              <h2 className="text-xl font-semibold">Calendar View</h2>
+              <div className="flex items-center space-x-2">
+                <button className="border bg-white p-1 rounded hover:bg-gray-100">
+                  <span className="material-icons-outlined">chevron_left</span>
+                </button>
+                <span className="text-sm font-medium">October 2023</span>
+                <button className="border bg-white p-1 rounded hover:bg-gray-100">
+                  <span className="material-icons-outlined">chevron_right</span>
+                </button>
+                <button className="border bg-white px-3 py-1 rounded text-sm hover:bg-gray-100 ml-2">
+                  Today
+                </button>
+              </div>
+            </div>
+            <div className="flex-1 px-6 pb-6">
+              <div className="bg-white rounded-lg shadow h-full p-4 flex flex-col">
+                <div className="grid grid-cols-7 gap-px bg-gray-200">
+                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                    <div key={day} className="bg-gray-50 font-medium text-sm p-2 text-center">
+                      {day}
+                    </div>
+                  ))}
+                </div>
+                <div className="flex-1 grid grid-cols-7 grid-rows-5 gap-px bg-gray-200">
+                  {Array.from({ length: 35 }).map((_, i) => {
+                    // Simplified calendar logic
+                    const dayNum = i - 6; // Offset for the month
+                    const isCurrentMonth = dayNum > 0 && dayNum <= 31;
+                    const isToday = dayNum === 15; // Just for demonstration
+                    
+                    return (
+                      <div 
+                        key={i} 
+                        className={`bg-white p-1 ${isCurrentMonth ? '' : 'text-gray-400'} ${isToday ? 'ring-2 ring-blue-500 ring-inset' : ''}`}
+                      >
+                        <div className="text-xs p-1">{isCurrentMonth ? dayNum : (dayNum <= 0 ? 30 + dayNum : dayNum - 31)}</div>
+                        {/* Task indicators for demo */}
+                        {isCurrentMonth && dayNum >= 10 && dayNum <= 20 && i % 3 === 0 && (
+                          <div className="text-xs p-1 bg-blue-50 border border-blue-200 rounded mt-1 truncate">
+                            <div className="font-medium">Task {dayNum}</div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>
@@ -223,48 +313,7 @@ export function ProjectsApp(props: ProjectsAppProps) {
       activeView={activeView}
       onViewChange={handleViewChange}
     >
-      {/* Navigation tabs */}
-      <div className="projects-app-tabs px-6 py-3 bg-gray-50 border-b flex space-x-4">
-        <button
-          className={`px-3 py-1 rounded-md text-sm flex items-center ${activeView === 'projects' ? 'bg-white shadow text-blue-700' : 'text-gray-600 hover:bg-gray-100'}`}
-          onClick={() => handleViewChange('projects')}
-        >
-          <span className="material-icons-outlined text-sm mr-1">dashboard</span>
-          Projects
-        </button>
-        <button
-          className={`px-3 py-1 rounded-md text-sm flex items-center ${activeView === 'tasks' ? 'bg-white shadow text-blue-700' : 'text-gray-600 hover:bg-gray-100'}`}
-          onClick={() => selectedProjectId && handleViewChange('tasks')}
-          disabled={!selectedProjectId}
-        >
-          <span className="material-icons-outlined text-sm mr-1">assignment</span>
-          Tasks
-        </button>
-        <button
-          className={`px-3 py-1 rounded-md text-sm flex items-center ${activeView === 'board' ? 'bg-white shadow text-blue-700' : 'text-gray-600 hover:bg-gray-100'}`}
-          onClick={() => handleViewChange('board')}
-        >
-          <span className="material-icons-outlined text-sm mr-1">view_kanban</span>
-          Board
-        </button>
-        <button
-          className={`px-3 py-1 rounded-md text-sm flex items-center ${activeView === 'gantt' ? 'bg-white shadow text-blue-700' : 'text-gray-600 hover:bg-gray-100'}`}
-          onClick={() => handleViewChange('gantt')}
-        >
-          <span className="material-icons-outlined text-sm mr-1">stacked_bar_chart</span>
-          Gantt
-        </button>
-        <button
-          className={`px-3 py-1 rounded-md text-sm flex items-center ${activeView === 'calendar' ? 'bg-white shadow text-blue-700' : 'text-gray-600 hover:bg-gray-100'}`}
-          onClick={() => handleViewChange('calendar')}
-        >
-          <span className="material-icons-outlined text-sm mr-1">calendar_today</span>
-          Calendar
-        </button>
-      </div>
-      
-      {/* Main content area */}
-      <div className="projects-app-main">
+      <div className="projects-app-main h-full">
         {renderView()}
       </div>
     </AppShell>

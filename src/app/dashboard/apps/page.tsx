@@ -19,7 +19,7 @@ export default function AppsPage() {
   
   return (
     <PageLayout>
-      <PageHeader title={`${appNames[appId] || appId} App`} />
+      {/*<PageHeader title={`${appNames[appId] || appId} App`} />*/}
       <main className="app-container">
         <AppLoader appId={appId} />
       </main>

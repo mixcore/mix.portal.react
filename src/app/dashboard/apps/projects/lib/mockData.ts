@@ -164,15 +164,149 @@ export const mockTasks: TaskProps[] = [
   }
 ];
 
-// Sample Gantt data
-export const mockGanttTasks: GanttTask[] = mockTasks.map(task => ({
-  id: task.id,
-  name: task.name,
-  startDate: new Date(task.startDate),
-  endDate: new Date(task.dueDate),
-  progress: task.progress,
-  assignedTo: task.assignedTo
-}));
+// Enhanced Gantt data with dependencies, critical paths, and milestones
+export const mockGanttTasks: GanttTask[] = [
+  {
+    id: 't1',
+    name: 'Project Kickoff',
+    startDate: new Date('2023-08-15'),
+    endDate: new Date('2023-08-15'),
+    progress: 100,
+    assignedTo: 'John Doe',
+    isMilestone: true,
+    isCritical: true
+  },
+  {
+    id: 't2',
+    name: 'Requirements Gathering',
+    startDate: new Date('2023-08-16'),
+    endDate: new Date('2023-08-25'),
+    progress: 100,
+    assignedTo: 'John Doe',
+    dependencies: ['t1'],
+    isCritical: true
+  },
+  {
+    id: 't3',
+    name: 'Wireframing',
+    startDate: new Date('2023-08-26'),
+    endDate: new Date('2023-09-05'),
+    progress: 100,
+    assignedTo: 'Jane Smith',
+    dependencies: ['t2'],
+    isCritical: true
+  },
+  {
+    id: 't4',
+    name: 'Review Wireframes',
+    startDate: new Date('2023-09-06'),
+    endDate: new Date('2023-09-06'),
+    progress: 100,
+    isMilestone: true,
+    dependencies: ['t3'],
+    isCritical: true
+  },
+  {
+    id: 't5',
+    name: 'UI Design',
+    startDate: new Date('2023-09-07'),
+    endDate: new Date('2023-09-25'),
+    progress: 100,
+    assignedTo: 'Jane Smith',
+    dependencies: ['t4'],
+    isCritical: true
+  },
+  {
+    id: 't6',
+    name: 'Design Approval',
+    startDate: new Date('2023-09-26'),
+    endDate: new Date('2023-09-26'),
+    progress: 100,
+    isMilestone: true,
+    dependencies: ['t5'],
+    isCritical: true
+  },
+  {
+    id: 't7',
+    name: 'Frontend Development',
+    startDate: new Date('2023-09-27'),
+    endDate: new Date('2023-10-15'),
+    progress: 65,
+    assignedTo: 'Robert Johnson',
+    dependencies: ['t6'],
+    isCritical: true
+  },
+  {
+    id: 't8',
+    name: 'Backend Integration',
+    startDate: new Date('2023-10-10'),
+    endDate: new Date('2023-10-20'),
+    progress: 30,
+    assignedTo: 'Lisa Wong',
+    dependencies: ['t6'],
+    isCritical: false
+  },
+  {
+    id: 't9',
+    name: 'Content Creation',
+    startDate: new Date('2023-09-27'),
+    endDate: new Date('2023-10-10'),
+    progress: 100,
+    assignedTo: 'Emily Davis',
+    dependencies: ['t6'],
+    isCritical: false
+  },
+  {
+    id: 't10',
+    name: 'Testing',
+    startDate: new Date('2023-10-16'),
+    endDate: new Date('2023-10-27'),
+    progress: 0,
+    assignedTo: 'John Doe',
+    dependencies: ['t7', 't8'],
+    isCritical: true
+  },
+  {
+    id: 't11',
+    name: 'Client Review',
+    startDate: new Date('2023-10-20'),
+    endDate: new Date('2023-10-25'),
+    progress: 0,
+    assignedTo: 'Jane Smith',
+    dependencies: ['t9'],
+    isCritical: false
+  },
+  {
+    id: 't12',
+    name: 'Final Adjustments',
+    startDate: new Date('2023-10-26'),
+    endDate: new Date('2023-10-28'),
+    progress: 0,
+    assignedTo: 'Robert Johnson',
+    dependencies: ['t11'],
+    isCritical: false
+  },
+  {
+    id: 't13',
+    name: 'Deployment',
+    startDate: new Date('2023-10-28'),
+    endDate: new Date('2023-10-30'),
+    progress: 0,
+    assignedTo: 'Lisa Wong',
+    dependencies: ['t10', 't12'],
+    isCritical: true
+  },
+  {
+    id: 't14',
+    name: 'Website Launch',
+    startDate: new Date('2023-10-30'),
+    endDate: new Date('2023-10-30'),
+    progress: 0,
+    isMilestone: true,
+    dependencies: ['t13'],
+    isCritical: true
+  }
+];
 
 export const ganttStartDate = new Date('2023-08-15');
 export const ganttEndDate = new Date('2023-11-05'); 

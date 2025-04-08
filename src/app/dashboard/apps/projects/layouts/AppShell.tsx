@@ -15,6 +15,7 @@ export function AppShell({
   onViewChange 
 }: AppShellProps) {
   const isFluidLayout = useContainerStatus();
+  const [activeRibbonTab, setActiveRibbonTab] = useState('file');
   
   const handleViewChange = (view: 'projects' | 'tasks' | 'gantt' | 'calendar' | 'board') => {
     if (onViewChange) {
@@ -67,58 +68,196 @@ export function AppShell({
   
   return (
     <div className={`projects-app-shell flex flex-col ${isFluidLayout ? 'h-full overflow-hidden' : ''}`}>
-      {/* Projects app-specific header elements */}
-      <div className="projects-app-header border-b bg-white px-4 py-2 flex items-center justify-between">
-        <div className="flex items-center">
-          <h1 className="text-xl font-semibold text-blue-700">Projects</h1>
-          <div className="ml-6 flex space-x-4">
+      {/* MS Project-like header with app title and quick actions */}
+      <div className="projects-app-header bg-white border-b flex flex-col">
+        {/* Title bar with app name and controls */}
+        <div className="flex items-center justify-between p-2 border-b">
+          <div className="flex items-center">
+            <span className="material-icons-outlined mr-2 text-blue-600">space_dashboard</span>
+            <h1 className="text-lg font-semibold">Mixcore Projects</h1>
+          </div>
+          <div className="flex items-center space-x-2">
             <button 
-              className={`text-sm px-3 py-1 rounded ${activeView === 'tasks' ? 'bg-blue-50 text-blue-700' : 'hover:bg-gray-100'}`}
-              onClick={() => handleViewChange('tasks')}
+              className={`text-sm px-3 py-1 rounded-md flex items-center ${isFluidLayout ? 'bg-amber-100 text-amber-800 hover:bg-amber-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+              onClick={toggleContainerClass}
             >
-              Timeline
-            </button>
-            <button 
-              className={`text-sm px-3 py-1 rounded ${activeView === 'board' ? 'bg-blue-50 text-blue-700' : 'hover:bg-gray-100'}`}
-              onClick={() => handleViewChange('board')}
-            >
-              Board
-            </button>
-            <button 
-              className={`text-sm px-3 py-1 rounded ${activeView === 'gantt' ? 'bg-blue-50 text-blue-700' : 'hover:bg-gray-100'}`}
-              onClick={() => handleViewChange('gantt')}
-            >
-              Gantt
-            </button>
-            <button 
-              className={`text-sm px-3 py-1 rounded ${activeView === 'calendar' ? 'bg-blue-50 text-blue-700' : 'hover:bg-gray-100'}`}
-              onClick={() => handleViewChange('calendar')}
-            >
-              Calendar
+              <span className="material-icons-outlined text-sm mr-1">{isFluidLayout ? 'width_normal' : 'width_full'}</span>
+              {isFluidLayout ? 'Normal View' : 'Full Screen'}
             </button>
           </div>
         </div>
-        <div className="flex items-center space-x-2">
+        
+        {/* Ribbon tabs */}
+        <div className="ribbon-tabs flex text-sm border-b">
           <button 
-            className={`text-sm px-3 py-1 rounded-md flex items-center ${isFluidLayout ? 'bg-amber-100 text-amber-800 hover:bg-amber-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-            onClick={toggleContainerClass}
+            className={`px-4 py-2 ${activeRibbonTab === 'file' ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-600' : 'hover:bg-gray-50'}`}
+            onClick={() => setActiveRibbonTab('file')}
           >
-            <span className="material-icons-outlined text-sm mr-1">{isFluidLayout ? 'width_normal' : 'width_full'}</span>
-            {isFluidLayout ? 'Contained View' : 'Full Width'}
+            File
           </button>
-          <button className="text-sm px-3 py-1 bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100 flex items-center">
-            <span className="material-icons-outlined text-sm mr-1">share</span>
-            Share
+          <button 
+            className={`px-4 py-2 ${activeRibbonTab === 'task' ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-600' : 'hover:bg-gray-50'}`}
+            onClick={() => setActiveRibbonTab('task')}
+          >
+            Task
           </button>
-          <button className="text-sm px-3 py-1 bg-blue-700 text-white rounded-md hover:bg-blue-800 flex items-center">
-            <span className="material-icons-outlined text-sm mr-1">add</span>
-            New Task
+          <button 
+            className={`px-4 py-2 ${activeRibbonTab === 'resource' ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-600' : 'hover:bg-gray-50'}`}
+            onClick={() => setActiveRibbonTab('resource')}
+          >
+            Resource
           </button>
+          <button 
+            className={`px-4 py-2 ${activeRibbonTab === 'report' ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-600' : 'hover:bg-gray-50'}`}
+            onClick={() => setActiveRibbonTab('report')}
+          >
+            Report
+          </button>
+          <button 
+            className={`px-4 py-2 ${activeRibbonTab === 'view' ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-600' : 'hover:bg-gray-50'}`}
+            onClick={() => setActiveRibbonTab('view')}
+          >
+            View
+          </button>
+        </div>
+        
+        {/* Ribbon content based on active tab */}
+        <div className="ribbon-content p-1 border-b flex items-center bg-gray-50">
+          {activeRibbonTab === 'file' && (
+            <div className="flex items-center space-x-4">
+              <div className="ribbon-group px-2 border-r">
+                <button className="flex flex-col items-center p-1 text-sm hover:bg-gray-200 rounded">
+                  <span className="material-icons-outlined">add</span>
+                  <span className="text-xs">New</span>
+                </button>
+              </div>
+              <div className="ribbon-group px-2 border-r flex space-x-1">
+                <button className="flex flex-col items-center p-1 text-sm hover:bg-gray-200 rounded">
+                  <span className="material-icons-outlined">save</span>
+                  <span className="text-xs">Save</span>
+                </button>
+                <button className="flex flex-col items-center p-1 text-sm hover:bg-gray-200 rounded">
+                  <span className="material-icons-outlined">print</span>
+                  <span className="text-xs">Print</span>
+                </button>
+              </div>
+              <div className="ribbon-group px-2 flex space-x-1">
+                <button className="flex flex-col items-center p-1 text-sm hover:bg-gray-200 rounded">
+                  <span className="material-icons-outlined">undo</span>
+                  <span className="text-xs">Undo</span>
+                </button>
+                <button className="flex flex-col items-center p-1 text-sm hover:bg-gray-200 rounded">
+                  <span className="material-icons-outlined">redo</span>
+                  <span className="text-xs">Redo</span>
+                </button>
+              </div>
+            </div>
+          )}
+          
+          {activeRibbonTab === 'task' && (
+            <div className="flex items-center space-x-4">
+              <div className="ribbon-group px-2 border-r flex space-x-1">
+                <button className="flex flex-col items-center p-1 text-sm hover:bg-gray-200 rounded">
+                  <span className="material-icons-outlined">add_task</span>
+                  <span className="text-xs">Add Task</span>
+                </button>
+                <button className="flex flex-col items-center p-1 text-sm hover:bg-gray-200 rounded">
+                  <span className="material-icons-outlined">link</span>
+                  <span className="text-xs">Link</span>
+                </button>
+              </div>
+              <div className="ribbon-group px-2 border-r flex space-x-1">
+                <button className="flex flex-col items-center p-1 text-sm hover:bg-gray-200 rounded">
+                  <span className="material-icons-outlined">check_circle</span>
+                  <span className="text-xs">Mark Complete</span>
+                </button>
+                <button className="flex flex-col items-center p-1 text-sm hover:bg-gray-200 rounded">
+                  <span className="material-icons-outlined">schedule</span>
+                  <span className="text-xs">Reschedule</span>
+                </button>
+              </div>
+            </div>
+          )}
+          
+          {activeRibbonTab === 'view' && (
+            <div className="flex items-center space-x-4">
+              <div className="ribbon-group px-2 border-r flex space-x-1">
+                <button 
+                  className={`flex flex-col items-center p-1 text-sm rounded ${activeView === 'projects' ? 'bg-blue-100' : 'hover:bg-gray-200'}`}
+                  onClick={() => handleViewChange('projects')}
+                >
+                  <span className="material-icons-outlined">dashboard</span>
+                  <span className="text-xs">Projects</span>
+                </button>
+                <button 
+                  className={`flex flex-col items-center p-1 text-sm rounded ${activeView === 'tasks' ? 'bg-blue-100' : 'hover:bg-gray-200'}`}
+                  onClick={() => handleViewChange('tasks')}
+                >
+                  <span className="material-icons-outlined">assignment</span>
+                  <span className="text-xs">Tasks</span>
+                </button>
+                <button 
+                  className={`flex flex-col items-center p-1 text-sm rounded ${activeView === 'gantt' ? 'bg-blue-100' : 'hover:bg-gray-200'}`}
+                  onClick={() => handleViewChange('gantt')}
+                >
+                  <span className="material-icons-outlined">stacked_bar_chart</span>
+                  <span className="text-xs">Gantt</span>
+                </button>
+                <button 
+                  className={`flex flex-col items-center p-1 text-sm rounded ${activeView === 'board' ? 'bg-blue-100' : 'hover:bg-gray-200'}`}
+                  onClick={() => handleViewChange('board')}
+                >
+                  <span className="material-icons-outlined">view_kanban</span>
+                  <span className="text-xs">Board</span>
+                </button>
+                <button 
+                  className={`flex flex-col items-center p-1 text-sm rounded ${activeView === 'calendar' ? 'bg-blue-100' : 'hover:bg-gray-200'}`}
+                  onClick={() => handleViewChange('calendar')}
+                >
+                  <span className="material-icons-outlined">calendar_today</span>
+                  <span className="text-xs">Calendar</span>
+                </button>
+              </div>
+              <div className="ribbon-group px-2 border-r flex space-x-1">
+                <button className="flex flex-col items-center p-1 text-sm hover:bg-gray-200 rounded">
+                  <span className="material-icons-outlined">zoom_in</span>
+                  <span className="text-xs">Zoom In</span>
+                </button>
+                <button className="flex flex-col items-center p-1 text-sm hover:bg-gray-200 rounded">
+                  <span className="material-icons-outlined">zoom_out</span>
+                  <span className="text-xs">Zoom Out</span>
+                </button>
+              </div>
+            </div>
+          )}
+          
+          {(activeRibbonTab === 'resource' || activeRibbonTab === 'report') && (
+            <div className="p-2 text-sm text-gray-500">
+              Features coming soon...
+            </div>
+          )}
+        </div>
+        
+        {/* View selector tabs - making them smaller and more integrated with the ribbon */}
+        <div className="view-tabs bg-white text-sm flex">
+          {activeView !== 'projects' && (
+            <button 
+              className="px-3 py-1 border-r border-b text-blue-700 hover:bg-blue-50 flex items-center"
+              onClick={() => handleViewChange('projects')}
+            >
+              <span className="material-icons-outlined text-sm mr-1">arrow_back</span>
+              All Projects
+            </button>
+          )}
+          <div className="px-3 py-1 border-r border-b text-gray-500 flex items-center">
+            <span className="material-icons-outlined text-sm mr-1">folder</span>
+            {activeView === 'projects' ? 'All Projects' : activeView === 'tasks' ? 'Task List' : activeView === 'gantt' ? 'Timeline' : activeView === 'board' ? 'Board View' : 'Calendar'}
+          </div>
         </div>
       </div>
       
       {/* App content area */}
-      <div className={`projects-app-content ${isFluidLayout ? 'h-[calc(100vh-100px)]' : 'flex-1 overflow-auto'}`}>
+      <div className={`projects-app-content ${isFluidLayout ? 'h-[calc(100vh-172px)]' : 'flex-1 overflow-auto'}`}>
         {children}
       </div>
     </div>
