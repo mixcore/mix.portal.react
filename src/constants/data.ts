@@ -328,889 +328,1465 @@ export const contextNavItems: NavItem[] = [
     priority: 0
   },
   
-  // Website Category
+  // Moved second-level items to first level (Website context)
   {
-    title: 'Website',
-    url: '/dashboard/website',
-    icon: 'fileText',
-    isActive: false,
-    shortcut: ['w', 'b'],
+    title: 'Pages',
+    url: '/dashboard/pages',
+    icon: 'page',
+    shortcut: ['p', 'g'],
     contextId: 'website',
     appId: 'website',
     priority: 10,
     items: [
       {
-        title: 'Pages',
-        url: '/dashboard/pages',
-        icon: 'page',
-        shortcut: ['p', 'g'],
+        title: 'Recent Pages',
+        url: '/dashboard/pages/recent',
         contextId: 'website',
         appId: 'website',
         items: [
           {
-            title: 'Recent Pages',
-            url: '/dashboard/pages/recent',
+            title: 'Published Today',
+            url: '/dashboard/pages/recent/today',
             contextId: 'website',
             appId: 'website'
           },
           {
-            title: 'Published',
-            url: '/dashboard/pages/published',
+            title: 'This Week',
+            url: '/dashboard/pages/recent/week',
             contextId: 'website',
             appId: 'website'
           },
           {
-            title: 'Drafts',
-            url: '/dashboard/pages/drafts',
-            contextId: 'website',
-            appId: 'website'
-          },
-          {
-            title: 'Templates',
-            url: '/dashboard/pages/templates',
-            contextId: 'website',
-            appId: 'website'
-          },
-          {
-            title: 'SEO Settings',
-            url: '/dashboard/pages/seo',
+            title: 'This Month',
+            url: '/dashboard/pages/recent/month',
             contextId: 'website',
             appId: 'website'
           }
         ]
       },
       {
-        title: 'eCommerce',
-        url: '/dashboard/ecommerce',
-        icon: 'product',
-        shortcut: ['e', 'c'],
+        title: 'Published',
+        url: '/dashboard/pages/published',
+        contextId: 'website',
+        appId: 'website',
+        items: [
+          {
+            title: 'Landing Pages',
+            url: '/dashboard/pages/published/landing',
+            contextId: 'website',
+            appId: 'website'
+          },
+          {
+            title: 'Content Pages',
+            url: '/dashboard/pages/published/content',
+            contextId: 'website',
+            appId: 'website'
+          },
+          {
+            title: 'System Pages',
+            url: '/dashboard/pages/published/system',
+            contextId: 'website',
+            appId: 'website'
+          }
+        ]
+      },
+      {
+        title: 'Drafts',
+        url: '/dashboard/pages/drafts',
+        contextId: 'website',
+        appId: 'website',
+        items: [
+          {
+            title: 'In Review',
+            url: '/dashboard/pages/drafts/review',
+            contextId: 'website',
+            appId: 'website'
+          },
+          {
+            title: 'Needs Approval',
+            url: '/dashboard/pages/drafts/approval',
+            contextId: 'website',
+            appId: 'website'
+          },
+          {
+            title: 'Work in Progress',
+            url: '/dashboard/pages/drafts/wip',
+            contextId: 'website',
+            appId: 'website'
+          }
+        ]
+      },
+      {
+        title: 'Templates',
+        url: '/dashboard/pages/templates',
+        contextId: 'website',
+        appId: 'website',
+        items: [
+          {
+            title: 'Blank Templates',
+            url: '/dashboard/pages/templates/blank',
+            contextId: 'website',
+            appId: 'website'
+          },
+          {
+            title: 'Section Templates',
+            url: '/dashboard/pages/templates/sections',
+            contextId: 'website',
+            appId: 'website'
+          },
+          {
+            title: 'Custom Templates',
+            url: '/dashboard/pages/templates/custom',
+            contextId: 'website',
+            appId: 'website'
+          }
+        ]
+      },
+      {
+        title: 'SEO Settings',
+        url: '/dashboard/pages/seo',
+        contextId: 'website',
+        appId: 'website',
+        items: [
+          {
+            title: 'Meta Descriptions',
+            url: '/dashboard/pages/seo/meta',
+            contextId: 'website',
+            appId: 'website'
+          },
+          {
+            title: 'Keywords',
+            url: '/dashboard/pages/seo/keywords',
+            contextId: 'website',
+            appId: 'website'
+          },
+          {
+            title: 'Analytics',
+            url: '/dashboard/pages/seo/analytics',
+            contextId: 'website',
+            appId: 'website'
+          }
+        ]
+      }
+    ]
+  },
+  {
+    title: 'eCommerce',
+    url: '/dashboard/ecommerce',
+    icon: 'product',
+    shortcut: ['e', 'c'],
+    contextId: 'website',
+    appId: 'ecommerce',
+    priority: 11,
+    items: [
+      {
+        title: 'Products',
+        url: '/dashboard/ecommerce/products',
         contextId: 'website',
         appId: 'ecommerce',
         items: [
           {
-            title: 'Products',
-            url: '/dashboard/ecommerce/products',
+            title: 'Physical Products',
+            url: '/dashboard/ecommerce/products/physical',
             contextId: 'website',
             appId: 'ecommerce'
           },
           {
-            title: 'Orders',
-            url: '/dashboard/ecommerce/orders',
+            title: 'Digital Products',
+            url: '/dashboard/ecommerce/products/digital',
             contextId: 'website',
             appId: 'ecommerce'
           },
           {
-            title: 'Customers',
-            url: '/dashboard/ecommerce/customers',
-            contextId: 'website',
-            appId: 'ecommerce'
-          },
-          {
-            title: 'Inventory',
-            url: '/dashboard/ecommerce/inventory',
-            contextId: 'website',
-            appId: 'ecommerce'
-          },
-          {
-            title: 'Discounts',
-            url: '/dashboard/ecommerce/discounts',
-            contextId: 'website',
-            appId: 'ecommerce'
-          },
-          {
-            title: 'Payment Methods',
-            url: '/dashboard/ecommerce/payments',
-            contextId: 'website',
-            appId: 'ecommerce'
-          },
-          {
-            title: 'Shipping Options',
-            url: '/dashboard/ecommerce/shipping',
+            title: 'Subscriptions',
+            url: '/dashboard/ecommerce/products/subscriptions',
             contextId: 'website',
             appId: 'ecommerce'
           }
         ]
       },
       {
-        title: 'Blog',
-        url: '/dashboard/posts',
-        icon: 'post',
-        shortcut: ['b', 'l'],
+        title: 'Orders',
+        url: '/dashboard/ecommerce/orders',
+        contextId: 'website',
+        appId: 'ecommerce',
+        items: [
+          {
+            title: 'Pending Orders',
+            url: '/dashboard/ecommerce/orders/pending',
+            contextId: 'website',
+            appId: 'ecommerce'
+          },
+          {
+            title: 'Completed Orders',
+            url: '/dashboard/ecommerce/orders/completed',
+            contextId: 'website',
+            appId: 'ecommerce'
+          },
+          {
+            title: 'Returned Orders',
+            url: '/dashboard/ecommerce/orders/returned',
+            contextId: 'website',
+            appId: 'ecommerce'
+          }
+        ]
+      },
+      {
+        title: 'Customers',
+        url: '/dashboard/ecommerce/customers',
+        contextId: 'website',
+        appId: 'ecommerce',
+        items: [
+          {
+            title: 'New Customers',
+            url: '/dashboard/ecommerce/customers/new',
+            contextId: 'website',
+            appId: 'ecommerce'
+          },
+          {
+            title: 'Repeat Customers',
+            url: '/dashboard/ecommerce/customers/repeat',
+            contextId: 'website',
+            appId: 'ecommerce'
+          },
+          {
+            title: 'VIP Customers',
+            url: '/dashboard/ecommerce/customers/vip',
+            contextId: 'website',
+            appId: 'ecommerce'
+          }
+        ]
+      },
+      {
+        title: 'Inventory',
+        url: '/dashboard/ecommerce/inventory',
+        contextId: 'website',
+        appId: 'ecommerce',
+        items: [
+          {
+            title: 'Stock Levels',
+            url: '/dashboard/ecommerce/inventory/stock',
+            contextId: 'website',
+            appId: 'ecommerce'
+          },
+          {
+            title: 'Replenishment',
+            url: '/dashboard/ecommerce/inventory/replenishment',
+            contextId: 'website',
+            appId: 'ecommerce'
+          },
+          {
+            title: 'Warehouses',
+            url: '/dashboard/ecommerce/inventory/warehouses',
+            contextId: 'website',
+            appId: 'ecommerce'
+          }
+        ]
+      },
+      {
+        title: 'Discounts',
+        url: '/dashboard/ecommerce/discounts',
+        contextId: 'website',
+        appId: 'ecommerce',
+        items: [
+          {
+            title: 'Coupon Codes',
+            url: '/dashboard/ecommerce/discounts/coupons',
+            contextId: 'website',
+            appId: 'ecommerce'
+          },
+          {
+            title: 'Special Offers',
+            url: '/dashboard/ecommerce/discounts/offers',
+            contextId: 'website',
+            appId: 'ecommerce'
+          },
+          {
+            title: 'Bulk Discounts',
+            url: '/dashboard/ecommerce/discounts/bulk',
+            contextId: 'website',
+            appId: 'ecommerce'
+          }
+        ]
+      }
+    ]
+  },
+  {
+    title: 'Blog',
+    url: '/dashboard/posts',
+    icon: 'post',
+    shortcut: ['b', 'l'],
+    contextId: 'website',
+    appId: 'blog',
+    priority: 12,
+    items: [
+      {
+        title: 'All Posts',
+        url: '/dashboard/posts/all',
         contextId: 'website',
         appId: 'blog',
         items: [
           {
-            title: 'All Posts',
-            url: '/dashboard/posts/all',
+            title: 'Featured Posts',
+            url: '/dashboard/posts/all/featured',
             contextId: 'website',
             appId: 'blog'
           },
           {
-            title: 'Categories',
-            url: '/dashboard/posts/categories',
+            title: 'Popular Posts',
+            url: '/dashboard/posts/all/popular',
             contextId: 'website',
             appId: 'blog'
           },
           {
-            title: 'Tags',
-            url: '/dashboard/posts/tags',
-            contextId: 'website',
-            appId: 'blog'
-          },
-          {
-            title: 'Comments',
-            url: '/dashboard/posts/comments',
-            contextId: 'website',
-            appId: 'blog'
-          },
-          {
-            title: 'Analytics',
-            url: '/dashboard/posts/analytics',
-            contextId: 'website',
-            appId: 'blog'
-          },
-          {
-            title: 'Schedules',
-            url: '/dashboard/posts/schedules',
+            title: 'Archives',
+            url: '/dashboard/posts/all/archives',
             contextId: 'website',
             appId: 'blog'
           }
         ]
       },
       {
-        title: 'Forum',
-        url: '/dashboard/forum',
-        icon: 'form',
-        shortcut: ['f', 'r'],
+        title: 'Categories',
+        url: '/dashboard/posts/categories',
         contextId: 'website',
-        appId: 'forum',
+        appId: 'blog',
         items: [
           {
-            title: 'Topics',
-            url: '/dashboard/forum/topics',
+            title: 'Category Management',
+            url: '/dashboard/posts/categories/manage',
             contextId: 'website',
-            appId: 'forum'
+            appId: 'blog'
           },
           {
-            title: 'Categories',
-            url: '/dashboard/forum/categories',
+            title: 'Hierarchy Settings',
+            url: '/dashboard/posts/categories/hierarchy',
             contextId: 'website',
-            appId: 'forum'
+            appId: 'blog'
           },
           {
-            title: 'Moderation',
-            url: '/dashboard/forum/moderation',
+            title: 'SEO for Categories',
+            url: '/dashboard/posts/categories/seo',
             contextId: 'website',
-            appId: 'forum'
-          },
-          {
-            title: 'Reports',
-            url: '/dashboard/forum/reports',
-            contextId: 'website',
-            appId: 'forum'
-          },
-          {
-            title: 'Settings',
-            url: '/dashboard/forum/settings',
-            contextId: 'website',
-            appId: 'forum'
+            appId: 'blog'
           }
         ]
       },
       {
-        title: 'eLearning',
-        url: '/dashboard/learning',
-        icon: 'book',
-        shortcut: ['e', 'l'],
+        title: 'Tags',
+        url: '/dashboard/posts/tags',
         contextId: 'website',
-        appId: 'learning',
+        appId: 'blog',
         items: [
           {
-            title: 'Courses',
-            url: '/dashboard/learning/courses',
+            title: 'Popular Tags',
+            url: '/dashboard/posts/tags/popular',
             contextId: 'website',
-            appId: 'learning'
+            appId: 'blog'
           },
           {
-            title: 'Lessons',
-            url: '/dashboard/learning/lessons',
+            title: 'Tag Groups',
+            url: '/dashboard/posts/tags/groups',
             contextId: 'website',
-            appId: 'learning'
+            appId: 'blog'
           },
           {
-            title: 'Students',
-            url: '/dashboard/learning/students',
+            title: 'Unused Tags',
+            url: '/dashboard/posts/tags/unused',
             contextId: 'website',
-            appId: 'learning'
-          },
-          {
-            title: 'Certificates',
-            url: '/dashboard/learning/certificates',
-            contextId: 'website',
-            appId: 'learning'
-          },
-          {
-            title: 'Analytics',
-            url: '/dashboard/learning/analytics',
-            contextId: 'website',
-            appId: 'learning'
+            appId: 'blog'
           }
         ]
       },
       {
-        title: 'Live Chat',
-        url: '/dashboard/chat',
-        icon: 'help',
-        shortcut: ['l', 'c'],
+        title: 'Comments',
+        url: '/dashboard/posts/comments',
         contextId: 'website',
-        appId: 'chat',
+        appId: 'blog',
         items: [
           {
-            title: 'Conversations',
-            url: '/dashboard/chat/conversations',
+            title: 'Pending Approval',
+            url: '/dashboard/posts/comments/pending',
             contextId: 'website',
-            appId: 'chat'
+            appId: 'blog'
           },
           {
-            title: 'Agents',
-            url: '/dashboard/chat/agents',
+            title: 'Reported Comments',
+            url: '/dashboard/posts/comments/reported',
             contextId: 'website',
-            appId: 'chat'
+            appId: 'blog'
           },
           {
-            title: 'Canned Responses',
-            url: '/dashboard/chat/responses',
+            title: 'Comment Settings',
+            url: '/dashboard/posts/comments/settings',
             contextId: 'website',
-            appId: 'chat'
-          },
-          {
-            title: 'Analytics',
-            url: '/dashboard/chat/analytics',
-            contextId: 'website',
-            appId: 'chat'
-          },
-          {
-            title: 'Settings',
-            url: '/dashboard/chat/settings',
-            contextId: 'website',
-            appId: 'chat'
+            appId: 'blog'
           }
         ]
       }
     ]
   },
   
-  // Sales Category
+  // Moved second-level items to first level (Sales context)
   {
-    title: 'Sales',
-    url: '/dashboard/sales',
-    icon: 'product',
-    isActive: false,
-    shortcut: ['s', 'l'],
+    title: 'CRM',
+    url: '/dashboard/crm',
+    icon: 'user',
+    shortcut: ['c', 'r'],
     contextId: 'sales',
-    appId: 'sales',
+    appId: 'crm',
     priority: 20,
     items: [
       {
-        title: 'CRM',
-        url: '/dashboard/crm',
-        icon: 'user',
-        shortcut: ['c', 'r'],
+        title: 'Leads',
+        url: '/dashboard/crm/leads',
         contextId: 'sales',
         appId: 'crm',
         items: [
           {
-            title: 'Leads',
-            url: '/dashboard/crm/leads',
+            title: 'New Leads',
+            url: '/dashboard/crm/leads/new',
             contextId: 'sales',
             appId: 'crm'
           },
           {
-            title: 'Opportunities',
-            url: '/dashboard/crm/opportunities',
+            title: 'Qualified Leads',
+            url: '/dashboard/crm/leads/qualified',
             contextId: 'sales',
             appId: 'crm'
           },
           {
-            title: 'Contacts',
-            url: '/dashboard/crm/contacts',
-            contextId: 'sales',
-            appId: 'crm'
-          },
-          {
-            title: 'Companies',
-            url: '/dashboard/crm/companies',
-            contextId: 'sales',
-            appId: 'crm'
-          },
-          {
-            title: 'Activities',
-            url: '/dashboard/crm/activities',
-            contextId: 'sales',
-            appId: 'crm'
-          },
-          {
-            title: 'Pipeline Analytics',
-            url: '/dashboard/crm/pipeline',
+            title: 'Lead Scoring',
+            url: '/dashboard/crm/leads/scoring',
             contextId: 'sales',
             appId: 'crm'
           }
         ]
       },
       {
-        title: 'Sales',
+        title: 'Opportunities',
+        url: '/dashboard/crm/opportunities',
+        contextId: 'sales',
+        appId: 'crm',
+        items: [
+          {
+            title: 'Pipeline View',
+            url: '/dashboard/crm/opportunities/pipeline',
+            contextId: 'sales',
+            appId: 'crm'
+          },
+          {
+            title: 'Forecasting',
+            url: '/dashboard/crm/opportunities/forecasting',
+            contextId: 'sales',
+            appId: 'crm'
+          },
+          {
+            title: 'Won/Lost Analysis',
+            url: '/dashboard/crm/opportunities/analysis',
+            contextId: 'sales',
+            appId: 'crm'
+          }
+        ]
+      },
+      {
+        title: 'Contacts',
+        url: '/dashboard/crm/contacts',
+        contextId: 'sales',
+        appId: 'crm',
+        items: [
+          {
+            title: 'Individual Contacts',
+            url: '/dashboard/crm/contacts/individual',
+            contextId: 'sales',
+            appId: 'crm'
+          },
+          {
+            title: 'Contact Groups',
+            url: '/dashboard/crm/contacts/groups',
+            contextId: 'sales',
+            appId: 'crm'
+          },
+          {
+            title: 'Contact Enrichment',
+            url: '/dashboard/crm/contacts/enrichment',
+            contextId: 'sales',
+            appId: 'crm'
+          }
+        ]
+      },
+      {
+        title: 'Companies',
+        url: '/dashboard/crm/companies',
+        contextId: 'sales',
+        appId: 'crm',
+        items: [
+          {
+            title: 'Company Profiles',
+            url: '/dashboard/crm/companies/profiles',
+            contextId: 'sales',
+            appId: 'crm'
+          },
+          {
+            title: 'Industry Segments',
+            url: '/dashboard/crm/companies/segments',
+            contextId: 'sales',
+            appId: 'crm'
+          },
+          {
+            title: 'Account Hierarchy',
+            url: '/dashboard/crm/companies/hierarchy',
+            contextId: 'sales',
+            appId: 'crm'
+          }
+        ]
+      }
+    ]
+  },
+  {
+    title: 'Sales',
+    url: '/dashboard/sales/orders',
+    icon: 'billing',
+    shortcut: ['s', 'o'],
+    contextId: 'sales',
+    appId: 'sales',
+    priority: 21,
+    items: [
+      {
+        title: 'Orders',
         url: '/dashboard/sales/orders',
-        icon: 'billing',
-        shortcut: ['s', 'o'],
         contextId: 'sales',
         appId: 'sales',
         items: [
           {
-            title: 'Orders',
-            url: '/dashboard/sales/orders',
+            title: 'New Orders',
+            url: '/dashboard/sales/orders/new',
             contextId: 'sales',
             appId: 'sales'
           },
           {
-            title: 'Quotations',
-            url: '/dashboard/sales/quotations',
+            title: 'Processing',
+            url: '/dashboard/sales/orders/processing',
             contextId: 'sales',
             appId: 'sales'
           },
           {
-            title: 'Invoices',
-            url: '/dashboard/sales/invoices',
-            contextId: 'sales',
-            appId: 'sales'
-          },
-          {
-            title: 'Negotiations',
-            url: '/dashboard/sales/negotiations',
-            contextId: 'sales',
-            appId: 'sales'
-          },
-          {
-            title: 'Sales Teams',
-            url: '/dashboard/sales/teams',
-            contextId: 'sales',
-            appId: 'sales'
-          },
-          {
-            title: 'Performance',
-            url: '/dashboard/sales/performance',
+            title: 'Completed',
+            url: '/dashboard/sales/orders/completed',
             contextId: 'sales',
             appId: 'sales'
           }
         ]
       },
       {
-        title: 'Point of Sale',
-        url: '/dashboard/pos',
-        icon: 'product',
-        shortcut: ['p', 'o'],
+        title: 'Quotations',
+        url: '/dashboard/sales/quotations',
         contextId: 'sales',
-        appId: 'pos',
+        appId: 'sales',
         items: [
           {
-            title: 'Dashboard',
-            url: '/dashboard/pos/dashboard',
+            title: 'Draft Quotes',
+            url: '/dashboard/sales/quotations/draft',
             contextId: 'sales',
-            appId: 'pos'
+            appId: 'sales'
           },
           {
-            title: 'Sessions',
-            url: '/dashboard/pos/sessions',
+            title: 'Sent Quotes',
+            url: '/dashboard/sales/quotations/sent',
             contextId: 'sales',
-            appId: 'pos'
+            appId: 'sales'
           },
           {
-            title: 'Products',
-            url: '/dashboard/pos/products',
+            title: 'Quote Templates',
+            url: '/dashboard/sales/quotations/templates',
             contextId: 'sales',
-            appId: 'pos'
-          },
-          {
-            title: 'Payment Methods',
-            url: '/dashboard/pos/payments',
-            contextId: 'sales',
-            appId: 'pos'
-          },
-          {
-            title: 'Receipts',
-            url: '/dashboard/pos/receipts',
-            contextId: 'sales',
-            appId: 'pos'
-          },
-          {
-            title: 'Discounts',
-            url: '/dashboard/pos/discounts',
-            contextId: 'sales',
-            appId: 'pos'
+            appId: 'sales'
           }
         ]
       },
       {
-        title: 'Subscriptions',
-        url: '/dashboard/subscriptions',
-        icon: 'refresh',
-        shortcut: ['s', 'u'],
+        title: 'Invoices',
+        url: '/dashboard/sales/invoices',
         contextId: 'sales',
-        appId: 'subscriptions',
+        appId: 'sales',
         items: [
           {
-            title: 'All Subscriptions',
-            url: '/dashboard/subscriptions/all',
+            title: 'Outstanding',
+            url: '/dashboard/sales/invoices/outstanding',
             contextId: 'sales',
-            appId: 'subscriptions'
+            appId: 'sales'
           },
           {
-            title: 'Plans',
-            url: '/dashboard/subscriptions/plans',
+            title: 'Paid',
+            url: '/dashboard/sales/invoices/paid',
             contextId: 'sales',
-            appId: 'subscriptions'
+            appId: 'sales'
           },
           {
-            title: 'Recurring Invoices',
-            url: '/dashboard/subscriptions/invoices',
+            title: 'Overdue',
+            url: '/dashboard/sales/invoices/overdue',
             contextId: 'sales',
-            appId: 'subscriptions'
+            appId: 'sales'
+          }
+        ]
+      },
+      {
+        title: 'Performance',
+        url: '/dashboard/sales/performance',
+        contextId: 'sales',
+        appId: 'sales',
+        items: [
+          {
+            title: 'Team Analytics',
+            url: '/dashboard/sales/performance/team',
+            contextId: 'sales',
+            appId: 'sales'
           },
           {
-            title: 'Analytics',
-            url: '/dashboard/subscriptions/analytics',
+            title: 'Individual Performance',
+            url: '/dashboard/sales/performance/individual',
             contextId: 'sales',
-            appId: 'subscriptions'
+            appId: 'sales'
           },
           {
-            title: 'Settings',
-            url: '/dashboard/subscriptions/settings',
+            title: 'KPI Tracking',
+            url: '/dashboard/sales/performance/kpi',
             contextId: 'sales',
-            appId: 'subscriptions'
+            appId: 'sales'
+          }
+        ]
+      },
+      {
+        title: 'Sales Teams',
+        url: '/dashboard/sales/teams',
+        contextId: 'sales',
+        appId: 'sales',
+        items: [
+          {
+            title: 'Team Structure',
+            url: '/dashboard/sales/teams/structure',
+            contextId: 'sales',
+            appId: 'sales'
+          },
+          {
+            title: 'Territory Management',
+            url: '/dashboard/sales/teams/territory',
+            contextId: 'sales',
+            appId: 'sales'
+          },
+          {
+            title: 'Quota Management',
+            url: '/dashboard/sales/teams/quota',
+            contextId: 'sales',
+            appId: 'sales'
           }
         ]
       }
     ]
   },
   
-  // Finance Category
+  // Moved second-level items to first level (Finance context)
   {
-    title: 'Finance',
-    url: '/dashboard/finance',
-    icon: 'billing',
-    isActive: false,
-    shortcut: ['f', 'n'],
+    title: 'Accounting',
+    url: '/dashboard/accounting',
+    icon: 'chart',
+    shortcut: ['a', 'c'],
     contextId: 'finance',
-    appId: 'finance',
+    appId: 'accounting',
     priority: 30,
     items: [
       {
-        title: 'Accounting',
-        url: '/dashboard/accounting',
-        icon: 'chart',
-        shortcut: ['a', 'c'],
+        title: 'Journal Entries',
+        url: '/dashboard/accounting/journals',
         contextId: 'finance',
         appId: 'accounting',
         items: [
           {
-            title: 'Dashboard',
-            url: '/dashboard/accounting/dashboard',
+            title: 'Create Entry',
+            url: '/dashboard/accounting/journals/create',
             contextId: 'finance',
             appId: 'accounting'
           },
           {
-            title: 'Journal Entries',
-            url: '/dashboard/accounting/journals',
+            title: 'Review Entries',
+            url: '/dashboard/accounting/journals/review',
             contextId: 'finance',
             appId: 'accounting'
           },
           {
-            title: 'Chart of Accounts',
-            url: '/dashboard/accounting/accounts',
-            contextId: 'finance',
-            appId: 'accounting'
-          },
-          {
-            title: 'Reconciliation',
-            url: '/dashboard/accounting/reconciliation',
-            contextId: 'finance',
-            appId: 'accounting'
-          },
-          {
-            title: 'Financial Reports',
-            url: '/dashboard/accounting/reports',
-            contextId: 'finance',
-            appId: 'accounting'
-          },
-          {
-            title: 'Taxes',
-            url: '/dashboard/accounting/taxes',
+            title: 'Entry Templates',
+            url: '/dashboard/accounting/journals/templates',
             contextId: 'finance',
             appId: 'accounting'
           }
         ]
       },
       {
-        title: 'Invoicing',
-        url: '/dashboard/invoicing',
-        icon: 'billing',
-        shortcut: ['i', 'n'],
+        title: 'Chart of Accounts',
+        url: '/dashboard/accounting/accounts',
+        contextId: 'finance',
+        appId: 'accounting',
+        items: [
+          {
+            title: 'Asset Accounts',
+            url: '/dashboard/accounting/accounts/assets',
+            contextId: 'finance',
+            appId: 'accounting'
+          },
+          {
+            title: 'Liability Accounts',
+            url: '/dashboard/accounting/accounts/liabilities',
+            contextId: 'finance',
+            appId: 'accounting'
+          },
+          {
+            title: 'Equity Accounts',
+            url: '/dashboard/accounting/accounts/equity',
+            contextId: 'finance',
+            appId: 'accounting'
+          }
+        ]
+      },
+      {
+        title: 'Financial Reports',
+        url: '/dashboard/accounting/reports',
+        contextId: 'finance',
+        appId: 'accounting',
+        items: [
+          {
+            title: 'Income Statement',
+            url: '/dashboard/accounting/reports/income',
+            contextId: 'finance',
+            appId: 'accounting'
+          },
+          {
+            title: 'Balance Sheet',
+            url: '/dashboard/accounting/reports/balance',
+            contextId: 'finance',
+            appId: 'accounting'
+          },
+          {
+            title: 'Cash Flow',
+            url: '/dashboard/accounting/reports/cashflow',
+            contextId: 'finance',
+            appId: 'accounting'
+          }
+        ]
+      }
+    ]
+  },
+  {
+    title: 'Invoicing',
+    url: '/dashboard/invoicing',
+    icon: 'billing',
+    shortcut: ['i', 'n'],
+    contextId: 'finance',
+    appId: 'invoicing',
+    priority: 31,
+    items: [
+      {
+        title: 'Customer Invoices',
+        url: '/dashboard/invoicing/customer',
         contextId: 'finance',
         appId: 'invoicing',
         items: [
           {
-            title: 'Customer Invoices',
-            url: '/dashboard/invoicing/customer',
+            title: 'Draft Invoices',
+            url: '/dashboard/invoicing/customer/draft',
             contextId: 'finance',
             appId: 'invoicing'
           },
           {
-            title: 'Vendor Bills',
-            url: '/dashboard/invoicing/vendor',
+            title: 'Sent Invoices',
+            url: '/dashboard/invoicing/customer/sent',
             contextId: 'finance',
             appId: 'invoicing'
           },
           {
-            title: 'Recurring Invoices',
-            url: '/dashboard/invoicing/recurring',
-            contextId: 'finance',
-            appId: 'invoicing'
-          },
-          {
-            title: 'Payment Reminders',
-            url: '/dashboard/invoicing/reminders',
-            contextId: 'finance',
-            appId: 'invoicing'
-          },
-          {
-            title: 'Credit Notes',
-            url: '/dashboard/invoicing/credits',
-            contextId: 'finance',
-            appId: 'invoicing'
-          },
-          {
-            title: 'Invoice Templates',
-            url: '/dashboard/invoicing/templates',
+            title: 'Paid Invoices',
+            url: '/dashboard/invoicing/customer/paid',
             contextId: 'finance',
             appId: 'invoicing'
           }
         ]
       },
       {
-        title: 'Expenses',
-        url: '/dashboard/expenses',
-        icon: 'billing',
-        shortcut: ['e', 'x'],
+        title: 'Vendor Bills',
+        url: '/dashboard/invoicing/vendor',
         contextId: 'finance',
-        appId: 'expenses',
+        appId: 'invoicing',
         items: [
           {
-            title: 'Expense Reports',
-            url: '/dashboard/expenses/reports',
+            title: 'Pending Bills',
+            url: '/dashboard/invoicing/vendor/pending',
             contextId: 'finance',
-            appId: 'expenses'
+            appId: 'invoicing'
           },
           {
-            title: 'Approval Workflow',
-            url: '/dashboard/expenses/approval',
+            title: 'Approved Bills',
+            url: '/dashboard/invoicing/vendor/approved',
             contextId: 'finance',
-            appId: 'expenses'
+            appId: 'invoicing'
           },
           {
-            title: 'Categories',
-            url: '/dashboard/expenses/categories',
+            title: 'Paid Bills',
+            url: '/dashboard/invoicing/vendor/paid',
             contextId: 'finance',
-            appId: 'expenses'
+            appId: 'invoicing'
+          }
+        ]
+      },
+      {
+        title: 'Recurring Invoices',
+        url: '/dashboard/invoicing/recurring',
+        contextId: 'finance',
+        appId: 'invoicing',
+        items: [
+          {
+            title: 'Active Subscriptions',
+            url: '/dashboard/invoicing/recurring/active',
+            contextId: 'finance',
+            appId: 'invoicing'
           },
           {
-            title: 'Reimbursements',
-            url: '/dashboard/expenses/reimbursements',
+            title: 'Upcoming Renewals',
+            url: '/dashboard/invoicing/recurring/upcoming',
             contextId: 'finance',
-            appId: 'expenses'
+            appId: 'invoicing'
           },
           {
-            title: 'Analytics',
-            url: '/dashboard/expenses/analytics',
+            title: 'Subscription Plans',
+            url: '/dashboard/invoicing/recurring/plans',
             contextId: 'finance',
-            appId: 'expenses'
+            appId: 'invoicing'
           }
         ]
       }
     ]
   },
   
-  // Inventory & Manufacturing Category
+  // Moved second-level items to first level (HR context)
   {
-    title: 'Inventory',
-    url: '/dashboard/inventory',
-    icon: 'folder',
-    isActive: false,
-    shortcut: ['i', 'v'],
-    contextId: 'inventory',
-    appId: 'inventory',
-    priority: 40,
-    items: [
-      {
-        title: 'Inventory',
-        url: '/dashboard/inventory/stock',
-        icon: 'folder',
-        shortcut: ['i', 's'],
-        contextId: 'inventory',
-        appId: 'inventory'
-      },
-      {
-        title: 'Manufacturing',
-        url: '/dashboard/manufacturing',
-        icon: 'settings',
-        shortcut: ['m', 'f'],
-        contextId: 'inventory',
-        appId: 'manufacturing'
-      },
-      {
-        title: 'Purchase',
-        url: '/dashboard/purchase',
-        icon: 'product',
-        shortcut: ['p', 'u'],
-        contextId: 'inventory',
-        appId: 'purchase'
-      },
-      {
-        title: 'Maintenance',
-        url: '/dashboard/maintenance',
-        icon: 'settings',
-        shortcut: ['m', 't'],
-        contextId: 'inventory',
-        appId: 'maintenance'
-      }
-    ]
-  },
-  
-  // Human Resources Category
-  {
-    title: 'HR',
-    url: '/dashboard/hr',
+    title: 'Employees',
+    url: '/dashboard/employees',
     icon: 'user',
-    isActive: false,
-    shortcut: ['h', 'r'],
+    shortcut: ['e', 'm'],
     contextId: 'hr',
-    appId: 'hr',
+    appId: 'employees',
     priority: 50,
     items: [
       {
-        title: 'Employees',
-        url: '/dashboard/employees',
-        icon: 'user',
-        shortcut: ['e', 'm'],
+        title: 'Directory',
+        url: '/dashboard/employees/directory',
         contextId: 'hr',
-        appId: 'employees'
+        appId: 'employees',
+        items: [
+          {
+            title: 'Active Employees',
+            url: '/dashboard/employees/directory/active',
+            contextId: 'hr',
+            appId: 'employees'
+          },
+          {
+            title: 'Contractors',
+            url: '/dashboard/employees/directory/contractors',
+            contextId: 'hr',
+            appId: 'employees'
+          },
+          {
+            title: 'Alumni',
+            url: '/dashboard/employees/directory/alumni',
+            contextId: 'hr',
+            appId: 'employees'
+          }
+        ]
       },
       {
-        title: 'Recruitment',
-        url: '/dashboard/recruitment',
-        icon: 'userCircle',
-        shortcut: ['r', 'c'],
+        title: 'Onboarding',
+        url: '/dashboard/employees/onboarding',
         contextId: 'hr',
-        appId: 'recruitment'
+        appId: 'employees',
+        items: [
+          {
+            title: 'New Hires',
+            url: '/dashboard/employees/onboarding/new',
+            contextId: 'hr',
+            appId: 'employees'
+          },
+          {
+            title: 'Paperwork',
+            url: '/dashboard/employees/onboarding/paperwork',
+            contextId: 'hr',
+            appId: 'employees'
+          },
+          {
+            title: 'Training',
+            url: '/dashboard/employees/onboarding/training',
+            contextId: 'hr',
+            appId: 'employees'
+          }
+        ]
       },
       {
-        title: 'Time Off',
-        url: '/dashboard/timeoff',
-        icon: 'userPen',
-        shortcut: ['t', 'o'],
+        title: 'Performance',
+        url: '/dashboard/employees/performance',
         contextId: 'hr',
-        appId: 'timeoff'
-      },
-      {
-        title: 'Appraisals',
-        url: '/dashboard/appraisals',
-        icon: 'chart',
-        shortcut: ['a', 'p'],
-        contextId: 'hr',
-        appId: 'appraisals'
+        appId: 'employees',
+        items: [
+          {
+            title: 'Reviews',
+            url: '/dashboard/employees/performance/reviews',
+            contextId: 'hr',
+            appId: 'employees'
+          },
+          {
+            title: 'Goals',
+            url: '/dashboard/employees/performance/goals',
+            contextId: 'hr',
+            appId: 'employees'
+          },
+          {
+            title: 'Feedback',
+            url: '/dashboard/employees/performance/feedback',
+            contextId: 'hr',
+            appId: 'employees'
+          }
+        ]
       }
     ]
   },
-  
-  // Marketing Category
   {
-    title: 'Marketing',
-    url: '/dashboard/marketing',
-    icon: 'file',
-    isActive: false,
-    shortcut: ['m', 'k'],
+    title: 'Recruitment',
+    url: '/dashboard/recruitment',
+    icon: 'userCircle',
+    shortcut: ['r', 'c'],
+    contextId: 'hr',
+    appId: 'recruitment',
+    priority: 51,
+    items: [
+      {
+        title: 'Job Postings',
+        url: '/dashboard/recruitment/jobs',
+        contextId: 'hr',
+        appId: 'recruitment',
+        items: [
+          {
+            title: 'Active Postings',
+            url: '/dashboard/recruitment/jobs/active',
+            contextId: 'hr',
+            appId: 'recruitment'
+          },
+          {
+            title: 'Draft Postings',
+            url: '/dashboard/recruitment/jobs/draft',
+            contextId: 'hr',
+            appId: 'recruitment'
+          },
+          {
+            title: 'Job Templates',
+            url: '/dashboard/recruitment/jobs/templates',
+            contextId: 'hr',
+            appId: 'recruitment'
+          }
+        ]
+      },
+      {
+        title: 'Candidates',
+        url: '/dashboard/recruitment/candidates',
+        contextId: 'hr',
+        appId: 'recruitment',
+        items: [
+          {
+            title: 'All Applications',
+            url: '/dashboard/recruitment/candidates/all',
+            contextId: 'hr',
+            appId: 'recruitment'
+          },
+          {
+            title: 'Shortlisted',
+            url: '/dashboard/recruitment/candidates/shortlisted',
+            contextId: 'hr',
+            appId: 'recruitment'
+          },
+          {
+            title: 'Interviews',
+            url: '/dashboard/recruitment/candidates/interviews',
+            contextId: 'hr',
+            appId: 'recruitment'
+          }
+        ]
+      },
+      {
+        title: 'Hiring Pipeline',
+        url: '/dashboard/recruitment/pipeline',
+        contextId: 'hr',
+        appId: 'recruitment',
+        items: [
+          {
+            title: 'Pipeline View',
+            url: '/dashboard/recruitment/pipeline/view',
+            contextId: 'hr',
+            appId: 'recruitment'
+          },
+          {
+            title: 'Analytics',
+            url: '/dashboard/recruitment/pipeline/analytics',
+            contextId: 'hr',
+            appId: 'recruitment'
+          },
+          {
+            title: 'Hiring Team',
+            url: '/dashboard/recruitment/pipeline/team',
+            contextId: 'hr',
+            appId: 'recruitment'
+          }
+        ]
+      }
+    ]
+  },
+  {
+    title: 'Time Off',
+    url: '/dashboard/timeoff',
+    icon: 'userPen',
+    shortcut: ['t', 'o'],
+    contextId: 'hr',
+    appId: 'timeoff',
+    priority: 52,
+    items: [
+      {
+        title: 'Requests',
+        url: '/dashboard/timeoff/requests',
+        contextId: 'hr',
+        appId: 'timeoff',
+        items: [
+          {
+            title: 'Pending Approval',
+            url: '/dashboard/timeoff/requests/pending',
+            contextId: 'hr',
+            appId: 'timeoff'
+          },
+          {
+            title: 'Approved Requests',
+            url: '/dashboard/timeoff/requests/approved',
+            contextId: 'hr',
+            appId: 'timeoff'
+          },
+          {
+            title: 'Denied Requests',
+            url: '/dashboard/timeoff/requests/denied',
+            contextId: 'hr',
+            appId: 'timeoff'
+          }
+        ]
+      },
+      {
+        title: 'Calendar',
+        url: '/dashboard/timeoff/calendar',
+        contextId: 'hr',
+        appId: 'timeoff',
+        items: [
+          {
+            title: 'Team Calendar',
+            url: '/dashboard/timeoff/calendar/team',
+            contextId: 'hr',
+            appId: 'timeoff'
+          },
+          {
+            title: 'Department Calendar',
+            url: '/dashboard/timeoff/calendar/department',
+            contextId: 'hr',
+            appId: 'timeoff'
+          },
+          {
+            title: 'Company Calendar',
+            url: '/dashboard/timeoff/calendar/company',
+            contextId: 'hr',
+            appId: 'timeoff'
+          }
+        ]
+      },
+      {
+        title: 'Policies',
+        url: '/dashboard/timeoff/policies',
+        contextId: 'hr',
+        appId: 'timeoff',
+        items: [
+          {
+            title: 'Vacation Policy',
+            url: '/dashboard/timeoff/policies/vacation',
+            contextId: 'hr',
+            appId: 'timeoff'
+          },
+          {
+            title: 'Sick Leave Policy',
+            url: '/dashboard/timeoff/policies/sick',
+            contextId: 'hr',
+            appId: 'timeoff'
+          },
+          {
+            title: 'Holiday Schedule',
+            url: '/dashboard/timeoff/policies/holidays',
+            contextId: 'hr',
+            appId: 'timeoff'
+          }
+        ]
+      }
+    ]
+  },
+  {
+    title: 'Appraisals',
+    url: '/dashboard/appraisals',
+    icon: 'chart',
+    shortcut: ['a', 'p'],
+    contextId: 'hr',
+    appId: 'appraisals',
+    priority: 53,
+    items: [
+      {
+        title: 'Review Cycles',
+        url: '/dashboard/appraisals/cycles',
+        contextId: 'hr',
+        appId: 'appraisals',
+        items: [
+          {
+            title: 'Current Cycle',
+            url: '/dashboard/appraisals/cycles/current',
+            contextId: 'hr',
+            appId: 'appraisals'
+          },
+          {
+            title: 'Past Cycles',
+            url: '/dashboard/appraisals/cycles/past',
+            contextId: 'hr',
+            appId: 'appraisals'
+          },
+          {
+            title: 'Upcoming Cycles',
+            url: '/dashboard/appraisals/cycles/upcoming',
+            contextId: 'hr',
+            appId: 'appraisals'
+          }
+        ]
+      },
+      {
+        title: 'Templates',
+        url: '/dashboard/appraisals/templates',
+        contextId: 'hr',
+        appId: 'appraisals',
+        items: [
+          {
+            title: 'Performance Templates',
+            url: '/dashboard/appraisals/templates/performance',
+            contextId: 'hr',
+            appId: 'appraisals'
+          },
+          {
+            title: '360 Feedback Templates',
+            url: '/dashboard/appraisals/templates/360',
+            contextId: 'hr',
+            appId: 'appraisals'
+          },
+          {
+            title: 'Self-Assessment Templates',
+            url: '/dashboard/appraisals/templates/self',
+            contextId: 'hr',
+            appId: 'appraisals'
+          }
+        ]
+      },
+      {
+        title: 'Reports',
+        url: '/dashboard/appraisals/reports',
+        contextId: 'hr',
+        appId: 'appraisals',
+        items: [
+          {
+            title: 'Individual Reports',
+            url: '/dashboard/appraisals/reports/individual',
+            contextId: 'hr',
+            appId: 'appraisals'
+          },
+          {
+            title: 'Team Reports',
+            url: '/dashboard/appraisals/reports/team',
+            contextId: 'hr',
+            appId: 'appraisals'
+          },
+          {
+            title: 'Trend Analysis',
+            url: '/dashboard/appraisals/reports/trends',
+            contextId: 'hr',
+            appId: 'appraisals'
+          }
+        ]
+      }
+    ]
+  },
+  {
+    title: 'Marketing Automation',
+    url: '/dashboard/marketing/automation',
+    icon: 'refresh',
+    shortcut: ['m', 'a'],
     contextId: 'marketing',
     appId: 'marketing',
     priority: 60,
     items: [
       {
-        title: 'Marketing Automation',
-        url: '/dashboard/marketing/automation',
-        icon: 'refresh',
-        shortcut: ['m', 'a'],
+        title: 'Campaigns',
+        url: '/dashboard/marketing/automation/campaigns',
         contextId: 'marketing',
-        appId: 'marketing'
+        appId: 'marketing',
+        items: [
+          {
+            title: 'Active Campaigns',
+            url: '/dashboard/marketing/automation/campaigns/active',
+            contextId: 'marketing',
+            appId: 'marketing'
+          },
+          {
+            title: 'Scheduled Campaigns',
+            url: '/dashboard/marketing/automation/campaigns/scheduled',
+            contextId: 'marketing',
+            appId: 'marketing'
+          },
+          {
+            title: 'Completed Campaigns',
+            url: '/dashboard/marketing/automation/campaigns/completed',
+            contextId: 'marketing',
+            appId: 'marketing'
+          }
+        ]
       },
       {
-        title: 'Email Marketing',
-        url: '/dashboard/email',
-        icon: 'file',
-        shortcut: ['e', 'm'],
+        title: 'Workflows',
+        url: '/dashboard/marketing/automation/workflows',
         contextId: 'marketing',
-        appId: 'email'
+        appId: 'marketing',
+        items: [
+          {
+            title: 'Lead Nurturing',
+            url: '/dashboard/marketing/automation/workflows/lead',
+            contextId: 'marketing',
+            appId: 'marketing'
+          },
+          {
+            title: 'Customer Onboarding',
+            url: '/dashboard/marketing/automation/workflows/onboarding',
+            contextId: 'marketing',
+            appId: 'marketing'
+          },
+          {
+            title: 'Re-engagement',
+            url: '/dashboard/marketing/automation/workflows/reengagement',
+            contextId: 'marketing',
+            appId: 'marketing'
+          }
+        ]
       },
       {
-        title: 'Events',
-        url: '/dashboard/events',
-        icon: 'fileText',
-        shortcut: ['e', 'v'],
+        title: 'Analytics',
+        url: '/dashboard/marketing/automation/analytics',
         contextId: 'marketing',
-        appId: 'events'
-      },
-      {
-        title: 'Social Marketing',
-        url: '/dashboard/social',
-        icon: 'twitter',
-        shortcut: ['s', 'm'],
-        contextId: 'marketing',
-        appId: 'social'
+        appId: 'marketing',
+        items: [
+          {
+            title: 'Performance Metrics',
+            url: '/dashboard/marketing/automation/analytics/performance',
+            contextId: 'marketing',
+            appId: 'marketing'
+          },
+          {
+            title: 'Conversion Rates',
+            url: '/dashboard/marketing/automation/analytics/conversion',
+            contextId: 'marketing',
+            appId: 'marketing'
+          },
+          {
+            title: 'ROI Reporting',
+            url: '/dashboard/marketing/automation/analytics/roi',
+            contextId: 'marketing',
+            appId: 'marketing'
+          }
+        ]
       }
     ]
   },
-  
-  // Services Category
   {
-    title: 'Services',
-    url: '/dashboard/services',
+    title: 'Discuss',
+    url: '/dashboard/discuss',
     icon: 'help',
-    isActive: false,
-    shortcut: ['s', 'v'],
-    contextId: 'services',
-    appId: 'services',
-    priority: 70,
-    items: [
-      {
-        title: 'Project',
-        url: '/dashboard/projects',
-        icon: 'folder',
-        shortcut: ['p', 'r'],
-        contextId: 'services',
-        appId: 'projects'
-      },
-      {
-        title: 'Timesheet',
-        url: '/dashboard/timesheet',
-        icon: 'check',
-        shortcut: ['t', 's'],
-        contextId: 'services',
-        appId: 'timesheet'
-      },
-      {
-        title: 'Helpdesk',
-        url: '/dashboard/helpdesk',
-        icon: 'help',
-        shortcut: ['h', 'd'],
-        contextId: 'services',
-        appId: 'helpdesk'
-      },
-      {
-        title: 'Appointments',
-        url: '/dashboard/appointments',
-        icon: 'media',
-        shortcut: ['a', 't'],
-        contextId: 'services',
-        appId: 'appointments'
-      }
-    ]
-  },
-  
-  // Productivity Category
-  {
-    title: 'Productivity',
-    url: '/dashboard/productivity',
-    icon: 'check',
-    isActive: false,
-    shortcut: ['p', 'd'],
+    shortcut: ['d', 'i'],
     contextId: 'productivity',
-    appId: 'productivity',
+    appId: 'discuss',
     priority: 80,
     items: [
       {
-        title: 'Discuss',
-        url: '/dashboard/discuss',
-        icon: 'help',
-        shortcut: ['d', 'i'],
+        title: 'Channels',
+        url: '/dashboard/discuss/channels',
         contextId: 'productivity',
-        appId: 'discuss'
+        appId: 'discuss',
+        items: [
+          {
+            title: 'Team Channels',
+            url: '/dashboard/discuss/channels/team',
+            contextId: 'productivity',
+            appId: 'discuss'
+          },
+          {
+            title: 'Project Channels',
+            url: '/dashboard/discuss/channels/project',
+            contextId: 'productivity',
+            appId: 'discuss'
+          },
+          {
+            title: 'Private Channels',
+            url: '/dashboard/discuss/channels/private',
+            contextId: 'productivity',
+            appId: 'discuss'
+          }
+        ]
       },
       {
-        title: 'Approvals',
-        url: '/dashboard/approvals',
-        icon: 'check',
-        shortcut: ['a', 'p'],
+        title: 'Direct Messages',
+        url: '/dashboard/discuss/direct',
         contextId: 'productivity',
-        appId: 'approvals'
-      },
-      {
-        title: 'Knowledge',
-        url: '/dashboard/knowledge',
-        icon: 'book',
-        shortcut: ['k', 'n'],
-        contextId: 'productivity',
-        appId: 'knowledge'
-      }
-    ]
-  },
-  
-  // Customization Category
-  {
-    title: 'Customization',
-    url: '/dashboard/customization',
-    icon: 'settings',
-    isActive: false,
-    shortcut: ['c', 'u'],
-    contextId: 'customization',
-    appId: 'customization',
-    priority: 90,
-    items: [
-      {
-        title: 'Studio',
-        url: '/dashboard/studio',
-        icon: 'settings',
-        shortcut: ['s', 't'],
-        contextId: 'customization',
-        appId: 'studio'
-      }
-    ]
-  },
-
-  
-  
-  // Account - Available in all contexts
-  /*{
-    title: 'Account',
-    url: '#',
-    icon: 'userPen',
-    isActive: false,
-    shortcut: ['a', 'c'],
-    priority: 100,
-    items: [
-      {
-        title: 'Profile',
-        url: '/dashboard/profile',
-        icon: 'userPen',
-        shortcut: ['p', 'f']
+        appId: 'discuss',
+        items: [
+          {
+            title: 'Recent Messages',
+            url: '/dashboard/discuss/direct/recent',
+            contextId: 'productivity',
+            appId: 'discuss'
+          },
+          {
+            title: 'Starred Conversations',
+            url: '/dashboard/discuss/direct/starred',
+            contextId: 'productivity',
+            appId: 'discuss'
+          },
+          {
+            title: 'Message Requests',
+            url: '/dashboard/discuss/direct/requests',
+            contextId: 'productivity',
+            appId: 'discuss'
+          }
+        ]
       },
       {
         title: 'Settings',
-        url: '/dashboard/settings',
-        icon: 'settings',
-        shortcut: ['s', 't']
-      },
-      {
-        title: 'Logout',
-        url: '/logout',
-        icon: 'logout',
-        shortcut: ['l', 'o']
+        url: '/dashboard/discuss/settings',
+        contextId: 'productivity',
+        appId: 'discuss',
+        items: [
+          {
+            title: 'Notifications',
+            url: '/dashboard/discuss/settings/notifications',
+            contextId: 'productivity',
+            appId: 'discuss'
+          },
+          {
+            title: 'Integrations',
+            url: '/dashboard/discuss/settings/integrations',
+            contextId: 'productivity',
+            appId: 'discuss'
+          },
+          {
+            title: 'Privacy',
+            url: '/dashboard/discuss/settings/privacy',
+            contextId: 'productivity',
+            appId: 'discuss'
+          }
+        ]
       }
     ]
-  }*/
+  },
+  {
+    title: 'Studio',
+    url: '/dashboard/studio',
+    icon: 'settings',
+    shortcut: ['s', 't'],
+    contextId: 'customization',
+    appId: 'studio',
+    priority: 90,
+    items: [
+      {
+        title: 'App Builder',
+        url: '/dashboard/studio/app-builder',
+        contextId: 'customization',
+        appId: 'studio',
+        items: [
+          {
+            title: 'My Apps',
+            url: '/dashboard/studio/app-builder/my-apps',
+            contextId: 'customization',
+            appId: 'studio'
+          },
+          {
+            title: 'Templates',
+            url: '/dashboard/studio/app-builder/templates',
+            contextId: 'customization',
+            appId: 'studio'
+          },
+          {
+            title: 'Components',
+            url: '/dashboard/studio/app-builder/components',
+            contextId: 'customization',
+            appId: 'studio'
+          }
+        ]
+      },
+      {
+        title: 'Automation',
+        url: '/dashboard/studio/automation',
+        contextId: 'customization',
+        appId: 'studio',
+        items: [
+          {
+            title: 'Workflows',
+            url: '/dashboard/studio/automation/workflows',
+            contextId: 'customization',
+            appId: 'studio'
+          },
+          {
+            title: 'Actions',
+            url: '/dashboard/studio/automation/actions',
+            contextId: 'customization',
+            appId: 'studio'
+          },
+          {
+            title: 'Triggers',
+            url: '/dashboard/studio/automation/triggers',
+            contextId: 'customization',
+            appId: 'studio'
+          }
+        ]
+      },
+      {
+        title: 'Code Studio',
+        url: '/dashboard/studio/code',
+        contextId: 'customization',
+        appId: 'studio',
+        items: [
+          {
+            title: 'Scripts',
+            url: '/dashboard/studio/code/scripts',
+            contextId: 'customization',
+            appId: 'studio'
+          },
+          {
+            title: 'API Integration',
+            url: '/dashboard/studio/code/api',
+            contextId: 'customization',
+            appId: 'studio'
+          },
+          {
+            title: 'Custom Widgets',
+            url: '/dashboard/studio/code/widgets',
+            contextId: 'customization',
+            appId: 'studio'
+          }
+        ]
+      }
+    ]
+  }
 ];
