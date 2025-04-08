@@ -185,6 +185,9 @@ importers:
       match-sorter:
         specifier: ^8.0.0
         version: 8.0.0
+      material-icons:
+        specifier: ^1.13.14
+        version: 1.13.14
       motion:
         specifier: ^11.17.0
         version: 11.18.2(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -2949,6 +2952,9 @@ packages:
 
   matchmediaquery@0.4.2:
     resolution: {integrity: sha512-wrZpoT50ehYOudhDjt/YvUJc6eUzcdFPdmbizfgvswCKNHD1/OBOHYJpHie+HXpu6bSkEGieFMYk6VuutaiRfA==}
+
+  material-icons@1.13.14:
+    resolution: {integrity: sha512-kZOfc7xCC0rAT8Q3DQixYAeT+tBqZnxkseQtp2bxBxz7q5pMAC+wmit7vJn1g/l7wRU+HEPq23gER4iPjGs5Cg==}
 
   math-intrinsics@1.1.0:
     resolution: {integrity: sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==}
@@ -6845,6 +6851,8 @@ snapshots:
   matchmediaquery@0.4.2:
     dependencies:
       css-mediaquery: 0.1.2
+
+  material-icons@1.13.14: {}
 
   math-intrinsics@1.1.0: {}
 

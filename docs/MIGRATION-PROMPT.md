@@ -110,6 +110,101 @@ To create a context-specific menu item:
 }
 ```
 
+## Mini-App Architecture
+
+Each mini-app in Mixcore should be designed as a self-contained mini-application that can be hot-loaded into the main application. This modular approach allows for better separation of concerns and improved performance through code splitting.
+
+### Key Concepts
+
+- **Hot-Loading**: mini-apps load dynamically without requiring full page reloads
+- **Isolated Shell Layouts**: Each mini-app has its own shell layout displayed within the `<main>` element of /dashboard/apps/
+- **Contextual UI**: UI elements adapt based on the active app
+- **Code Splitting**: Only load code necessary for the current app
+
+### Implementation
+
+1. **App Module Structure**:
+```
+/src/app/dashboard/apps
+  /cms
+    /components
+    /hooks
+    /layouts
+      AppShell.tsx  # App-specific shell layout
+    /lib
+    index.tsx       # Entry point
+  /mixdb
+    ...
+  /design
+    ...
+```
+
+2. **App Registration**:
+```tsx
+// App registry
+const APPS = {
+  cms: () => import('@/app/dashboard/apps/cms'),
+  mixdb: () => import('@/app/dashboard/apps/mixdb'),
+  design: () => import('@/app/dashboard/apps/projects'),
+  // Additional apps
+};
+```
+
+3. **App Shell Template**:
+```tsx
+// apps/[app-name]/layouts/AppShell.tsx
+export function AppShell({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="app-shell">
+      {/* App-specific header elements */}
+      <div className="app-content">
+        {children}
+      </div>
+      {/* App-specific footer elements */}
+    </div>
+  );
+}
+```
+
+4. **App Loading**:
+```tsx
+// App loader component
+export function AppLoader({ appId }: { appId: string }) {
+  const [AppComponent, setAppComponent] = useState<React.ComponentType | null>(null);
+  
+  useEffect(() => {
+    if (APPS[appId]) {
+      APPS[appId]().then(module => {
+        setAppComponent(() => module.default);
+      });
+    }
+  }, [appId]);
+  
+  if (!AppComponent) return <LoadingSpinner />;
+  
+  return <AppComponent />;
+}
+```
+
+### Usage in Layouts
+
+```tsx
+// In the main application layout
+export function MainLayout() {
+  const { activeAppId } = useAppContext();
+  
+  return (
+    <div className="main-layout">
+      <Header />
+      <Sidebar />
+      <main className="content-area">
+        <AppLoader appId={activeAppId} />
+      </main>
+    </div>
+  );
+}
+```
+
 ## Component Templates
 
 ### UI Component Template

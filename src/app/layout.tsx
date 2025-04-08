@@ -9,6 +9,7 @@ import NextTopLoader from 'nextjs-toploader';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import './globals.css';
 import './theme.css';
+import 'material-icons/iconfont/material-icons.css';
 
 const META_THEME_COLORS = {
   light: '#ffffff',

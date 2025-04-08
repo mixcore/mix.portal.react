@@ -28,8 +28,8 @@ export default async function DashboardLayout({
             <Header />
 
             {/* Main content container */}
-            <main className='flex-1 overflow-auto'>
-              <div className='container mx-auto max-w-7xl p-4 md:p-6'>
+            <main className='flex-1 overflow-auto' data-app-view="default">
+              <div className='dashboard-content container mx-auto max-w-7xl p-4 md:p-6'>
                 {children}
               </div>
             </main>
