@@ -3,6 +3,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import useContainerStatus from '../hooks/useContainerStatus';
 import { getAppConfig } from '../app-loader';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { 
+  Maximize, 
+  Minimize, 
+  Plus, 
+  Minus, 
+  ChevronLeft, 
+  ChevronRight, 
+  AlertTriangle, 
+  Link2, 
+  Download, 
+  FlipVertical
+} from 'lucide-react';
 
 export interface GanttTask {
   id: string;
@@ -217,38 +233,38 @@ export function GanttView({ tasks, startDate, endDate }: GanttViewProps) {
   const renderTaskRow = (task: GanttTask) => {
     const barStyles = getTaskBarStyles(task);
     const barClasses = task.isMilestone 
-      ? "absolute top-3 h-4 w-4 bg-purple-600 rotate-45 transform -translate-x-2 -translate-y-2" 
+      ? "absolute top-3 h-4 w-4 bg-purple-600 dark:bg-purple-500 rotate-45 transform -translate-x-2 -translate-y-2" 
       : task.isCritical && showCriticalPath
-        ? "absolute top-1 h-8 bg-red-500 rounded opacity-90 task-bar"
-        : "absolute top-1 h-8 bg-blue-500 rounded opacity-90 task-bar";
+        ? "absolute top-1 h-8 bg-red-500 dark:bg-red-600 rounded opacity-90 task-bar"
+        : "absolute top-1 h-8 bg-blue-500 dark:bg-blue-600 rounded opacity-90 task-bar";
     
     return (
-      <div key={task.id} className="task-row flex border-b hover:bg-gray-50">
+      <div key={task.id} className="task-row flex border-b hover:bg-accent/10">
         {/* Task details area */}
         <div className="task-name-column w-96 min-w-96 flex-shrink-0 p-2 border-r flex items-center">
           <div className="flex items-center w-full">
             <div className="w-5 flex justify-center mr-1">
               {task.isMilestone ? (
-                <span className="material-icons-outlined text-purple-600 text-sm">diamond</span>
+                <span className="material-icons-outlined text-purple-600 dark:text-purple-500 text-sm">diamond</span>
               ) : (
-                <span className="w-3 h-3 block rounded-sm border border-gray-400"></span>
+                <span className="w-3 h-3 block rounded-sm border border-muted-foreground"></span>
               )}
             </div>
             <div className="flex-1 flex items-center justify-between">
-              <div className={`truncate ${task.isCritical && showCriticalPath ? 'text-red-600 font-medium' : ''}`}>
+              <div className={`truncate ${task.isCritical && showCriticalPath ? 'text-red-600 dark:text-red-400 font-medium' : 'text-foreground'}`}>
                 {task.name}
               </div>
               <div className="flex items-center space-x-1">
                 {task.assignedTo && (
-                  <div className="h-5 w-5 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold">
+                  <div className="h-5 w-5 rounded-full bg-blue-500 dark:bg-blue-600 text-white flex items-center justify-center text-xs font-bold">
                     {task.assignedTo.slice(0, 2).toUpperCase()}
                   </div>
                 )}
                 {task.dependencies?.length ? (
-                  <span className="material-icons-outlined text-gray-400 text-sm">link</span>
+                  <span className="material-icons-outlined text-muted-foreground text-sm">link</span>
                 ) : null}
                 {task.isCritical && (
-                  <span className="material-icons-outlined text-red-500 text-sm" title="Critical Path">priority_high</span>
+                  <span className="material-icons-outlined text-red-500 dark:text-red-400 text-sm" title="Critical Path">priority_high</span>
                 )}
               </div>
             </div>
@@ -262,7 +278,7 @@ export function GanttView({ tasks, startDate, endDate }: GanttViewProps) {
             {dateRange.map((date, index) => (
               <div 
                 key={index} 
-                className={`flex-1 border-r ${date.getDay() === 0 || date.getDay() === 6 ? 'bg-gray-100' : 'bg-white'}`}
+                className={`flex-1 border-r ${date.getDay() === 0 || date.getDay() === 6 ? 'bg-muted/80' : 'bg-card'}`}
               />
             ))}
           </div>
@@ -275,11 +291,11 @@ export function GanttView({ tasks, startDate, endDate }: GanttViewProps) {
             return (
               <div 
                 key={`week-${i}`} 
-                className="absolute h-full border-l border-gray-300"
+                className="absolute h-full border-l border-border"
                 style={{
                   left: `${(startIdx / totalDays) * 100}%`,
                   width: `${weekWidth}%`,
-                  borderRight: i === weekRanges.length - 1 ? '1px solid #d1d5db' : 'none'
+                  borderRight: i === weekRanges.length - 1 ? '1px solid var(--border)' : 'none'
                 }}
               />
             );
@@ -304,7 +320,7 @@ export function GanttView({ tasks, startDate, endDate }: GanttViewProps) {
                 className="absolute top-0 left-0 h-full bg-opacity-70 rounded-l"
                 style={{ 
                   width: `${task.progress}%`, 
-                  backgroundColor: task.isCritical && showCriticalPath ? '#b91c1c' : '#1d4ed8' 
+                  backgroundColor: task.isCritical && showCriticalPath ? 'var(--destructive)' : 'var(--primary)' 
                 }}
               />
             </div>
@@ -317,110 +333,122 @@ export function GanttView({ tasks, startDate, endDate }: GanttViewProps) {
   return (
     <div 
       ref={ganttContainerRef}
-      className={`gantt-view-wrapper ${isFullScreen ? 'fixed inset-0 z-50 bg-white' : 'h-full flex flex-col'}`}
+      className={`gantt-view-wrapper ${isFullScreen ? 'fixed inset-0 z-50 bg-background' : 'h-full flex flex-col'}`}
     >
-      {/* Enhanced MS Project-like toolbar */}
-      <div className="gantt-toolbar flex items-center justify-between bg-gray-100 border-b p-2">
-        <div className="left-controls flex items-center space-x-2">
-          <button 
-            onClick={toggleFullScreen}
-            className="px-2 py-1 text-sm bg-white border rounded hover:bg-gray-50 flex items-center"
+      {/* Enhanced MS Project-like toolbar with shadcn components */}
+      <div className="gantt-toolbar flex items-center justify-between bg-muted/50 dark:bg-muted/30 border-b p-2">
+        <div className="left-controls flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={toggleFullScreen} 
+            className="gap-1"
           >
-            <span className="material-icons-outlined text-sm mr-1">
-              {isFullScreen ? 'fullscreen_exit' : 'fullscreen'}
-            </span>
-            {isFullScreen ? 'Exit' : 'Full Screen'}
-          </button>
+            {isFullScreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
+            <span className="text-xs">{isFullScreen ? 'Exit' : 'Full Screen'}</span>
+          </Button>
           
-          <div className="border-l h-6 mx-1"></div>
+          <Separator orientation="vertical" className="h-6" />
           
-          {/* View mode selector */}
-          <div className="flex items-center space-x-1 border rounded bg-white">
+          {/* View mode selector as ToggleGroup */}
+          <ToggleGroup type="single" variant="outline" size="sm" value={viewMode} onValueChange={(value: string) => {
+            if (value) setViewMode(value as ViewMode);
+          }}>
             {VIEW_MODES.map(mode => (
-              <button
-                key={mode}
-                className={`px-2 py-1 text-xs ${viewMode === mode ? 'bg-blue-50 text-blue-700' : 'hover:bg-gray-100'}`}
-                onClick={() => setViewMode(mode)}
-              >
+              <ToggleGroupItem key={mode} value={mode} aria-label={`View by ${mode}`} className="text-xs">
                 {mode}
-              </button>
+              </ToggleGroupItem>
             ))}
-          </div>
+          </ToggleGroup>
           
-          <div className="border-l h-6 mx-1"></div>
+          <Separator orientation="vertical" className="h-6" />
           
           {/* Zoom controls */}
-          <div className="zoom-controls flex items-center space-x-1 bg-white border rounded px-1">
-            <button 
+          <div className="flex items-center gap-1 bg-transparent">
+            <Button 
+              variant="ghost" 
+              size="icon" 
               onClick={() => handleZoom(false)}
-              className="p-1 rounded hover:bg-gray-200" 
               disabled={zoomLevel <= 50}
               title="Zoom Out"
+              className="h-7 w-7"
             >
-              <span className="material-icons-outlined text-sm">remove</span>
-            </button>
-            <span className="text-xs font-medium px-1">{zoomLevel}%</span>
-            <button 
+              <Minus className="h-3.5 w-3.5" />
+            </Button>
+            <span className="text-xs font-medium px-1 text-foreground">{zoomLevel}%</span>
+            <Button 
+              variant="ghost" 
+              size="icon" 
               onClick={() => handleZoom(true)}
-              className="p-1 rounded hover:bg-gray-200" 
               disabled={zoomLevel >= 200}
               title="Zoom In"
+              className="h-7 w-7"
             >
-              <span className="material-icons-outlined text-sm">add</span>
-            </button>
+              <Plus className="h-3.5 w-3.5" />
+            </Button>
           </div>
           
-          <div className="border-l h-6 mx-1"></div>
+          <Separator orientation="vertical" className="h-6" />
           
-          {/* Visibility toggles */}
-          <div className="flex items-center space-x-1">
-            <button 
-              className={`px-2 py-1 text-xs ${showCriticalPath ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-white border'} rounded flex items-center`}
+          {/* Feature toggle buttons */}
+          <div className="flex items-center gap-1.5">
+            <Button 
+              variant={showCriticalPath ? "secondary" : "outline"} 
+              size="sm" 
+              className="h-7 text-xs gap-1 px-2 py-1"
               onClick={() => setShowCriticalPath(!showCriticalPath)}
-              title="Toggle Critical Path"
             >
-              <span className="material-icons-outlined text-xs mr-1">priority_high</span>
-              Critical Path
-            </button>
-            <button 
-              className={`px-2 py-1 text-xs ${showDependencies ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-white border'} rounded flex items-center`}
+              <AlertTriangle className="h-3.5 w-3.5" />
+              <span>Critical Path</span>
+            </Button>
+            <Button 
+              variant={showDependencies ? "secondary" : "outline"} 
+              size="sm" 
+              className="h-7 text-xs gap-1 px-2 py-1"
               onClick={() => setShowDependencies(!showDependencies)}
-              title="Toggle Dependencies"
             >
-              <span className="material-icons-outlined text-xs mr-1">timeline</span>
-              Links
-            </button>
-            <button 
-              className={`px-2 py-1 text-xs ${splitView ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-white border'} rounded flex items-center`}
+              <Link2 className="h-3.5 w-3.5" />
+              <span>Links</span>
+            </Button>
+            <Button 
+              variant={splitView ? "secondary" : "outline"} 
+              size="sm" 
+              className="h-7 text-xs gap-1 px-2 py-1"
               onClick={() => setSplitView(!splitView)}
-              title="Toggle Split View"
             >
-              <span className="material-icons-outlined text-xs mr-1">vertical_split</span>
-              Split
-            </button>
+              <FlipVertical className="h-3.5 w-3.5" />
+              <span>Split</span>
+            </Button>
           </div>
         </div>
         
-        <div className="right-controls flex items-center space-x-2">
-          <div className="date-selector bg-white border rounded flex items-center">
-            <button className="p-1 hover:bg-gray-100">
-              <span className="material-icons-outlined text-sm">chevron_left</span>
-            </button>
-            <span className="text-sm px-2">{startDate.toLocaleDateString()} - {endDate.toLocaleDateString()}</span>
-            <button className="p-1 hover:bg-gray-100">
-              <span className="material-icons-outlined text-sm">chevron_right</span>
-            </button>
+        <div className="right-controls flex items-center gap-2">
+          <div className="flex items-center gap-1 border rounded">
+            <Button variant="ghost" size="icon" className="h-7 w-7">
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="text-xs px-2 text-foreground">{startDate.toLocaleDateString()} - {endDate.toLocaleDateString()}</span>
+            <Button variant="ghost" size="icon" className="h-7 w-7">
+              <ChevronRight className="h-4 w-4" />
+            </Button>
           </div>
-          <select className="text-xs border rounded py-1 px-2 bg-white">
-            <option>Today</option>
-            <option>This Week</option>
-            <option>This Month</option>
-            <option>Custom Range</option>
-          </select>
-          <button className="px-2 py-1 text-xs bg-white border rounded hover:bg-gray-50 flex items-center">
-            <span className="material-icons-outlined text-xs mr-1">file_download</span>
-            Export
-          </button>
+          
+          <Select defaultValue="today">
+            <SelectTrigger className="h-7 text-xs w-32">
+              <SelectValue placeholder="View range" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="today" className="text-xs">Today</SelectItem>
+              <SelectItem value="this-week" className="text-xs">This Week</SelectItem>
+              <SelectItem value="this-month" className="text-xs">This Month</SelectItem>
+              <SelectItem value="custom" className="text-xs">Custom Range</SelectItem>
+            </SelectContent>
+          </Select>
+          
+          <Button variant="outline" size="sm" className="h-7 text-xs gap-1 px-2.5 py-1">
+            <Download className="h-3.5 w-3.5" />
+            <span>Export</span>
+          </Button>
         </div>
       </div>
       
@@ -430,19 +458,19 @@ export function GanttView({ tasks, startDate, endDate }: GanttViewProps) {
       >
         <div className="gantt-container min-w-full h-full" style={{ fontSize: `${zoomLevel}%` }}>
           {/* Enhanced timeline header with multiple levels (MS Project style) */}
-          <div className="timeline-header sticky top-0 bg-white z-10 border-b">
+          <div className="timeline-header sticky top-0 bg-card dark:bg-card/95 z-10 border-b">
             {/* Month header for Month view */}
             {viewMode !== 'Day' && (
               <div className="flex border-b">
-                <div className="w-96 min-w-96 flex-shrink-0 border-r bg-gray-50">
-                  <div className="px-3 py-1 font-medium text-xs">Task Name</div>
+                <div className="w-96 min-w-96 flex-shrink-0 border-r bg-muted/50 dark:bg-muted/20">
+                  <div className="px-3 py-1 font-medium text-xs text-muted-foreground">Task Name</div>
                 </div>
                 <div className="flex-grow flex">
                   {viewMode === 'Month' ? (
                     monthRanges.map((month, i) => (
                       <div 
                         key={`month-${i}`} 
-                        className="border-r text-center font-medium text-xs py-1 bg-gray-50"
+                        className="border-r text-center font-medium text-xs py-1 bg-muted/50 dark:bg-muted/20 text-muted-foreground"
                         style={{ width: `${(month.days / totalDays) * 100}%` }}
                       >
                         {month.month}
@@ -457,7 +485,7 @@ export function GanttView({ tasks, startDate, endDate }: GanttViewProps) {
                       return (
                         <div 
                           key={`week-header-${i}`} 
-                          className="border-r text-center font-medium text-xs py-1 bg-gray-50"
+                          className="border-r text-center font-medium text-xs py-1 bg-muted/50 dark:bg-muted/20 text-muted-foreground"
                           style={{ width: `${weekWidth}%` }}
                         >
                           {`${startDate} - ${endDate}`}
@@ -471,20 +499,20 @@ export function GanttView({ tasks, startDate, endDate }: GanttViewProps) {
             
             {/* Day header always shown */}
             <div className="flex">
-              <div className="w-96 min-w-96 flex-shrink-0 p-2 border-r bg-gray-50 flex items-center">
+              <div className="w-96 min-w-96 flex-shrink-0 p-2 border-r bg-muted/50 dark:bg-muted/20 flex items-center">
                 <div className="w-5 mr-1"></div>
-                <div className="text-xs text-gray-600 font-medium">Task</div>
+                <div className="text-xs text-muted-foreground font-medium">Task</div>
               </div>
               <div className="timeline-column flex-grow overflow-hidden">
                 <div className="flex">
                   {dateRange.map((date, index) => (
                     <div 
                       key={index} 
-                      className={`date-header flex-1 text-center py-1 text-xs border-r ${date.getDay() === 0 || date.getDay() === 6 ? 'bg-gray-100' : 'bg-white'}`}
+                      className={`date-header flex-1 text-center py-1 text-xs border-r ${date.getDay() === 0 || date.getDay() === 6 ? 'bg-muted/80 dark:bg-muted/40' : 'bg-card dark:bg-card'}`}
                     >
                       {date.getDate()}
                       {viewMode === 'Day' && (
-                        <div className="text-gray-500 text-[10px]">{date.toLocaleDateString('en-US', { weekday: 'short' })}</div>
+                        <div className="text-muted-foreground text-[10px]">{date.toLocaleDateString('en-US', { weekday: 'short' })}</div>
                       )}
                     </div>
                   ))}
@@ -509,7 +537,7 @@ export function GanttView({ tasks, startDate, endDate }: GanttViewProps) {
       
       {/* Full screen mode footer status bar */}
       {isFullScreen && (
-        <div className="gantt-footer border-t bg-gray-50 p-2 text-xs text-gray-600 flex justify-between">
+        <div className="gantt-footer border-t bg-muted/50 dark:bg-muted/20 p-2 text-xs text-muted-foreground flex justify-between">
           <div>Tasks: {tasks.length} • Critical Tasks: {tasks.filter(t => t.isCritical).length} • Date Range: {startDate.toLocaleDateString()} - {endDate.toLocaleDateString()}</div>
           <div>Press ESC to exit full screen</div>
         </div>

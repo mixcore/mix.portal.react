@@ -149,6 +149,8 @@ We are currently in **Phase 2: Content Management** with the following prioritie
 - [ ] Refine mobile responsiveness
 - [ ] Add confirmation dialogs
 - [ ] Improve loading states
+- [x] Standardize mini-app UI components with shadcn/ui
+- [x] Add dark mode support to all views and components
 
 ## Critical Dependencies
 
@@ -158,7 +160,8 @@ We are currently in **Phase 2: Content Management** with the following prioritie
 | Form component library | ✅ Completed | Content creation pages |
 | Data table component | ✅ Completed | List views |
 | API client | ✅ Completed | All API integrations |
-| Rich text editor | 🔜 Pending | Post/page editing |
+| Rich text editor | ✅ Completed | Post/page editing |
+| shadcn/ui component library | ✅ Completed | UI standardization |
 
 ## Risk Management
 
@@ -179,4 +182,5 @@ We are currently in **Phase 2: Content Management** with the following prioritie
 | 2023-04-20 | Developer | Added Phase 2 detailed tasks |
 | 2023-04-25 | Developer | Completed Edit Page form |
 | 2023-04-27 | Developer | Implemented RichTextEditor component using TipTap |
-| 2023-04-28 | Developer | Fixed TipTap dependencies - installed @tiptap/react, @tiptap/pm, @tiptap/starter-kit, @tiptap/extension-image, @tiptap/extension-color, @tiptap/extension-text-style, @tiptap/extension-link using pnpm add -w | 
+| 2023-04-28 | Developer | Fixed TipTap dependencies - installed @tiptap/react, @tiptap/pm, @tiptap/starter-kit, @tiptap/extension-image, @tiptap/extension-color, @tiptap/extension-text-style, @tiptap/extension-link using pnpm add -w |
+| 2023-06-05 | Developer | Updated GanttView toolbar to use shadcn/ui components and added dark mode support | 

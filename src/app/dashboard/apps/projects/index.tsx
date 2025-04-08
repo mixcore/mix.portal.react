@@ -266,10 +266,10 @@ export function ProjectsApp(props: ProjectsAppProps) {
         return (
           <div className="projects-view h-full overflow-hidden flex flex-col">
             <div className="flex justify-between items-center p-6 pb-2">
-              <h2 className="text-xl font-semibold">All Projects</h2>
+              <h2 className="text-xl font-semibold text-foreground">All Projects</h2>
               <div className="flex items-center space-x-2">
                 <button
-                  className="text-gray-600 hover:bg-gray-100 p-1 rounded"
+                  className="text-muted-foreground hover:bg-muted p-1 rounded"
                   title="Copy Deep Link"
                   onClick={() => {
                     const deepLink = window.location.origin + getDeepLink('projects');
@@ -282,11 +282,11 @@ export function ProjectsApp(props: ProjectsAppProps) {
               </div>
             </div>
             <div className="flex justify-between items-center px-6 mb-4">
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-muted-foreground">
                 Showing {mockProjects.length} projects
               </div>
               <div>
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-700 flex items-center">
+                <button className="bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm hover:bg-primary/90 flex items-center">
                   <span className="material-icons-outlined text-sm mr-1">add</span>
                   New Project
                 </button>
@@ -308,16 +308,16 @@ export function ProjectsApp(props: ProjectsAppProps) {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center">
                   <button 
-                    className="text-blue-600 mr-2" 
+                    className="text-primary mr-2" 
                     onClick={() => handleViewChange('projects')}
                   >
                     <span className="material-icons-outlined">arrow_back</span>
                   </button>
-                  <h2 className="text-xl font-semibold">{selectedProject?.title || 'Project Tasks'}</h2>
+                  <h2 className="text-xl font-semibold text-foreground">{selectedProject?.title || 'Project Tasks'}</h2>
                 </div>
                 <div className="flex items-center space-x-2">
                   <button
-                    className="text-gray-600 hover:bg-gray-100 p-1 rounded"
+                    className="text-muted-foreground hover:bg-muted p-1 rounded"
                     title="Copy Deep Link"
                     onClick={() => {
                       const deepLink = window.location.origin + getDeepLink('tasks', selectedProjectId || undefined);
@@ -331,11 +331,11 @@ export function ProjectsApp(props: ProjectsAppProps) {
               </div>
               
               <div className="flex justify-between items-center mb-6">
-                <div className="text-sm text-gray-600">
+                <div className="text-sm text-muted-foreground">
                   {mockTasks.length} tasks · Due {selectedProject?.dueDate ? new Date(selectedProject.dueDate).toLocaleDateString() : 'N/A'}
                 </div>
                 <div>
-                  <button className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-700 flex items-center">
+                  <button className="bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm hover:bg-primary/90 flex items-center">
                     <span className="material-icons-outlined text-sm mr-1">add_task</span>
                     Add Task
                   </button>
@@ -344,12 +344,12 @@ export function ProjectsApp(props: ProjectsAppProps) {
             </div>
             
             <div className="flex-1 overflow-auto">
-              <div className="bg-white shadow overflow-hidden mx-6">
-                <div className="px-4 py-2 bg-gray-50 border-b text-sm font-medium text-gray-600 flex justify-between">
+              <div className="bg-card shadow overflow-hidden mx-6 border rounded-md">
+                <div className="px-4 py-2 bg-muted/50 border-b text-sm font-medium text-muted-foreground flex justify-between">
                   <span>Task</span>
                   <span>Details</span>
                 </div>
-                <div className="task-list divide-y">
+                <div className="task-list divide-y divide-border">
                   {mockTasks.map(task => (
                     <Task key={task.id} {...task} />
                   ))}
@@ -362,7 +362,7 @@ export function ProjectsApp(props: ProjectsAppProps) {
       case 'gantt':
         return (
           <div className="gantt-view-container h-full overflow-hidden">
-            <div className="bg-white h-full overflow-hidden">
+            <div className="bg-card h-full overflow-hidden">
               <GanttView 
                 tasks={mockGanttTasks}
                 startDate={ganttStartDate}
@@ -376,10 +376,10 @@ export function ProjectsApp(props: ProjectsAppProps) {
         return (
           <div className="board-view h-full overflow-hidden flex flex-col">
             <div className="p-6 flex justify-between items-center">
-              <h2 className="text-xl font-semibold">Task Board</h2>
+              <h2 className="text-xl font-semibold text-foreground">Task Board</h2>
               <div className="flex items-center space-x-2">
                 <button
-                  className="text-gray-600 hover:bg-gray-100 p-1 rounded"
+                  className="text-muted-foreground hover:bg-muted p-1 rounded"
                   title="Copy Deep Link"
                   onClick={() => {
                     const deepLink = window.location.origin + getDeepLink('board');
@@ -389,7 +389,7 @@ export function ProjectsApp(props: ProjectsAppProps) {
                 >
                   <span className="material-icons-outlined text-sm">link</span>
                 </button>
-                <button className="bg-blue-600 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-700 flex items-center">
+                <button className="bg-primary text-primary-foreground px-3 py-1 rounded-md text-sm hover:bg-primary/90 flex items-center">
                   <span className="material-icons-outlined text-sm mr-1">add</span>
                   New Task
                 </button>
@@ -399,37 +399,37 @@ export function ProjectsApp(props: ProjectsAppProps) {
             <div className="flex-1 overflow-auto">
               <div className="flex gap-4 overflow-x-auto pb-4 px-6 h-full">
                 {/* Not Started column */}
-                <div className="board-column min-w-[320px] bg-white rounded-lg shadow max-h-full flex flex-col">
-                  <div className="p-3 bg-gray-50 border-b font-medium sticky top-0 flex justify-between items-center">
+                <div className="board-column min-w-[320px] bg-card rounded-lg shadow border max-h-full flex flex-col">
+                  <div className="p-3 bg-muted/50 border-b font-medium sticky top-0 flex justify-between items-center">
                     <div className="flex items-center">
-                      <span className="h-3 w-3 bg-gray-300 rounded-full mr-2"></span>
-                      <span>Not Started</span>
+                      <span className="h-3 w-3 bg-secondary rounded-full mr-2"></span>
+                      <span className="text-foreground">Not Started</span>
                     </div>
-                    <span className="text-xs text-gray-500 px-2 py-1 bg-gray-100 rounded">
+                    <span className="text-xs text-muted-foreground px-2 py-1 bg-muted rounded">
                       {mockTasks.filter(task => task.status === 'notStarted').length}
                     </span>
                   </div>
                   <div className="p-2 overflow-auto flex-1">
                     {mockTasks.filter(task => task.status === 'notStarted').map(task => (
-                      <div key={task.id} className="bg-white p-3 mb-2 rounded border shadow-sm hover:shadow-md transition-shadow cursor-pointer">
-                        <div className="font-medium mb-2 flex items-center">
+                      <div key={task.id} className="bg-card p-3 mb-2 rounded border shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                        <div className="font-medium mb-2 flex items-center text-foreground">
                           {task.name}
-                          {task.priority === 'high' && <span className="ml-2 text-red-500 material-icons-outlined text-sm">priority_high</span>}
+                          {task.priority === 'high' && <span className="ml-2 text-red-500 dark:text-red-400 material-icons-outlined text-sm">priority_high</span>}
                         </div>
-                        <div className="text-sm text-gray-600 mb-2 flex items-center">
+                        <div className="text-sm text-muted-foreground mb-2 flex items-center">
                           <span className="material-icons-outlined text-xs mr-1">event</span>
                           {task.dueDate}
                         </div>
                         <div className="flex justify-between items-center">
                           <span className={`text-xs px-2 py-0.5 rounded-full ${
-                            task.priority === 'high' ? 'bg-red-100 text-red-800' : 
-                            task.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' : 
-                            'bg-green-100 text-green-800'
+                            task.priority === 'high' ? 'bg-red-100 dark:bg-red-950/50 text-red-800 dark:text-red-300' : 
+                            task.priority === 'medium' ? 'bg-yellow-100 dark:bg-yellow-950/50 text-yellow-800 dark:text-yellow-300' : 
+                            'bg-green-100 dark:bg-green-950/50 text-green-800 dark:text-green-300'
                           }`}>
                             {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
                           </span>
                           {task.assignedTo && (
-                            <div className="h-6 w-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold">
+                            <div className="h-6 w-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
                               {task.assignedTo.slice(0, 2).toUpperCase()}
                             </div>
                           )}
@@ -440,24 +440,24 @@ export function ProjectsApp(props: ProjectsAppProps) {
                 </div>
                 
                 {/* In Progress column */}
-                <div className="board-column min-w-[320px] bg-white rounded-lg shadow max-h-full flex flex-col">
-                  <div className="p-3 bg-blue-50 border-b font-medium text-blue-800 sticky top-0 flex justify-between items-center">
+                <div className="board-column min-w-[320px] bg-card rounded-lg shadow border max-h-full flex flex-col">
+                  <div className="p-3 bg-blue-100 dark:bg-blue-950/50 border-b font-medium text-blue-800 dark:text-blue-300 sticky top-0 flex justify-between items-center">
                     <div className="flex items-center">
-                      <span className="h-3 w-3 bg-blue-500 rounded-full mr-2"></span>
+                      <span className="h-3 w-3 bg-blue-500 dark:bg-blue-400 rounded-full mr-2"></span>
                       <span>In Progress</span>
                     </div>
-                    <span className="text-xs text-blue-700 px-2 py-1 bg-blue-100 rounded">
+                    <span className="text-xs text-blue-700 dark:text-blue-300 px-2 py-1 bg-blue-100/50 dark:bg-blue-900/30 rounded">
                       {mockTasks.filter(task => task.status === 'inProgress').length}
                     </span>
                   </div>
                   <div className="p-2 overflow-auto flex-1">
                     {mockTasks.filter(task => task.status === 'inProgress').map(task => (
-                      <div key={task.id} className="bg-white p-3 mb-2 rounded border shadow-sm hover:shadow-md transition-shadow cursor-pointer">
-                        <div className="font-medium mb-2 flex items-center">
+                      <div key={task.id} className="bg-card p-3 mb-2 rounded border shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                        <div className="font-medium mb-2 flex items-center text-foreground">
                           {task.name}
-                          {task.priority === 'high' && <span className="ml-2 text-red-500 material-icons-outlined text-sm">priority_high</span>}
+                          {task.priority === 'high' && <span className="ml-2 text-red-500 dark:text-red-400 material-icons-outlined text-sm">priority_high</span>}
                         </div>
-                        <div className="text-sm text-gray-600 mb-2 flex items-center">
+                        <div className="text-sm text-muted-foreground mb-2 flex items-center">
                           <span className="material-icons-outlined text-xs mr-1">event</span>
                           {task.dueDate}
                         </div>
@@ -466,7 +466,7 @@ export function ProjectsApp(props: ProjectsAppProps) {
                             {task.progress}% complete
                           </div>
                           {task.assignedTo && (
-                            <div className="h-6 w-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold">
+                            <div className="h-6 w-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
                               {task.assignedTo.slice(0, 2).toUpperCase()}
                             </div>
                           )}
@@ -483,28 +483,28 @@ export function ProjectsApp(props: ProjectsAppProps) {
                 </div>
                 
                 {/* Completed column */}
-                <div className="board-column min-w-[320px] bg-white rounded-lg shadow max-h-full flex flex-col">
-                  <div className="p-3 bg-green-50 border-b font-medium text-green-800 sticky top-0 flex justify-between items-center">
+                <div className="board-column min-w-[320px] bg-card rounded-lg shadow border max-h-full flex flex-col">
+                  <div className="p-3 bg-green-100 dark:bg-green-950/50 border-b font-medium text-green-800 dark:text-green-300 sticky top-0 flex justify-between items-center">
                     <div className="flex items-center">
-                      <span className="h-3 w-3 bg-green-500 rounded-full mr-2"></span>
+                      <span className="h-3 w-3 bg-green-500 dark:bg-green-400 rounded-full mr-2"></span>
                       <span>Completed</span>
                     </div>
-                    <span className="text-xs text-green-700 px-2 py-1 bg-green-100 rounded">
+                    <span className="text-xs text-green-700 dark:text-green-300 px-2 py-1 bg-green-100/50 dark:bg-green-900/30 rounded">
                       {mockTasks.filter(task => task.status === 'completed').length}
                     </span>
                   </div>
                   <div className="p-2 overflow-auto flex-1">
                     {mockTasks.filter(task => task.status === 'completed').map(task => (
-                      <div key={task.id} className="bg-white p-3 mb-2 rounded border shadow-sm hover:shadow-md transition-shadow cursor-pointer opacity-80">
+                      <div key={task.id} className="bg-card p-3 mb-2 rounded border shadow-sm hover:shadow-md transition-shadow cursor-pointer opacity-80">
                         <div className="font-medium mb-2 flex items-center line-through text-gray-500">
                           {task.name}
                         </div>
-                        <div className="text-sm text-gray-400 mb-2 flex items-center">
+                        <div className="text-sm text-muted-foreground mb-2 flex items-center">
                           <span className="material-icons-outlined text-xs mr-1">event</span>
                           {task.dueDate}
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-800">
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-950/50 text-green-800 dark:text-green-300">
                             100% Complete
                           </span>
                           {task.assignedTo && (
@@ -526,10 +526,10 @@ export function ProjectsApp(props: ProjectsAppProps) {
         return (
           <div className="calendar-view h-full overflow-hidden flex flex-col">
             <div className="p-6 flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Calendar View</h2>
+              <h2 className="text-xl font-semibold text-foreground">Calendar View</h2>
               <div className="flex items-center space-x-2">
                 <button
-                  className="text-gray-600 hover:bg-gray-100 p-1 rounded"
+                  className="text-muted-foreground hover:bg-muted p-1 rounded"
                   title="Copy Deep Link"
                   onClick={() => {
                     const deepLink = window.location.origin + getDeepLink('calendar');
@@ -540,14 +540,14 @@ export function ProjectsApp(props: ProjectsAppProps) {
                   <span className="material-icons-outlined text-sm">link</span>
                 </button>
                 <div className="flex items-center space-x-2">
-                  <button className="border bg-white p-1 rounded hover:bg-gray-100">
-                    <span className="material-icons-outlined">chevron_left</span>
+                  <button className="border bg-card p-1 rounded hover:bg-muted">
+                    <span className="material-icons-outlined text-muted-foreground">chevron_left</span>
                   </button>
-                  <span className="text-sm font-medium">October 2023</span>
-                  <button className="border bg-white p-1 rounded hover:bg-gray-100">
-                    <span className="material-icons-outlined">chevron_right</span>
+                  <span className="text-sm font-medium text-foreground">October 2023</span>
+                  <button className="border bg-card p-1 rounded hover:bg-muted">
+                    <span className="material-icons-outlined text-muted-foreground">chevron_right</span>
                   </button>
-                  <button className="border bg-white px-3 py-1 rounded text-sm hover:bg-gray-100 ml-2">
+                  <button className="border bg-card px-3 py-1 rounded text-sm hover:bg-muted ml-2 text-foreground">
                     Today
                   </button>
                 </div>
@@ -555,15 +555,15 @@ export function ProjectsApp(props: ProjectsAppProps) {
             </div>
             
             <div className="flex-1 px-6 pb-6 overflow-auto">
-              <div className="bg-white rounded-lg shadow h-full p-4 flex flex-col">
-                <div className="grid grid-cols-7 gap-px bg-gray-200">
+              <div className="bg-card rounded-lg shadow border h-full p-4 flex flex-col">
+                <div className="grid grid-cols-7 gap-px bg-muted/90">
                   {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                    <div key={day} className="bg-gray-50 font-medium text-sm p-2 text-center">
+                    <div key={day} className="bg-muted/50 font-medium text-sm p-2 text-center text-muted-foreground">
                       {day}
                     </div>
                   ))}
                 </div>
-                <div className="flex-1 grid grid-cols-7 grid-rows-5 gap-px bg-gray-200">
+                <div className="flex-1 grid grid-cols-7 grid-rows-5 gap-px bg-muted/90">
                   {Array.from({ length: 35 }).map((_, i) => {
                     // Simplified calendar logic
                     const dayNum = i - 6; // Offset for the month
@@ -573,13 +573,13 @@ export function ProjectsApp(props: ProjectsAppProps) {
                     return (
                       <div 
                         key={i} 
-                        className={`bg-white p-1 ${isCurrentMonth ? '' : 'text-gray-400'} ${isToday ? 'ring-2 ring-blue-500 ring-inset' : ''}`}
+                        className={`bg-card p-1 ${isCurrentMonth ? 'text-foreground' : 'text-muted-foreground'} ${isToday ? 'ring-2 ring-primary ring-inset' : ''}`}
                       >
                         <div className="text-xs p-1">{isCurrentMonth ? dayNum : (dayNum <= 0 ? 30 + dayNum : dayNum - 31)}</div>
                         {/* Task indicators for demo */}
                         {isCurrentMonth && dayNum >= 10 && dayNum <= 20 && i % 3 === 0 && (
-                          <div className="text-xs p-1 bg-blue-50 border border-blue-200 rounded mt-1 truncate">
-                            <div className="font-medium">Task {dayNum}</div>
+                          <div className="text-xs p-1 bg-blue-100/50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded mt-1 truncate">
+                            <div className="font-medium text-blue-800 dark:text-blue-300">Task {dayNum}</div>
                           </div>
                         )}
                       </div>

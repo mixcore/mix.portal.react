@@ -422,3 +422,57 @@ We are currently in **Phase 2: Content Management** with the following prioritie
 - Refine authentication system
 
 For detailed status, see the [Progress Tracker](./tracking/PROGRESS-TRACKER.md). 
+
+## UI Component Standardization
+
+To ensure a consistent user experience across the application, all mini-apps and components should use the UI component library based on shadcn/ui. This helps maintain a cohesive design language throughout the application.
+
+### Key UI Standardization Requirements
+
+1. **Use shadcn/ui Components**: Rather than building custom UI elements, leverage the shadcn/ui components for all common UI needs.
+   - Buttons, inputs, selects, and dialogs should use shadcn/ui implementations
+   - Toolbars and control panels should be built from shadcn/ui primitives
+   
+2. **Dark Mode Support**: All components must support both light and dark themes.
+   - Use theme tokens instead of hardcoded colors (e.g., `bg-card` instead of `bg-white`)
+   - Add `dark:` variants for any custom colors
+   - Test all components in both light and dark mode
+   
+3. **Responsive Design**: Components should adapt gracefully to different screen sizes.
+   - Mobile-first approach
+   - Use fluid layouts and responsive spacing
+   
+4. **Accessibility**: Ensure all UI components meet accessibility standards.
+   - Proper keyboard navigation
+   - Screen reader compatibility
+   - Sufficient color contrast
+
+### Example: Toolbar Implementation
+
+When implementing toolbars, such as those in the Gantt chart component:
+
+```tsx
+// ❌ Avoid custom implementations
+<div className="toolbar">
+  <button className="custom-button">
+    <span className="icon">+</span>
+    Add
+  </button>
+</div>
+
+// ✅ Use shadcn/ui components
+<div className="flex items-center gap-2">
+  <Button variant="outline" size="sm">
+    <Plus className="h-4 w-4 mr-1" />
+    Add
+  </Button>
+  <Separator orientation="vertical" className="h-6" />
+  <ToggleGroup type="single" variant="outline" size="sm">
+    <ToggleGroupItem value="day">Day</ToggleGroupItem>
+    <ToggleGroupItem value="week">Week</ToggleGroupItem>
+    <ToggleGroupItem value="month">Month</ToggleGroupItem>
+  </ToggleGroup>
+</div>
+```
+
+By following these standards, we ensure that all parts of the application look and feel consistent, which improves user experience and makes maintenance easier. 

@@ -344,6 +344,64 @@ When implementing a new content type:
 
 ## Component Guidelines
 
+All components should follow these guidelines to ensure consistency, accessibility, and maintainability across the Mixcore application.
+
+### UI Component Standardization
+
+To ensure a consistent user experience across the application, we've standardized our UI components using shadcn/ui. This approach provides several benefits:
+
+1. **Consistency**: All parts of the application look and behave similarly
+2. **Accessibility**: shadcn/ui components are built with accessibility in mind
+3. **Maintainability**: Reduces custom CSS and makes updates easier
+4. **Theme Support**: All components support both light and dark themes
+
+#### Key Standardization Principles
+
+1. **Use shadcn/ui Components**: Rather than creating custom UI elements, use shadcn/ui components wherever possible:
+   - Buttons, inputs, selects, and dialogs should use shadcn/ui implementations
+   - Complex UI elements like toolbars should be built from shadcn/ui primitives
+
+2. **Theme Token Usage**: Use theme tokens instead of hardcoded colors:
+   - Use `bg-card` instead of `bg-white`
+   - Use `text-foreground` instead of `text-black`
+   - Add `dark:` variants for custom colors
+   - Example: `bg-blue-100 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300`
+
+3. **Mini-App Consistency**: Mini-apps should maintain consistency with the main application:
+   - Use the same component library
+   - Follow the same design patterns
+   - Support both light and dark themes
+
+#### Example Improvements
+
+We've recently standardized the GanttView toolbar in the Projects mini-app:
+
+```tsx
+// ❌ Before: Custom toolbar implementation
+<div className="toolbar">
+  <button className="custom-button">
+    <span className="icon">+</span>
+    Add
+  </button>
+</div>
+
+// ✅ After: shadcn/ui-based toolbar
+<div className="flex items-center gap-2">
+  <Button variant="outline" size="sm">
+    <Plus className="h-4 w-4 mr-1" />
+    Add
+  </Button>
+  <Separator orientation="vertical" className="h-6" />
+  <ToggleGroup type="single" variant="outline" size="sm">
+    <ToggleGroupItem value="day">Day</ToggleGroupItem>
+    <ToggleGroupItem value="week">Week</ToggleGroupItem>
+    <ToggleGroupItem value="month">Month</ToggleGroupItem>
+  </ToggleGroup>
+</div>
+```
+
+### Component Naming Convention
+
 ### UI Component Template
 
 ```tsx

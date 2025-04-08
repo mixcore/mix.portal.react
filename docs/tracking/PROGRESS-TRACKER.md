@@ -56,6 +56,19 @@ This document provides detailed tracking of the Mixcore migration progress, serv
 | RichTextEditor | ✅ Complete | For content editing with TipTap | 2023-04-27 |
 | FileUploader | ❌ Not Started | For media uploads | - |
 | FormBuilder | ❌ Not Started | For dynamic forms | - |
+| Gantt Chart | ✅ Complete | Project management visualization with shadcn UI toolbar | 2023-06-05 |
+
+### Mini-App Components
+
+| Component | Status | Notes | Last Updated |
+|-----------|--------|-------|-------------|
+| Projects App | ✅ Complete | Project management mini-app with Gantt view | 2023-06-05 |
+| ProjectList | ✅ Complete | Data table with sorting and filtering | 2023-06-02 |
+| ProjectItem | ✅ Complete | Card component for project display | 2023-06-02 |
+| GanttView | ✅ Complete | Gantt chart with shadcn/ui toolbar implementation | 2023-06-05 |
+| Task | ✅ Complete | Task display component with progress tracking | 2023-06-03 |
+| TaskBoard | 🔄 In Progress | Kanban board for task management | 2023-06-04 |
+| Calendar View | 🔄 In Progress | Calendar visualization of projects | 2023-06-04 |
 
 ## Pages Status
 
@@ -145,24 +158,17 @@ This document provides detailed tracking of the Mixcore migration progress, serv
 
 ## Sprint Tracking
 
-### Current Sprint (2023-04-15 to 2023-04-30)
+### Current Sprint (2023-06-01 to 2023-06-15)
 
 | Task | Assignee | Status | Due Date |
 |------|----------|--------|----------|
-| Implement Edit Page Form | | ✅ Complete | 2023-04-25 |
-| Create Post Detail Page | | ✅ Complete | 2023-04-28 |
-| Implement Post Create Form | | ✅ Complete | 2023-04-30 |
-| Enhance API Error Handling | | 🔄 In Progress | 2023-04-25 |
-| Create Rich Text Editor Component | | ✅ Complete | 2023-04-27 |
-
-### Next Sprint (2023-05-01 to 2023-05-15)
-
-| Task | Assignee | Status | Due Date |
-|------|----------|--------|----------|
-| Complete Posts Management | | 🔜 Planned | 2023-05-10 |
-| Implement Media List | | 🔜 Planned | 2023-05-10 |
-| Create File Upload Component | | 🔜 Planned | 2023-05-15 |
-| Enhance Authentication System | | 🔜 Planned | 2023-05-15 |
+| Standardize UI components in mini-apps | | ✅ Complete | 2023-06-05 |
+| Update GanttView toolbar with shadcn/ui | | ✅ Complete | 2023-06-05 |
+| Implement dark mode support for all views | | ✅ Complete | 2023-06-05 |
+| Complete Calendar View UI | | 🔄 In Progress | 2023-06-10 |
+| Complete TaskBoard UI | | 🔄 In Progress | 2023-06-10 |
+| Implement Media List | | 🔜 Planned | 2023-06-12 |
+| Create File Upload Component | | 🔜 Planned | 2023-06-15 |
 
 ## Status Legend
 
