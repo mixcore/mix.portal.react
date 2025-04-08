@@ -1,11 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AppShell from './layouts/AppShell';
 import ProjectList from './components/ProjectList';
 import Task from './components/Task';
 import GanttView from './components/GanttView';
 import { mockProjects, mockTasks, mockGanttTasks, ganttStartDate, ganttEndDate } from './lib/mockData';
+import useContainerStatus from './hooks/useContainerStatus';
+import './app-globals.css'; // Import app-specific styles
+import { initializeApp, getAppConfig } from './app-loader';
 
 type ViewType = 'projects' | 'tasks' | 'gantt' | 'calendar' | 'board';
 
@@ -14,8 +17,63 @@ export interface ProjectsAppProps {
 }
 
 export function ProjectsApp(props: ProjectsAppProps) {
-  const [activeView, setActiveView] = useState<ViewType>('projects');
+  // Get app config
+  const appConfig = getAppConfig();
+  
+  // Set initial view from config
+  const initialView = appConfig.settings.enableFullScreenByDefault ? 'gantt' : 'projects';
+  
+  const [activeView, setActiveView] = useState<ViewType>(initialView as ViewType);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const isFluidLayout = useContainerStatus();
+  const [isInitialized, setIsInitialized] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  
+  // Initialize app if needed
+  useEffect(() => {
+    const appInitKey = 'mixcore_projects_initialized';
+    const isAppInitialized = localStorage.getItem(appInitKey) === 'true';
+    
+    const handleInitialization = async () => {
+      // If already initialized or currently initializing, skip
+      if (isAppInitialized || isLoading) return;
+      
+      try {
+        setIsLoading(true);
+        const success = await initializeApp();
+        
+        if (success) {
+          localStorage.setItem(appInitKey, 'true');
+          setIsInitialized(true);
+        } else {
+          setIsInitialized(false);
+          // Only clear initialization flag in development to allow retries
+          if (process.env.NODE_ENV === 'development') {
+            localStorage.removeItem(appInitKey);
+          }
+        }
+      } catch (error) {
+        console.error('Error during app initialization:', error);
+        setIsInitialized(false);
+        // Only clear initialization flag in development to allow retries
+        if (process.env.NODE_ENV === 'development') {
+          localStorage.removeItem(appInitKey);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    // Handle initial load
+    handleInitialization();
+    
+    // Clean up (if the component unmounts during initialization)
+    return () => {
+      if (isLoading) {
+        console.log('Initialization interrupted: component unmounted');
+      }
+    };
+  }, [isLoading]);
   
   // Handle project selection
   const handleProjectClick = (projectId: string) => {
@@ -27,6 +85,80 @@ export function ProjectsApp(props: ProjectsAppProps) {
   const handleViewChange = (viewType: ViewType) => {
     setActiveView(viewType);
   };
+  
+  // Set body class for fluid layout when this app is active
+  useEffect(() => {
+    const body = document.body;
+    const shouldUseFluidLayout = appConfig.ui.layout.fluid || isFluidLayout;
+    
+    if (shouldUseFluidLayout) {
+      body.classList.add('projects-app-active');
+    } else {
+      body.classList.remove('projects-app-active');
+    }
+    
+    return () => {
+      body.classList.remove('projects-app-active');
+    };
+  }, [isFluidLayout, appConfig.ui.layout.fluid]);
+  
+  // Handle retry initialization
+  const handleRetryInitialization = () => {
+    localStorage.removeItem('mixcore_projects_initialized');
+    setIsLoading(true);
+    setIsInitialized(true);
+  };
+  
+  // Show loading state while app is initializing
+  if (isLoading) {
+    return (
+      <div className="h-full flex items-center justify-center bg-white p-4">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-gray-300 border-t-blue-600 mb-4"></div>
+          <p className="text-gray-600">Initializing Projects app...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // Show error state if initialization failed
+  if (!isInitialized) {
+    return (
+      <div className="h-full flex items-center justify-center bg-white p-4">
+        <div className="text-center max-w-md">
+          <div className="text-red-500 mb-4">
+            <span className="material-icons-outlined text-4xl">error_outline</span>
+          </div>
+          <h3 className="text-lg font-medium text-red-800 mb-2">Initialization Error</h3>
+          <p className="text-gray-600 mb-4">
+            Failed to initialize the Projects app. This could be because the API endpoints are not yet available.
+            {process.env.NODE_ENV === 'development' && (
+              <span className="block mt-2 text-sm">
+                Note: In development mode, we're simulating initialization. The actual API endpoints will be implemented soon.
+              </span>
+            )}
+          </p>
+          <button 
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            onClick={handleRetryInitialization}
+          >
+            Retry
+          </button>
+          {process.env.NODE_ENV === 'development' && (
+            <button 
+              className="px-4 py-2 ml-2 bg-green-600 text-white rounded hover:bg-green-700"
+              onClick={() => {
+                localStorage.setItem('mixcore_projects_initialized', 'true');
+                setIsInitialized(true);
+              }}
+            >
+              Continue Anyway
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
   
   // Render the currently selected view
   const renderView = () => {
@@ -46,7 +178,7 @@ export function ProjectsApp(props: ProjectsAppProps) {
                 </button>
               </div>
             </div>
-            <div className="flex-1 overflow-auto">
+            <div className="flex-1 overflow-auto px-0">
               <ProjectList 
                 projects={mockProjects} 
                 onProjectClick={handleProjectClick} 
@@ -266,7 +398,7 @@ export function ProjectsApp(props: ProjectsAppProps) {
                 </button>
               </div>
             </div>
-            <div className="flex-1 px-6 pb-6">
+            <div className="flex-1 px-6 pb-6 overflow-auto">
               <div className="bg-white rounded-lg shadow h-full p-4 flex flex-col">
                 <div className="grid grid-cols-7 gap-px bg-gray-200">
                   {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (

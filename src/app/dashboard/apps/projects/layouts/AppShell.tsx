@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import useContainerStatus from '../hooks/useContainerStatus';
+import { getAppConfig } from '../app-loader';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -16,6 +17,8 @@ export function AppShell({
 }: AppShellProps) {
   const isFluidLayout = useContainerStatus();
   const [activeRibbonTab, setActiveRibbonTab] = useState('file');
+  const [appHeight, setAppHeight] = useState(0);
+  const appConfig = getAppConfig();
   
   const handleViewChange = (view: 'projects' | 'tasks' | 'gantt' | 'calendar' | 'board') => {
     if (onViewChange) {
@@ -49,10 +52,25 @@ export function AppShell({
     }
   };
   
+  // Calculate and set the app height dynamically
+  const calculateAppHeight = () => {
+    const mainContent = document.querySelector('main.flex-1');
+    if (mainContent) {
+      const mainHeight = mainContent.clientHeight;
+      // Subtract header height (ribbon + tabs - around 172px)
+      const availableHeight = mainHeight - 172;
+      setAppHeight(Math.max(availableHeight, 300)); // Set minimum height
+    }
+  };
+  
   // Set initial layout when component mounts or activeView changes
   useEffect(() => {
-    // Auto-enable full width for Gantt view
-    if (activeView === 'gantt' && !isFluidLayout) {
+    // Get full-screen setting from config
+    const shouldUseFullScreen = appConfig.settings.enableFullScreenByDefault;
+    const shouldUseFluidLayout = appConfig.ui.layout.fluid;
+    
+    // Enable full width if configured to use fluid layout by default
+    if ((activeView === 'gantt' || shouldUseFullScreen || shouldUseFluidLayout) && !isFluidLayout) {
       toggleContainerClass();
     }
     
@@ -64,6 +82,15 @@ export function AppShell({
       mainContent.setAttribute('data-app-view', 'projects-app');
     }
     
+    // Calculate initial height
+    calculateAppHeight();
+    
+    // Add resize listener
+    window.addEventListener('resize', calculateAppHeight);
+    
+    return () => {
+      window.removeEventListener('resize', calculateAppHeight);
+    };
   }, [activeView, isFluidLayout]);
   
   return (
@@ -256,8 +283,11 @@ export function AppShell({
         </div>
       </div>
       
-      {/* App content area */}
-      <div className={`projects-app-content ${isFluidLayout ? 'h-[calc(100vh-172px)]' : 'flex-1 overflow-auto'}`}>
+      {/* App content area with dynamic height calculation */}
+      <div 
+        className={`projects-app-content ${isFluidLayout ? 'overflow-hidden' : 'flex-1 overflow-auto'}`}
+        style={isFluidLayout ? { height: 'calc(100vh - 172px)' } : { height: appHeight ? `${appHeight}px` : 'auto' }}
+      >
         {children}
       </div>
     </div>

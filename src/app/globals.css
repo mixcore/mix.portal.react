@@ -121,3 +121,44 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Projects mini-app styles */
+main[data-app-view="projects-app"] {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.projects-app-active .dashboard-content {
+  height: 100%;
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.projects-app-shell {
+  height: 100%;
+}
+
+.projects-app-header {
+  z-index: 10;
+}
+
+.gantt-view-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.board-column {
+  height: fit-content;
+  max-height: calc(100vh - 172px - 120px);
+}
+
+@media (max-height: 800px) {
+  .projects-app-header .ribbon-content {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  
+  .projects-app-content {
+    height: calc(100vh - 150px) !important;
+  }
+}

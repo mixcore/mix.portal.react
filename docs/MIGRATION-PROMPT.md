@@ -186,24 +186,177 @@ export function AppLoader({ appId }: { appId: string }) {
 }
 ```
 
-### Usage in Layouts
+### Mini-App Requirements
 
-```tsx
-// In the main application layout
-export function MainLayout() {
-  const { activeAppId } = useAppContext();
-  
-  return (
-    <div className="main-layout">
-      <Header />
-      <Sidebar />
-      <main className="content-area">
-        <AppLoader appId={activeAppId} />
-      </main>
-    </div>
-  );
+Each mini-app must include the following files and features to ensure proper integration with the Mixcore system:
+
+#### Required Files
+
+1. **app-globals.css**: App-specific styles that override or extend the global styles
+   ```
+   /src/app/dashboard/apps/[app-name]/app-globals.css
+   ```
+
+2. **Configuration Files**: Located in the config directory
+   ```
+   /src/app/dashboard/apps/[app-name]/config/
+   ├── app.config.json      # App configuration
+   ├── demo-data.json       # Sample data for initialization
+   └── mixdb.schema.json    # MixDB schema definition
+   ```
+
+3. **App Loader**: For initialization and registration
+   ```
+   /src/app/dashboard/apps/[app-name]/app-loader.ts
+   ```
+
+4. **Documentation**: Basic usage and development guides
+   ```
+   /src/app/dashboard/apps/[app-name]/README.md
+   ```
+
+#### Configuration Schema
+
+The `app.config.json` should follow this structure:
+
+```json
+{
+  "appId": "[unique-app-id]",
+  "version": "1.0.0",
+  "displayName": "App Display Name",
+  "description": "App description",
+  "category": "category",
+  "icon": "material_icon_name",
+  "author": {
+    "name": "Author Name",
+    "email": "email@example.com",
+    "url": "https://example.com"
+  },
+  "license": "MIT",
+  "entryPoint": "index.tsx",
+  "init": {
+    "initOnInstall": true,
+    "schemaFile": "./mixdb.schema.json",
+    "demoDataFile": "./demo-data.json",
+    "createDefaultPermissions": true
+  },
+  "mainStyles": "app-globals.css",
+  "navigation": {
+    "position": "main",
+    "priority": 5,
+    "menuItem": {
+      "title": "App Name",
+      "icon": "icon_name",
+      "url": "/dashboard/apps/[app-id]",
+      "badge": null,
+      "contextId": "[app-id]"
+    }
+  },
+  "permissions": [
+    {
+      "name": "[app-id].action",
+      "displayName": "Action Name",
+      "description": "Action description"
+    }
+  ],
+  "settings": {
+    // App-specific settings
+  },
+  "integrations": {
+    "cms": {
+      "enabled": true,
+      "createContentTypes": true
+    },
+    "mixdb": {
+      "enabled": true
+    },
+    "authentication": {
+      "enabled": true,
+      "requiredRoles": ["Administrator", "Editor"]
+    }
+  }
 }
 ```
+
+#### Initialization Process
+
+Each mini-app should initialize itself when first loaded:
+
+```tsx
+// In your index.tsx
+'use client';
+
+import { useState, useEffect } from 'react';
+import { initializeApp } from './app-loader';
+import './app-globals.css';
+
+export function MyApp() {
+  const [isInitialized, setIsInitialized] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  
+  // Initialize app if needed
+  useEffect(() => {
+    const appInitKey = 'mixcore_[app-id]_initialized';
+    const isAppInitialized = localStorage.getItem(appInitKey) === 'true';
+    
+    if (!isAppInitialized) {
+      setIsLoading(true);
+      initializeApp()
+        .then(success => {
+          if (success) {
+            localStorage.setItem(appInitKey, 'true');
+          }
+          setIsInitialized(success);
+          setIsLoading(false);
+        })
+        .catch(error => {
+          console.error('Error initializing app:', error);
+          setIsInitialized(false);
+          setIsLoading(false);
+        });
+    }
+  }, []);
+  
+  // Show loading state
+  if (isLoading) {
+    return <LoadingIndicator />;
+  }
+  
+  // Show error state
+  if (!isInitialized) {
+    return <InitializationError />;
+  }
+  
+  // Render app
+  return (
+    <AppShell>
+      {/* App content */}
+    </AppShell>
+  );
+}
+
+export default MyApp;
+```
+
+#### Container Adaptability
+
+All mini-apps should adapt to their container size properly:
+
+1. Create a `useContainerStatus` hook to detect fluid/container mode
+2. Implement responsive layouts for all views
+3. Handle both windowed and full-screen modes
+4. Use CSS variables for consistent spacing
+5. Ensure proper scrolling behavior inside containers
+
+#### Testing Requirements
+
+Before submitting a mini-app, ensure:
+
+1. It initializes correctly with proper database schema and demo data
+2. It adapts properly to container size changes
+3. All views render correctly in both light and dark theme
+4. Permissions are properly applied to UI elements and actions
+5. Error states and loading indicators display correctly
 
 ## Component Templates
 

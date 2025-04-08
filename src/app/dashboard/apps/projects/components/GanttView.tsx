@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import useContainerStatus from '../hooks/useContainerStatus';
+import { getAppConfig } from '../app-loader';
 
 export interface GanttTask {
   id: string;
@@ -25,13 +26,21 @@ const VIEW_MODES = ['Day', 'Week', 'Month'] as const;
 type ViewMode = typeof VIEW_MODES[number];
 
 export function GanttView({ tasks, startDate, endDate }: GanttViewProps) {
-  const [isFullScreen, setIsFullScreen] = useState(false);
+  const appConfig = getAppConfig();
+  const defaultViewMode = appConfig.settings.ganttDefaultView as ViewMode || 'Day';
+  
+  // Get default fullscreen setting from config
+  const defaultFullScreen = appConfig.settings.enableFullScreenByDefault || false;
+  
+  const [isFullScreen, setIsFullScreen] = useState(defaultFullScreen);
   const [zoomLevel, setZoomLevel] = useState(100); // Percentage zoom
   const isFluidLayout = useContainerStatus();
-  const [viewMode, setViewMode] = useState<ViewMode>('Day');
+  const [viewMode, setViewMode] = useState<ViewMode>(defaultViewMode);
   const [showCriticalPath, setShowCriticalPath] = useState(false);
   const [showDependencies, setShowDependencies] = useState(true);
   const [splitView, setSplitView] = useState(false);
+  const [containerHeight, setContainerHeight] = useState(0);
+  const ganttContainerRef = useRef<HTMLDivElement>(null);
   
   // Calculate the total number of days in the view
   const totalDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
@@ -96,6 +105,18 @@ export function GanttView({ tasks, startDate, endDate }: GanttViewProps) {
     });
   };
   
+  // Calculate and update the container height
+  const updateContainerHeight = () => {
+    if (ganttContainerRef.current) {
+      const parent = ganttContainerRef.current.parentElement;
+      if (parent) {
+        // Consider the toolbar height (~50px) when calculating available height
+        const availableHeight = parent.clientHeight - 50;
+        setContainerHeight(Math.max(availableHeight, 200)); // Set minimum height
+      }
+    }
+  };
+  
   // Draw dependency lines
   const renderDependencyLines = () => {
     if (!showDependencies) return null;
@@ -146,7 +167,7 @@ export function GanttView({ tasks, startDate, endDate }: GanttViewProps) {
     });
   };
   
-  // Apply fullscreen effect
+  // Apply fullscreen effect and handle resize
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isFullScreen) {
@@ -154,7 +175,12 @@ export function GanttView({ tasks, startDate, endDate }: GanttViewProps) {
       }
     };
     
+    const handleResize = () => {
+      updateContainerHeight();
+    };
+    
     document.addEventListener('keydown', handleEsc);
+    window.addEventListener('resize', handleResize);
     
     // Apply body styles when fullscreen
     if (isFullScreen) {
@@ -163,11 +189,29 @@ export function GanttView({ tasks, startDate, endDate }: GanttViewProps) {
       document.body.style.overflow = '';
     }
     
+    // Initial height calculation
+    updateContainerHeight();
+    
     return () => {
       document.removeEventListener('keydown', handleEsc);
+      window.removeEventListener('resize', handleResize);
       document.body.style.overflow = '';
     };
   }, [isFullScreen]);
+  
+  // Update container height when layout mode changes
+  useEffect(() => {
+    updateContainerHeight();
+  }, [isFluidLayout]);
+  
+  // Update container when full-width default changes
+  useEffect(() => {
+    // Set isFullScreen based on config the first time
+    if (defaultFullScreen && !isFullScreen) {
+      setIsFullScreen(true);
+    }
+    updateContainerHeight();
+  }, []);
   
   // Render task row
   const renderTaskRow = (task: GanttTask) => {
@@ -271,7 +315,10 @@ export function GanttView({ tasks, startDate, endDate }: GanttViewProps) {
   };
   
   return (
-    <div className={`gantt-view-wrapper h-full flex flex-col ${isFullScreen ? 'fixed inset-0 z-50 bg-white' : ''}`}>
+    <div 
+      ref={ganttContainerRef}
+      className={`gantt-view-wrapper ${isFullScreen ? 'fixed inset-0 z-50 bg-white' : 'h-full flex flex-col'}`}
+    >
       {/* Enhanced MS Project-like toolbar */}
       <div className="gantt-toolbar flex items-center justify-between bg-gray-100 border-b p-2">
         <div className="left-controls flex items-center space-x-2">
@@ -377,7 +424,10 @@ export function GanttView({ tasks, startDate, endDate }: GanttViewProps) {
         </div>
       </div>
       
-      <div className="gantt-view overflow-x-auto flex-1">
+      <div 
+        className="gantt-view overflow-x-auto flex-1"
+        style={{ height: isFullScreen ? 'calc(100vh - 90px)' : containerHeight ? `${containerHeight}px` : '300px' }}
+      >
         <div className="gantt-container min-w-full h-full" style={{ fontSize: `${zoomLevel}%` }}>
           {/* Enhanced timeline header with multiple levels (MS Project style) */}
           <div className="timeline-header sticky top-0 bg-white z-10 border-b">
@@ -444,7 +494,10 @@ export function GanttView({ tasks, startDate, endDate }: GanttViewProps) {
           </div>
           
           {/* Task rows with timeline */}
-          <div className="task-rows overflow-y-auto relative" style={{ height: 'calc(100% - 70px)' }}>
+          <div 
+            className="task-rows overflow-y-auto relative" 
+            style={{ height: isFullScreen ? 'calc(100% - 70px)' : 'calc(100% - 70px)' }}
+          >
             {/* Task grid with dependency lines */}
             <div className="relative">
               {showDependencies && renderDependencyLines()}

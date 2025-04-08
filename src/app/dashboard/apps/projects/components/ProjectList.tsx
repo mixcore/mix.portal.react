@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ProjectData } from '../lib/types';
+import useContainerStatus from '../hooks/useContainerStatus';
 
 export interface ProjectListProps {
   projects: ProjectData[];
@@ -12,6 +13,8 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onProjectClick }) =
   const [sortBy, setSortBy] = useState<'name' | 'dueDate' | 'progress' | 'status'>('dueDate');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [selectedRow, setSelectedRow] = useState<string | null>(null);
+  const isFluidLayout = useContainerStatus();
+  const containerRef = useRef<HTMLDivElement>(null);
   
   // Handle sort toggle
   const handleSort = (column: 'name' | 'dueDate' | 'progress' | 'status') => {
@@ -22,6 +25,19 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onProjectClick }) =
       setSortDirection('asc');
     }
   };
+  
+  // Adjust container width based on layout
+  useEffect(() => {
+    if (containerRef.current) {
+      if (isFluidLayout) {
+        containerRef.current.classList.remove('mx-6');
+      } else {
+        if (!containerRef.current.classList.contains('mx-6')) {
+          containerRef.current.classList.add('mx-6');
+        }
+      }
+    }
+  }, [isFluidLayout]);
   
   // Sort projects based on current sorting criteria
   const sortedProjects = [...projects].sort((a, b) => {
@@ -89,9 +105,12 @@ const ProjectList: React.FC<ProjectListProps> = ({ projects, onProjectClick }) =
   };
   
   return (
-    <div className="project-list-container bg-white shadow overflow-hidden mx-6">
+    <div 
+      ref={containerRef}
+      className="project-list-container bg-white shadow overflow-hidden mx-6"
+    >
       {/* Table header with sorting */}
-      <div className="grid grid-cols-12 bg-gray-100 text-xs font-medium text-gray-600 border-b border-t">
+      <div className="grid grid-cols-12 bg-gray-100 text-xs font-medium text-gray-600 border-b border-t sticky top-0 z-10">
         <div 
           className="col-span-4 p-3 cursor-pointer hover:bg-gray-200 flex items-center"
           onClick={() => handleSort('name')}
