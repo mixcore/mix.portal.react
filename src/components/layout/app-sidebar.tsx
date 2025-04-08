@@ -490,10 +490,11 @@ export default function AppSidebar() {
             ];
           })}
 
-        {/* Third level child menu example */}
+        {/* Third level child menu example - Now follows Ghost structure */}
         <SidebarGroup className="mt-4">
-          <SidebarGroupLabel>Advanced Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel>MANAGE</SidebarGroupLabel>
           <SidebarMenu>
+            {/* Posts with subitems */}
             <Collapsible
               asChild
               defaultOpen={false}
@@ -502,93 +503,171 @@ export default function AppSidebar() {
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton 
-                    tooltip={isCollapsed ? "Developer Tools" : undefined}
+                    tooltip={isCollapsed ? "Posts" : undefined}
+                    isActive={pathname?.includes('/dashboard/posts')}
                   >
-                    <Icons.code className="h-4 w-4" />
-                    <span>Developer Tools</span>
+                    <Icons.file className="h-4 w-4" />
+                    <span>Posts</span>
                     <Icons.chevronRight className='ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <SidebarMenuSub>
                     <SidebarMenuSubItem>
-                      <CollapsibleTrigger asChild>
-                        <SidebarMenuSubButton className="w-full justify-between">
-                          <span>API Management</span>
-                          <Icons.chevronRight className='ml-auto h-3 w-3 transition-transform duration-200 group-data-[state=open]:rotate-90' />
-                        </SidebarMenuSubButton>
-                      </CollapsibleTrigger>
-                      <Collapsible>
-                        <CollapsibleContent className="pl-8 pt-2 space-y-1">
-                          <Link
-                            href="/dashboard/developer/api/endpoints"
-                            className={cn(
-                              "flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md py-1.5 px-2",
-                              pathname === "/dashboard/developer/api/endpoints" && "bg-accent text-foreground font-medium"
-                            )}
-                          >
-                            <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground mr-2"></div>
-                            API Endpoints
-                          </Link>
-                          <Link
-                            href="/dashboard/developer/api/schemas"
-                            className={cn(
-                              "flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md py-1.5 px-2",
-                              pathname === "/dashboard/developer/api/schemas" && "bg-accent text-foreground font-medium"
-                            )}
-                          >
-                            <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground mr-2"></div>
-                            Data Schemas
-                          </Link>
-                        </CollapsibleContent>
-                      </Collapsible>
+                      <SidebarMenuSubButton
+                        asChild
+                        isActive={pathname === '/dashboard/posts/drafts'}
+                      >
+                        <Link href="/dashboard/posts/drafts">
+                          <Icons.pencil className="h-4 w-4" />
+                          <span>Drafts</span>
+                        </Link>
+                      </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                     <SidebarMenuSubItem>
-                      <CollapsibleTrigger asChild>
-                        <SidebarMenuSubButton className="w-full justify-between">
-                          <span>Templates</span>
-                          <Icons.chevronRight className='ml-auto h-3 w-3 transition-transform duration-200 group-data-[state=open]:rotate-90' />
-                        </SidebarMenuSubButton>
-                      </CollapsibleTrigger>
-                      <Collapsible>
-                        <CollapsibleContent className="pl-8 pt-2 space-y-1">
-                          <Link
-                            href="/dashboard/developer/templates/pages"
-                            className={cn(
-                              "flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md py-1.5 px-2",
-                              pathname === "/dashboard/developer/templates/pages" && "bg-accent text-foreground font-medium"
-                            )}
-                          >
-                            <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground mr-2"></div>
-                            Page Templates
-                          </Link>
-                          <Link
-                            href="/dashboard/developer/templates/modules"
-                            className={cn(
-                              "flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md py-1.5 px-2",
-                              pathname === "/dashboard/developer/templates/modules" && "bg-accent text-foreground font-medium"
-                            )}
-                          >
-                            <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground mr-2"></div>
-                            Module Templates
-                          </Link>
-                          <Link
-                            href="/dashboard/developer/templates/blocks"
-                            className={cn(
-                              "flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md py-1.5 px-2",
-                              pathname === "/dashboard/developer/templates/blocks" && "bg-accent text-foreground font-medium"
-                            )}
-                          >
-                            <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground mr-2"></div>
-                            Content Blocks
-                          </Link>
-                        </CollapsibleContent>
-                      </Collapsible>
+                      <SidebarMenuSubButton
+                        asChild
+                        isActive={pathname === '/dashboard/posts/scheduled'}
+                      >
+                        <Link href="/dashboard/posts/scheduled">
+                          <Icons.fileText className="h-4 w-4" />
+                          <span>Scheduled</span>
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton
+                        asChild
+                        isActive={pathname === '/dashboard/posts/published'}
+                      >
+                        <Link href="/dashboard/posts/published">
+                          <Icons.check className="h-4 w-4" />
+                          <span>Published</span>
+                        </Link>
+                      </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   </SidebarMenuSub>
                 </CollapsibleContent>
               </SidebarMenuItem>
             </Collapsible>
+
+            {/* Pages */}
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                tooltip={isCollapsed ? "Pages" : undefined}
+                isActive={pathname?.includes('/dashboard/pages')}
+              >
+                <Link href="/dashboard/pages">
+                  <Icons.file className="h-4 w-4" />
+                  <span>Pages</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
+            {/* Tags */}
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                tooltip={isCollapsed ? "Tags" : undefined}
+                isActive={pathname?.includes('/dashboard/tags')}
+              >
+                <Link href="/dashboard/tags">
+                  <Icons.tag className="h-4 w-4" />
+                  <span>Tags</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
+            {/* Members */}
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                tooltip={isCollapsed ? "Members" : undefined}
+                isActive={pathname?.includes('/dashboard/members')}
+              >
+                <Link href="/dashboard/members">
+                  <Icons.user className="h-4 w-4" />
+                  <span>Members</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
+            {/* Staff */}
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                tooltip={isCollapsed ? "Staff" : undefined}
+                isActive={pathname?.includes('/dashboard/staff')}
+              >
+                <Link href="/dashboard/staff">
+                  <Icons.user className="h-4 w-4" />
+                  <span>Staff</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
+
+        {/* Settings section */}
+        <SidebarGroup className="mt-4">
+          <SidebarGroupLabel>SETTINGS</SidebarGroupLabel>
+          <SidebarMenu>
+            {/* General */}
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                tooltip={isCollapsed ? "General" : undefined}
+                isActive={pathname === '/dashboard/settings/general'}
+              >
+                <Link href="/dashboard/settings/general">
+                  <Icons.settings className="h-4 w-4" />
+                  <span>General</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
+            {/* Design */}
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                tooltip={isCollapsed ? "Design" : undefined}
+                isActive={pathname === '/dashboard/settings/design'}
+              >
+                <Link href="/dashboard/settings/design">
+                  <Icons.palette className="h-4 w-4" />
+                  <span>Design</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
+            {/* Code injection */}
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                tooltip={isCollapsed ? "Code injection" : undefined}
+                isActive={pathname === '/dashboard/settings/code-injection'}
+              >
+                <Link href="/dashboard/settings/code-injection">
+                  <Icons.code className="h-4 w-4" />
+                  <span>Code injection</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
+            {/* Integrations */}
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                tooltip={isCollapsed ? "Integrations" : undefined}
+                isActive={pathname === '/dashboard/settings/integrations'}
+              >
+                <Link href="/dashboard/settings/integrations">
+                  <Icons.link className="h-4 w-4" />
+                  <span>Integrations</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
