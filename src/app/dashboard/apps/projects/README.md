@@ -184,6 +184,69 @@ The app registers the following permissions:
 - `tasks.edit`: Edit existing tasks
 - `tasks.delete`: Delete tasks
 
+## Dashboard Integration
+
+### Breadcrumbs Integration
+
+The Projects mini-app integrates with the Mixcore dashboard's breadcrumb system to provide contextual navigation. Breadcrumbs are updated dynamically based on the current view and selected project.
+
+#### Breadcrumb Structure
+
+The breadcrumb structure follows this pattern:
+
+- Dashboard > Apps > Projects > [View Name] > [Project Name]
+
+For example:
+- Dashboard > Apps > Projects (when viewing the projects list)
+- Dashboard > Apps > Projects > Tasks > Website Redesign (when viewing tasks for a specific project)
+- Dashboard > Apps > Projects > Gantt (when viewing the Gantt chart)
+
+#### Implementation
+
+Breadcrumb integration is implemented through:
+
+1. **useBreadcrumb Hook**: A custom hook that dispatches events to update the dashboard's breadcrumb component
+2. **AppShell Integration**: The AppShell component updates breadcrumbs whenever the view or selected project changes
+3. **Event-Based Communication**: Custom events allow the mini-app to communicate with the dashboard header
+
+```tsx
+// Example of breadcrumb integration in AppShell
+useEffect(() => {
+  const breadcrumbs = [
+    { label: 'Dashboard', href: '/dashboard' },
+    { label: 'Apps', href: '/dashboard/apps' },
+    { label: 'Projects', href: '/dashboard/apps/projects' }
+  ];
+
+  if (activeView !== 'projects') {
+    breadcrumbs.push({ 
+      label: viewLabel, 
+      href: `/dashboard/apps/projects?view=${activeView}` 
+    });
+  }
+
+  if (selectedProjectId && selectedProjectTitle) {
+    breadcrumbs.push({ 
+      label: selectedProjectTitle, 
+      href: `/dashboard/apps/projects?view=tasks&projectId=${selectedProjectId}` 
+    });
+  }
+
+  setBreadcrumbs(breadcrumbs);
+}, [activeView, selectedProjectId]);
+```
+
+### Dashboard Header Integration
+
+The mini-app works seamlessly with the dashboard header, adapting its UI to maintain a cohesive experience:
+
+1. **Full-Width Toggle**: The app can switch between contained mode and full-width mode
+2. **Contextual Navigation**: The breadcrumb trail provides context about the current view
+3. **App Icon and Title**: Displays the app icon and title in the header
+4. **Sharing**: Provides sharing capabilities through the dashboard's sharing interface
+
+This integration ensures users have a consistent experience when navigating between the dashboard and the Projects mini-app.
+
 ## License
 
 MIT 

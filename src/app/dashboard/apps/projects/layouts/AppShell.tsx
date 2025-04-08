@@ -4,17 +4,22 @@ import React, { useState, useEffect } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import useContainerStatus from '../hooks/useContainerStatus';
 import { getAppConfig } from '../app-loader';
+import { useBreadcrumb } from '../hooks/useBreadcrumb';
 
 interface AppShellProps {
   children: React.ReactNode;
   activeView?: 'projects' | 'tasks' | 'gantt' | 'calendar' | 'board';
   onViewChange?: (view: 'projects' | 'tasks' | 'gantt' | 'calendar' | 'board') => void;
+  selectedProjectId?: string | null;
+  selectedProjectTitle?: string | null;
 }
 
 export function AppShell({ 
   children, 
   activeView = 'projects', 
-  onViewChange 
+  onViewChange,
+  selectedProjectId,
+  selectedProjectTitle
 }: AppShellProps) {
   const isFluidLayout = useContainerStatus();
   const [activeRibbonTab, setActiveRibbonTab] = useState('file');
@@ -23,6 +28,32 @@ export function AppShell({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [shareTooltip, setShareTooltip] = useState('');
+  const { setBreadcrumbs } = useBreadcrumb();
+  
+  // Update breadcrumbs when view or project changes
+  useEffect(() => {
+    const breadcrumbs = [
+      { label: 'Dashboard', href: '/dashboard' },
+      { label: 'Apps', href: '/dashboard/apps' },
+      { label: 'Projects', href: '/dashboard/apps/projects' }
+    ];
+
+    if (activeView !== 'projects') {
+      // Add view-specific breadcrumb
+      const viewLabel = activeView.charAt(0).toUpperCase() + activeView.slice(1);
+      const viewPath = `/dashboard/apps/projects?view=${activeView}`;
+      breadcrumbs.push({ label: viewLabel, href: viewPath });
+    }
+
+    if (selectedProjectId && selectedProjectTitle && activeView === 'tasks') {
+      // Add project-specific breadcrumb
+      const projectPath = `/dashboard/apps/projects?view=tasks&projectId=${selectedProjectId}`;
+      breadcrumbs.push({ label: selectedProjectTitle, href: projectPath });
+    }
+
+    // Update the dashboard breadcrumbs
+    setBreadcrumbs(breadcrumbs);
+  }, [activeView, selectedProjectId, selectedProjectTitle, setBreadcrumbs]);
   
   const handleViewChange = (view: 'projects' | 'tasks' | 'gantt' | 'calendar' | 'board') => {
     if (onViewChange) {
@@ -134,37 +165,6 @@ export function AppShell({
     <div className={`projects-app-shell flex flex-col ${isFluidLayout ? 'h-full overflow-hidden' : ''}`}>
       {/* MS Project-like header with app title and quick actions */}
       <div className="projects-app-header bg-white border-b flex flex-col">
-        {/* Title bar with app name and controls */}
-        <div className="flex items-center justify-between p-2 border-b">
-          <div className="flex items-center">
-            <span className="material-icons-outlined mr-2 text-blue-600">space_dashboard</span>
-            <h1 className="text-lg font-semibold">Mixcore Projects</h1>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="relative">
-              <button 
-                className="text-sm px-3 py-1 rounded-md flex items-center bg-gray-100 text-gray-700 hover:bg-gray-200"
-                onClick={copyDeepLink}
-              >
-                <span className="material-icons-outlined text-sm mr-1">share</span>
-                Share
-              </button>
-              {shareTooltip && (
-                <div className="absolute top-full mt-1 right-0 bg-gray-800 text-white text-xs py-1 px-2 rounded shadow-lg">
-                  {shareTooltip}
-                </div>
-              )}
-            </div>
-            <button 
-              className={`text-sm px-3 py-1 rounded-md flex items-center ${isFluidLayout ? 'bg-amber-100 text-amber-800 hover:bg-amber-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-              onClick={toggleContainerClass}
-            >
-              <span className="material-icons-outlined text-sm mr-1">{isFluidLayout ? 'width_normal' : 'width_full'}</span>
-              {isFluidLayout ? 'Normal View' : 'Full Width'}
-            </button>
-          </div>
-        </div>
-        
         {/* Ribbon tabs */}
         <div className="ribbon-tabs flex text-sm border-b">
           <button 
@@ -326,33 +326,6 @@ export function AppShell({
           )}
         </div>
         
-        {/* View selector tabs - making them smaller and more integrated with the ribbon */}
-        <div className="view-tabs bg-white text-sm flex">
-          {activeView !== 'projects' && (
-            <button 
-              className="px-3 py-1 border-r border-b text-blue-700 hover:bg-blue-50 flex items-center"
-              onClick={() => handleViewChange('projects')}
-            >
-              <span className="material-icons-outlined text-sm mr-1">arrow_back</span>
-              All Projects
-            </button>
-          )}
-          <div className="px-3 py-1 border-r border-b text-gray-500 flex items-center">
-            <span className="material-icons-outlined text-sm mr-1">folder</span>
-            {activeView === 'projects' ? 'All Projects' : activeView === 'tasks' ? 'Task List' : activeView === 'gantt' ? 'Timeline' : activeView === 'board' ? 'Board View' : 'Calendar'}
-          </div>
-          
-          {/* Share button for the current view */}
-          <div className="ml-auto px-3 py-1 border-l border-b flex items-center">
-            <button
-              className="text-gray-600 hover:text-blue-600 flex items-center text-xs"
-              onClick={copyDeepLink}
-            >
-              <span className="material-icons-outlined text-xs mr-1">link</span>
-              Copy View Link
-            </button>
-          </div>
-        </div>
       </div>
       
       {/* App content area with dynamic height calculation */}

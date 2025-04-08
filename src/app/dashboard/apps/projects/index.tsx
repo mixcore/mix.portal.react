@@ -10,6 +10,8 @@ import { mockProjects, mockTasks, mockGanttTasks, ganttStartDate, ganttEndDate }
 import useContainerStatus from './hooks/useContainerStatus';
 import './app-globals.css'; // Import app-specific styles
 import { initializeApp, getAppConfig } from './app-loader';
+import { ProjectData } from './lib/types';
+import { Project } from './components/ProjectItem';
 
 type ViewType = 'projects' | 'tasks' | 'gantt' | 'calendar' | 'board';
 
@@ -43,6 +45,30 @@ export function ProjectsApp(props: ProjectsAppProps) {
   const isFluidLayout = useContainerStatus();
   const [isInitialized, setIsInitialized] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Get selected project information from the mockProjects array by ID
+  const selectedProject = selectedProjectId 
+    ? mockProjects.find(p => p.id === selectedProjectId) 
+    : null;
+  
+  // Get the title of the selected project for breadcrumbs
+  const selectedProjectTitle = selectedProject ? selectedProject.title : null;
+  
+  // Convert the Project type to ProjectData type for the ProjectList component
+  const projectsForList: ProjectData[] = mockProjects.map(project => ({
+    id: project.id,
+    name: project.title,
+    description: project.description,
+    startDate: project.createdAt,
+    dueDate: project.dueDate || '',
+    progress: 50, // Default progress or calculate from tasks if available
+    status: project.status,
+    members: project.collaborators.map(c => c.name),
+    tasksCount: {
+      total: 10, // Default count or get from tasks if available
+      completed: 5  // Default count or get from tasks if available
+    }
+  }));
   
   // Update URL when view or project changes
   useEffect(() => {
@@ -268,7 +294,7 @@ export function ProjectsApp(props: ProjectsAppProps) {
             </div>
             <div className="flex-1 overflow-auto px-0">
               <ProjectList 
-                projects={mockProjects} 
+                projects={projectsForList}
                 onProjectClick={handleProjectClick} 
               />
             </div>
@@ -276,7 +302,6 @@ export function ProjectsApp(props: ProjectsAppProps) {
         );
         
       case 'tasks':
-        const selectedProject = mockProjects.find(p => p.id === selectedProjectId);
         return (
           <div className="tasks-view h-full overflow-hidden flex flex-col">
             <div className="p-6">
@@ -288,7 +313,7 @@ export function ProjectsApp(props: ProjectsAppProps) {
                   >
                     <span className="material-icons-outlined">arrow_back</span>
                   </button>
-                  <h2 className="text-xl font-semibold">{selectedProject?.name || 'Project Tasks'}</h2>
+                  <h2 className="text-xl font-semibold">{selectedProject?.title || 'Project Tasks'}</h2>
                 </div>
                 <div className="flex items-center space-x-2">
                   <button
@@ -307,7 +332,7 @@ export function ProjectsApp(props: ProjectsAppProps) {
               
               <div className="flex justify-between items-center mb-6">
                 <div className="text-sm text-gray-600">
-                  {mockTasks.length} tasks · Due {selectedProject?.dueDate}
+                  {mockTasks.length} tasks · Due {selectedProject?.dueDate ? new Date(selectedProject.dueDate).toLocaleDateString() : 'N/A'}
                 </div>
                 <div>
                   <button className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-700 flex items-center">
@@ -337,22 +362,6 @@ export function ProjectsApp(props: ProjectsAppProps) {
       case 'gantt':
         return (
           <div className="gantt-view-container h-full overflow-hidden">
-            <div className="flex justify-between items-center p-3 bg-white border-b">
-              <h2 className="text-lg font-semibold pl-2">Gantt Timeline</h2>
-              <div className="flex items-center space-x-2">
-                <button
-                  className="text-gray-600 hover:bg-gray-100 p-1 rounded"
-                  title="Copy Deep Link"
-                  onClick={() => {
-                    const deepLink = window.location.origin + getDeepLink('gantt');
-                    navigator.clipboard.writeText(deepLink);
-                    // Could add a toast notification here
-                  }}
-                >
-                  <span className="material-icons-outlined text-sm">link</span>
-                </button>
-              </div>
-            </div>
             <div className="bg-white h-full overflow-hidden">
               <GanttView 
                 tasks={mockGanttTasks}
@@ -591,6 +600,8 @@ export function ProjectsApp(props: ProjectsAppProps) {
     <AppShell
       activeView={activeView}
       onViewChange={handleViewChange}
+      selectedProjectId={selectedProjectId}
+      selectedProjectTitle={selectedProjectTitle}
     >
       <div className="projects-app-main h-full">
         {renderView()}
