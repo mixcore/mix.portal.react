@@ -8,7 +8,8 @@ const APPS = {
   cms: () => import('@/app/dashboard/apps/cms'),
   mixdb: () => import('@/app/dashboard/apps/mixdb'),
   projects: () => import('@/app/dashboard/apps/projects'),
-  workflow: () => import('@/app/dashboard/apps/workflow')
+  workflow: () => import('@/app/dashboard/apps/workflow'),
+  'mini-app': () => import('@/app/dashboard/apps/mini-app')
   // Additional apps can be registered here
 };
 
