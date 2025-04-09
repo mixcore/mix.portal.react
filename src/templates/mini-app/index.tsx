@@ -7,6 +7,11 @@ import Dashboard from './components/Dashboard';
 import useContainerStatus from './hooks/useContainerStatus';
 import './app-globals.css'; // Import app-specific styles
 import { initializeApp, getAppConfig } from './app-loader';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { AlertCircle, RefreshCw, ArrowRight } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 // Define possible views for the app
 type ViewType = 'dashboard' | 'list' | 'detail' | 'settings';
@@ -144,7 +149,7 @@ export function MiniApp(props: MiniAppProps) {
   // Set body class for fluid layout when this app is active
   useEffect(() => {
     const body = document.body;
-    const shouldUseFluidLayout = appConfig.ui.layout.fluid || isFluidLayout;
+    const shouldUseFluidLayout = appConfig.ui?.layout?.fluid || isFluidLayout;
     
     if (shouldUseFluidLayout) {
       body.classList.add(`${appConfig.appId}-app-active`);
@@ -155,7 +160,7 @@ export function MiniApp(props: MiniAppProps) {
     return () => {
       body.classList.remove(`${appConfig.appId}-app-active`);
     };
-  }, [isFluidLayout, appConfig.ui.layout.fluid, appConfig.appId]);
+  }, [isFluidLayout, appConfig.ui?.layout?.fluid, appConfig.appId]);
   
   // Handle retry initialization
   const handleRetryInitialization = () => {
@@ -180,10 +185,31 @@ export function MiniApp(props: MiniAppProps) {
   // Show loading state while app is initializing
   if (isLoading) {
     return (
-      <div className="h-full flex items-center justify-center bg-background p-4">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-muted border-t-primary mb-4"></div>
-          <p className="text-muted-foreground">Initializing {appConfig.displayName}...</p>
+      <div className="h-full w-full flex flex-col items-center justify-center bg-background p-6">
+        <div className="w-full max-w-md space-y-8">
+          <div className="space-y-2 text-center">
+            <Skeleton className="h-12 w-12 rounded-full mx-auto" />
+            <Skeleton className="h-6 w-48 mx-auto" />
+            <Skeleton className="h-4 w-64 mx-auto" />
+          </div>
+          
+          <div className="space-y-4">
+            <Card>
+              <CardHeader>
+                <Skeleton className="h-5 w-40" />
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-3/4" />
+              </CardContent>
+            </Card>
+            
+            <div className="text-center text-sm text-muted-foreground animate-pulse">
+              Initializing {appConfig.displayName}...
+              <RefreshCw className="h-4 w-4 ml-2 inline animate-spin" />
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -192,37 +218,49 @@ export function MiniApp(props: MiniAppProps) {
   // Show error state if initialization failed
   if (!isInitialized) {
     return (
-      <div className="h-full flex items-center justify-center bg-background p-4">
-        <div className="text-center max-w-md">
-          <div className="text-destructive mb-4">
-            <span className="material-icons-outlined text-4xl">error_outline</span>
-          </div>
-          <h3 className="text-lg font-medium text-destructive-foreground mb-2">Initialization Error</h3>
-          <p className="text-muted-foreground mb-4">
-            Failed to initialize the {appConfig.displayName}. This could be because the API endpoints are not yet available.
-            {process.env.NODE_ENV === 'development' && (
-              <span className="block mt-2 text-sm">
-                Note: In development mode, we're simulating initialization. The actual API endpoints will be implemented soon.
-              </span>
-            )}
-          </p>
-          <button 
-            className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90"
-            onClick={handleRetryInitialization}
-          >
-            Retry
-          </button>
-          {process.env.NODE_ENV === 'development' && (
-            <button 
-              className="px-4 py-2 ml-2 bg-secondary text-secondary-foreground rounded hover:bg-secondary/90"
-              onClick={() => {
-                localStorage.setItem(`mixcore_${appConfig.appId}_initialized`, 'true');
-                setIsInitialized(true);
-              }}
-            >
-              Skip Initialization
-            </button>
-          )}
+      <div className="h-full w-full flex flex-col items-center justify-center bg-background p-6">
+        <div className="w-full max-w-md">
+          <Alert variant="destructive" className="mb-6">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Initialization Error</AlertTitle>
+            <AlertDescription>
+              Failed to initialize the {appConfig.displayName}. This could be because the API endpoints are not yet available.
+            </AlertDescription>
+          </Alert>
+          
+          <Card>
+            <CardHeader>
+              <CardTitle>{appConfig.displayName}</CardTitle>
+              <CardDescription>
+                {process.env.NODE_ENV === 'development' && (
+                  "In development mode, you can retry initialization or skip this step for testing purposes."
+                )}
+              </CardDescription>
+            </CardHeader>
+            <CardFooter className="flex justify-between">
+              <Button 
+                variant="default"
+                onClick={handleRetryInitialization}
+                className="gap-2"
+              >
+                <RefreshCw className="h-4 w-4" />
+                Retry
+              </Button>
+              {process.env.NODE_ENV === 'development' && (
+                <Button 
+                  variant="outline"
+                  onClick={() => {
+                    localStorage.setItem(`mixcore_${appConfig.appId}_initialized`, 'true');
+                    setIsInitialized(true);
+                  }}
+                  className="gap-2"
+                >
+                  Skip Initialization
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              )}
+            </CardFooter>
+          </Card>
         </div>
       </div>
     );
@@ -236,72 +274,69 @@ export function MiniApp(props: MiniAppProps) {
       case 'list':
         return (
           <div className="h-full">
-            <h2 className="text-2xl font-bold mb-4">List View</h2>
-            <p>This is a placeholder for the list view.</p>
+            <Card className="border">
+              <CardHeader className="border-b">
+                <CardTitle>List View</CardTitle>
+                <CardDescription>A list of all available items</CardDescription>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <p className="text-muted-foreground">This is a placeholder for the list view.</p>
+              </CardContent>
+            </Card>
           </div>
         );
       case 'detail':
         return (
           <div className="h-full">
-            <h2 className="text-2xl font-bold mb-4">Detail View</h2>
-            <p>Viewing item: {selectedItemId}</p>
+            <Card className="border">
+              <CardHeader className="border-b">
+                <CardTitle>Detail View</CardTitle>
+                <CardDescription>Viewing detailed information</CardDescription>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <p className="flex items-center gap-2">
+                  <span className="font-medium">Item ID:</span> 
+                  <code className="bg-muted px-2 py-1 rounded text-sm">{selectedItemId}</code>
+                </p>
+              </CardContent>
+              <CardFooter className="border-t pt-6 mt-4">
+                <div className="flex justify-end w-full gap-2">
+                  <Button variant="outline" size="sm">Cancel</Button>
+                  <Button variant="default" size="sm">Save</Button>
+                </div>
+              </CardFooter>
+            </Card>
           </div>
         );
       case 'settings':
         return (
           <div className="h-full">
-            <h2 className="text-2xl font-bold mb-4">Settings</h2>
-            <p>This is a placeholder for the settings view.</p>
+            <Card className="border">
+              <CardHeader className="border-b">
+                <CardTitle>Settings</CardTitle>
+                <CardDescription>Manage your app preferences</CardDescription>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <p className="text-muted-foreground">This is a placeholder for the settings view.</p>
+              </CardContent>
+              <CardFooter className="border-t pt-6 mt-4">
+                <div className="flex justify-end w-full gap-2">
+                  <Button variant="outline" size="sm">Reset</Button>
+                  <Button variant="default" size="sm">Save Settings</Button>
+                </div>
+              </CardFooter>
+            </Card>
           </div>
         );
       default:
         return <Dashboard onItemClick={handleItemClick} />;
     }
   };
-
-  // Standalone mode has a slightly different rendering approach
-  if (props.standalone) {
-    return (
-      <div className="h-screen flex flex-col bg-background">
-        <header className="border-b bg-card p-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl font-bold">{appConfig.displayName}</h1>
-            <nav className="flex gap-4">
-              <button 
-                className={`px-3 py-1 rounded ${activeView === 'dashboard' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-                onClick={() => handleViewChange('dashboard')}
-              >
-                Dashboard
-              </button>
-              <button 
-                className={`px-3 py-1 rounded ${activeView === 'list' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-                onClick={() => handleViewChange('list')}
-              >
-                List
-              </button>
-              <button 
-                className={`px-3 py-1 rounded ${activeView === 'settings' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-                onClick={() => handleViewChange('settings')}
-              >
-                Settings
-              </button>
-            </nav>
-          </div>
-        </header>
-        <main className="flex-1 overflow-auto p-4">
-          {renderView()}
-        </main>
-        <footer className="border-t bg-muted p-4 text-center text-sm text-muted-foreground">
-          {appConfig.displayName} v{appConfig.version} | &copy; {new Date().getFullYear()} {appConfig.author.name}
-        </footer>
-      </div>
-    );
-  }
   
-  // Render the main app with the AppShell
+  // Main app rendering
   return (
-    <AppShell 
-      activeView={activeView} 
+    <AppShell
+      activeView={activeView}
       onViewChange={handleViewChange}
       selectedItemId={selectedItemId}
       selectedItemTitle={selectedItemId ? `Item ${selectedItemId}` : null}

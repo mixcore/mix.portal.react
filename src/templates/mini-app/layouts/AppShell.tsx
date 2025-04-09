@@ -16,19 +16,242 @@ import {
   Maximize2, 
   Minimize2, 
   Plus, 
-  Save, 
   Search, 
-  X, 
   ChevronDown
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Input } from '@/components/ui/input';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Separator } from '@/components/ui/separator';
+
+// Define view types for type safety
+type ViewType = 'dashboard' | 'list' | 'detail' | 'settings';
 
 interface AppShellProps {
   children: React.ReactNode;
-  activeView?: 'dashboard' | 'list' | 'detail' | 'settings';
-  onViewChange?: (view: 'dashboard' | 'list' | 'detail' | 'settings') => void;
+  activeView?: ViewType;
+  onViewChange?: (view: ViewType) => void;
   selectedItemId?: string | null;
   selectedItemTitle?: string | null;
 }
+
+// Header component for mobile view
+const MobileHeader = ({ 
+  appConfig, 
+  activeView, 
+  isFluidLayout, 
+  handleViewChange, 
+  toggleContainerClass,
+  copyDeepLink,
+  shareTooltip
+}: { 
+  appConfig: any; 
+  activeView: ViewType;
+  isFluidLayout: boolean;
+  handleViewChange: (view: ViewType) => void;
+  toggleContainerClass: () => void;
+  copyDeepLink: () => void;
+  shareTooltip: string;
+}) => (
+  <div className="md:hidden flex items-center justify-between px-4 py-2 border-b">
+    <div className="flex items-center">
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button variant="ghost" size="icon" className="md:hidden">
+            <Menu className="h-5 w-5" />
+            <span className="sr-only">Toggle menu</span>
+          </Button>
+        </SheetTrigger>
+        <SheetContent side="left" className="w-[240px] sm:w-[300px]">
+          <nav className="flex flex-col gap-4 mt-4">
+            <Button
+              variant={activeView === 'dashboard' ? 'default' : 'ghost'}
+              className="justify-start"
+              onClick={() => handleViewChange('dashboard')}
+            >
+              <LayoutDashboard className="mr-2 h-5 w-5" />
+              Dashboard
+            </Button>
+            <Button
+              variant={activeView === 'list' ? 'default' : 'ghost'}
+              className="justify-start"
+              onClick={() => handleViewChange('list')}
+            >
+              <ListTodo className="mr-2 h-5 w-5" />
+              List View
+            </Button>
+            <Button
+              variant={activeView === 'settings' ? 'default' : 'ghost'}
+              className="justify-start"
+              onClick={() => handleViewChange('settings')}
+            >
+              <Settings className="mr-2 h-5 w-5" />
+              Settings
+            </Button>
+          </nav>
+        </SheetContent>
+      </Sheet>
+      <span className="text-lg font-medium ml-2">{appConfig.displayName}</span>
+    </div>
+    <div className="flex items-center gap-1">
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="ghost" size="icon" onClick={toggleContainerClass}>
+              {isFluidLayout ? <Minimize2 className="h-5 w-5" /> : <Maximize2 className="h-5 w-5" />}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>{isFluidLayout ? 'Exit fullscreen' : 'Fullscreen'}</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="ghost" size="icon" onClick={copyDeepLink}>
+              <Share className="h-5 w-5" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>{shareTooltip || 'Copy link'}</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
+  </div>
+);
+
+// Main toolbar component with tabs and actions
+const Toolbar = ({ 
+  activeView, 
+  handleViewChange, 
+  selectedItemId,
+  searchQuery,
+  setSearchQuery
+}: { 
+  activeView: ViewType;
+  handleViewChange: (view: ViewType) => void;
+  selectedItemId: string | null;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
+}) => (
+  <div className="flex flex-col sm:flex-row items-center justify-between gap-2 px-4 py-2 border-b">
+    {/* Main view tabs */}
+    <Tabs value={activeView} onValueChange={(value) => handleViewChange(value as ViewType)} className="w-full">
+      <TabsList className="h-9 w-full md:w-auto grid grid-cols-3 md:grid-cols-4">
+        <TabsTrigger value="dashboard" className="flex items-center gap-1">
+          <LayoutDashboard className="h-4 w-4" />
+          <span className="hidden sm:inline-block">Dashboard</span>
+        </TabsTrigger>
+        <TabsTrigger value="list" className="flex items-center gap-1">
+          <ListTodo className="h-4 w-4" />
+          <span className="hidden sm:inline-block">List</span>
+        </TabsTrigger>
+        <TabsTrigger value="detail" disabled={!selectedItemId} className="flex items-center gap-1">
+          <File className="h-4 w-4" />
+          <span className="hidden sm:inline-block">Detail</span>
+        </TabsTrigger>
+        <TabsTrigger value="settings" className="flex items-center gap-1">
+          <Settings className="h-4 w-4" />
+          <span className="hidden sm:inline-block">Settings</span>
+        </TabsTrigger>
+      </TabsList>
+    </Tabs>
+    
+    {/* Action buttons */}
+    <div className="flex items-center gap-2">
+      <div className="relative w-full md:w-auto">
+        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Input
+          type="search" 
+          placeholder="Search..." 
+          className="w-full md:w-[180px] pl-8 h-9"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
+      
+      <div className="flex items-center gap-1">
+        <Button variant="outline" size="sm" className="h-9 hidden md:flex gap-1">
+          <Eye className="h-4 w-4" />
+          <span>Preview</span>
+        </Button>
+        <Button variant="default" size="sm" className="h-9 gap-1">
+          <Plus className="h-4 w-4" />
+          <span className="hidden sm:inline-block">Create</span>
+        </Button>
+      </div>
+    </div>
+  </div>
+);
+
+// Sidebar component
+const Sidebar = ({ 
+  sidebarOpen, 
+  setSidebarOpen, 
+  activeView, 
+  handleViewChange 
+}: { 
+  sidebarOpen: boolean;
+  setSidebarOpen: (open: boolean) => void;
+  activeView: ViewType;
+  handleViewChange: (view: ViewType) => void;
+}) => (
+  <div className={`hidden md:block app-sidebar bg-background border-r transition-all duration-300 ${sidebarOpen ? 'w-[240px]' : 'w-[60px]'}`}>
+    <div className="p-3 border-b">
+      <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => setSidebarOpen(!sidebarOpen)}>
+        <Menu className="h-5 w-5 mr-2" />
+        {sidebarOpen && <span>Toggle sidebar</span>}
+      </Button>
+    </div>
+    <nav className="p-3 flex flex-col gap-1">
+      <Button
+        variant={activeView === 'dashboard' ? 'secondary' : 'ghost'}
+        size="sm"
+        className="justify-start"
+        onClick={() => handleViewChange('dashboard')}
+      >
+        <LayoutDashboard className="h-5 w-5 mr-2" />
+        {sidebarOpen && <span>Dashboard</span>}
+      </Button>
+      <Button
+        variant={activeView === 'list' ? 'secondary' : 'ghost'}
+        size="sm"
+        className="justify-start"
+        onClick={() => handleViewChange('list')}
+      >
+        <ListTodo className="h-5 w-5 mr-2" />
+        {sidebarOpen && <span>List Items</span>}
+      </Button>
+      <Separator className="my-2" />
+      <Button
+        variant={activeView === 'settings' ? 'secondary' : 'ghost'}
+        size="sm"
+        className="justify-start"
+        onClick={() => handleViewChange('settings')}
+      >
+        <Settings className="h-5 w-5 mr-2" />
+        {sidebarOpen && <span>Settings</span>}
+      </Button>
+    </nav>
+  </div>
+);
+
+// Main content area component
+const MainContent = ({ 
+  children, 
+  isFluidLayout, 
+  appHeight 
+}: { 
+  children: React.ReactNode;
+  isFluidLayout: boolean;
+  appHeight: number;
+}) => (
+  <div className={`flex-1 ${isFluidLayout ? 'overflow-auto' : ''} border-l`}>
+    <div className="p-4 md:p-6" style={isFluidLayout ? { height: `${appHeight}px`, overflowY: 'auto' } : {}}>
+      {children}
+    </div>
+  </div>
+);
 
 export function AppShell({ 
   children, 
@@ -37,17 +260,18 @@ export function AppShell({
   selectedItemId,
   selectedItemTitle
 }: AppShellProps) {
+  // State hooks
   const isFluidLayout = useContainerStatus();
-  const [activeTab, setActiveTab] = useState('file');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [appHeight, setAppHeight] = useState(0);
+  const [shareTooltip, setShareTooltip] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  // Utility hooks
   const appConfig = getAppConfig();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [shareTooltip, setShareTooltip] = useState('');
   const { setBreadcrumbs } = useBreadcrumb();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
   
   // Set app context for the dashboard header
   useEffect(() => {
@@ -119,7 +343,8 @@ export function AppShell({
     setBreadcrumbs(breadcrumbs);
   }, [activeView, selectedItemId, selectedItemTitle, setBreadcrumbs, appConfig.appId, appConfig.displayName, appConfig.icon]);
   
-  const handleViewChange = (view: 'dashboard' | 'list' | 'detail' | 'settings') => {
+  // Handler for view changes
+  const handleViewChange = (view: ViewType) => {
     if (onViewChange) {
       onViewChange(view);
     }
@@ -211,7 +436,7 @@ export function AppShell({
     return `${window.location.origin}${pathname}?${params.toString()}`;
   };
   
-  // Copy current URL to clipboard
+  // Copy URL to clipboard
   const copyDeepLink = () => {
     const url = getDeepLink();
     navigator.clipboard.writeText(url).then(
@@ -226,294 +451,48 @@ export function AppShell({
     );
   };
   
-  // Get icon for view type
-  const getViewIcon = (view: string) => {
-    switch (view) {
-      case 'dashboard':
-        return <LayoutDashboard className="h-5 w-5" />;
-      case 'list':
-        return <ListTodo className="h-5 w-5" />;
-      case 'detail':
-        return <File className="h-5 w-5" />;
-      case 'settings':
-        return <Settings className="h-5 w-5" />;
-      default:
-        return <LayoutDashboard className="h-5 w-5" />;
-    }
-  };
-  
   return (
     <div className={`${appConfig.appId}-app-shell flex flex-col ${isFluidLayout ? 'h-full overflow-hidden' : ''}`}>
-      {/* App header with minimal, elegant design */}
-      <div className="app-header bg-background flex flex-col border-b">
-        {/* Title bar with app name and controls - hidden on larger screens as it appears in the dashboard header */}
-        <div className="md:hidden flex items-center justify-between px-4 py-2">
-          <div className="flex items-center">
-            <button 
-              className="mr-2 rounded-md p-1 hover:bg-accent"
-              onClick={() => setShowMobileMenu(!showMobileMenu)}
-              aria-label="Toggle menu"
-            >
-              <Menu className="h-5 w-5 text-muted-foreground" />
-            </button>
-            <h1 className="text-lg font-medium">{appConfig.displayName}</h1>
-          </div>
-          <div className="flex items-center gap-2">
-            <button 
-              className="text-xs px-3 py-1.5 rounded-md flex items-center text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-              onClick={copyDeepLink}
-              aria-label="Share"
-            >
-              <Share className="h-4 w-4 mr-1" />
-              Share
-              {shareTooltip && (
-                <span className="absolute mt-8 text-xs bg-popover text-popover-foreground px-2 py-1 rounded shadow-lg">
-                  {shareTooltip}
-                </span>
-              )}
-            </button>
-            <button 
-              className="text-xs px-3 py-1.5 rounded-md flex items-center text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-              onClick={toggleContainerClass}
-              aria-label={isFluidLayout ? "Switch to contained view" : "Switch to full width view"}
-            >
-              {isFluidLayout ? (
-                <Minimize2 className="h-4 w-4 mr-1" />
-              ) : (
-                <Maximize2 className="h-4 w-4 mr-1" />
-              )}
-              {isFluidLayout ? 'Contained' : 'Full Width'}
-            </button>
-          </div>
-        </div>
-
-        {/* Modern toolbar with common actions */}
-        <div className="app-toolbar flex items-center justify-between border-b px-4 py-2">
-          <div className="flex items-center space-x-2">
-            <button className="toolbar-button">
-              <Plus className="h-4 w-4 mr-1" />
-              New
-            </button>
-            <button className="toolbar-button">
-              <Save className="h-4 w-4 mr-1" />
-              Save
-            </button>
-            <div className="hidden sm:block h-4 w-px bg-border mx-2"></div>
-            <div className="hidden sm:flex items-center">
-              <div className="relative">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className="h-9 w-[180px] sm:w-[300px] rounded-md border border-input bg-transparent pl-8 pr-3 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                {searchQuery && (
-                  <button 
-                    className="absolute right-2 top-2.5 text-muted-foreground hover:text-foreground"
-                    onClick={() => setSearchQuery('')}
-                    aria-label="Clear search"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-          <div className="hidden md:flex items-center space-x-2">
-            <button 
-              className="toolbar-button"
-              onClick={toggleContainerClass}
-              aria-label={isFluidLayout ? "Switch to contained view" : "Switch to full width view"}
-            >
-              {isFluidLayout ? (
-                <Minimize2 className="h-4 w-4 mr-1" />
-              ) : (
-                <Maximize2 className="h-4 w-4 mr-1" />
-              )}
-              {isFluidLayout ? 'Contained' : 'Full Width'}
-            </button>
-            <button 
-              className="toolbar-button"
-              onClick={copyDeepLink}
-              aria-label="Share"
-            >
-              <Share className="h-4 w-4 mr-1" />
-              Share
-              {shareTooltip && (
-                <span className="absolute mt-16 text-xs bg-popover text-popover-foreground px-2 py-1 rounded shadow-lg">
-                  {shareTooltip}
-                </span>
-              )}
-            </button>
-          </div>
-        </div>
-
-        {/* View selector tabs */}
-        <div className="app-tabs flex items-center border-b overflow-x-auto no-scrollbar">
-          <button
-            className={`px-4 py-2 border-b-2 font-medium text-sm transition-colors ${
-              activeView === 'dashboard'
-                ? 'border-primary text-foreground'
-                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
-            }`}
-            onClick={() => handleViewChange('dashboard')}
-          >
-            <span className="flex items-center">
-              <LayoutDashboard className="h-4 w-4 mr-2" />
-              Dashboard
-            </span>
-          </button>
-          <button
-            className={`px-4 py-2 border-b-2 font-medium text-sm transition-colors ${
-              activeView === 'list'
-                ? 'border-primary text-foreground'
-                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
-            }`}
-            onClick={() => handleViewChange('list')}
-          >
-            <span className="flex items-center">
-              <ListTodo className="h-4 w-4 mr-2" />
-              List
-            </span>
-          </button>
-          <button
-            className={`px-4 py-2 border-b-2 font-medium text-sm transition-colors ${
-              activeView === 'settings'
-                ? 'border-primary text-foreground'
-                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
-            }`}
-            onClick={() => handleViewChange('settings')}
-          >
-            <span className="flex items-center">
-              <Settings className="h-4 w-4 mr-2" />
-              Settings
-            </span>
-          </button>
-        </div>
-      </div>
-      
-      {/* Main content area with optional sidebar */}
-      <div className={`app-content flex ${isFluidLayout ? 'flex-1 overflow-hidden' : ''}`}>
-        {/* Sidebar - controlled by sidebarOpen state */}
-        <div className={`app-sidebar ${sidebarOpen ? 'w-64' : 'w-0 sm:w-16'} border-r flex-shrink-0 transition-all duration-300 overflow-hidden ${showMobileMenu ? 'block absolute z-50 h-full bg-background sm:relative' : 'hidden sm:block'}`}>
-          <div className="flex flex-col h-full">
-            {/* Sidebar header */}
-            <div className="p-4 border-b flex items-center justify-between">
-              <h2 className={`font-medium truncate ${sidebarOpen ? 'block' : 'hidden'}`}>
-                Navigation
-              </h2>
-              <button 
-                className="p-1 rounded-md hover:bg-accent text-muted-foreground"
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-                aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
-              >
-                {sidebarOpen ? (
-                  <ChevronDown className="h-5 w-5 transform rotate-90" />
-                ) : (
-                  <ChevronDown className="h-5 w-5 transform -rotate-90" />
-                )}
-              </button>
-            </div>
-            
-            {/* Sidebar navigation */}
-            <nav className="flex-1 p-2 overflow-y-auto">
-              <div className="space-y-1">
-                <button
-                  className={`w-full flex items-center px-3 py-2 rounded-md ${
-                    activeView === 'dashboard'
-                      ? 'bg-accent text-accent-foreground'
-                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                  }`}
-                  onClick={() => handleViewChange('dashboard')}
-                >
-                  <LayoutDashboard className="h-5 w-5 mr-3 flex-shrink-0" />
-                  <span className={`truncate ${sidebarOpen ? 'block' : 'hidden'}`}>Dashboard</span>
-                </button>
-                <button
-                  className={`w-full flex items-center px-3 py-2 rounded-md ${
-                    activeView === 'list'
-                      ? 'bg-accent text-accent-foreground'
-                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                  }`}
-                  onClick={() => handleViewChange('list')}
-                >
-                  <ListTodo className="h-5 w-5 mr-3 flex-shrink-0" />
-                  <span className={`truncate ${sidebarOpen ? 'block' : 'hidden'}`}>List View</span>
-                </button>
-                <button
-                  className={`w-full flex items-center px-3 py-2 rounded-md ${
-                    activeView === 'settings'
-                      ? 'bg-accent text-accent-foreground'
-                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                  }`}
-                  onClick={() => handleViewChange('settings')}
-                >
-                  <Settings className="h-5 w-5 mr-3 flex-shrink-0" />
-                  <span className={`truncate ${sidebarOpen ? 'block' : 'hidden'}`}>Settings</span>
-                </button>
-              </div>
-            </nav>
-
-            {/* Sidebar footer */}
-            <div className="p-4 border-t mt-auto">
-              <div className={`text-xs text-muted-foreground ${sidebarOpen ? 'block' : 'hidden'}`}>
-                <p>{appConfig.displayName}</p>
-                <p className="mt-1">v{appConfig.version}</p>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* App header section */}
+      <header className="app-header bg-background flex flex-col border-b">
+        {/* Mobile header */}
+        <MobileHeader 
+          appConfig={appConfig}
+          activeView={activeView}
+          isFluidLayout={isFluidLayout}
+          handleViewChange={handleViewChange}
+          toggleContainerClass={toggleContainerClass}
+          copyDeepLink={copyDeepLink}
+          shareTooltip={shareTooltip}
+        />
         
-        {/* Main content */}
-        <div className={`app-main flex-1 overflow-auto p-4 ${showMobileMenu ? 'hidden sm:block' : 'block'}`} style={isFluidLayout ? { height: appHeight } : {}}>
-          {/* Mobile search bar - shown only on small screens */}
-          <div className="sm:hidden mb-4">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
-              <input
-                type="text"
-                placeholder="Search..."
-                className="h-9 w-full rounded-md border border-input bg-transparent pl-8 pr-3 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              {searchQuery && (
-                <button 
-                  className="absolute right-2 top-2.5 text-muted-foreground hover:text-foreground"
-                  onClick={() => setSearchQuery('')}
-                  aria-label="Clear search"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
-            </div>
-          </div>
-          
-          {/* Context-specific header for detail view */}
-          {activeView === 'detail' && selectedItemId && (
-            <div className="mb-4 p-4 border rounded-lg bg-card">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <File className="h-5 w-5 mr-2 text-primary" />
-                  <h2 className="text-lg font-medium">{selectedItemTitle || `Item ${selectedItemId}`}</h2>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button className="p-1 rounded-md hover:bg-accent text-muted-foreground">
-                    <Eye className="h-4 w-4" />
-                  </button>
-                  <button className="p-1 rounded-md hover:bg-accent text-muted-foreground">
-                    <Save className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {/* Main content children */}
+        {/* Main toolbar */}
+        <Toolbar 
+          activeView={activeView}
+          handleViewChange={handleViewChange}
+          selectedItemId={selectedItemId || null}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+        />
+      </header>
+      
+      {/* Main content with sidebar */}
+      <div className={`flex flex-grow ${isFluidLayout ? 'overflow-hidden' : ''}`}>
+        {/* Sidebar */}
+        <Sidebar 
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
+          activeView={activeView}
+          handleViewChange={handleViewChange}
+        />
+        
+        {/* Main content area */}
+        <MainContent 
+          isFluidLayout={isFluidLayout}
+          appHeight={appHeight}
+        >
           {children}
-        </div>
+        </MainContent>
       </div>
     </div>
   );

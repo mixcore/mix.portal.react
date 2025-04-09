@@ -8,9 +8,14 @@ import {
   ListTodo, 
   Plus,
   Settings,
-  Users
+  Users,
+  ChevronRight
 } from 'lucide-react';
 import { getAppConfig } from '../app-loader';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
 
 interface DashboardProps {
   onItemClick: (itemId: string) => void;
@@ -33,29 +38,37 @@ interface QuickAccessItemProps {
 }
 
 const StatCard: React.FC<StatCardProps> = ({ title, value, description, icon, color }) => (
-  <div className="flex flex-col space-y-3 bg-card p-6 rounded-lg border shadow-sm">
-    <div className={`${color} rounded-full w-10 h-10 flex items-center justify-center`}>
-      {icon}
-    </div>
-    <div>
-      <p className="text-sm font-medium text-muted-foreground">{title}</p>
-      <h3 className="text-2xl font-bold tracking-tight">{value}</h3>
-      {description && <p className="text-xs text-muted-foreground">{description}</p>}
-    </div>
-  </div>
+  <Card>
+    <CardContent className="pt-6">
+      <div className="flex flex-col space-y-3">
+        <div className={`${color} rounded-full w-10 h-10 flex items-center justify-center`}>
+          {icon}
+        </div>
+        <div>
+          <p className="text-sm font-medium text-muted-foreground">{title}</p>
+          <h3 className="text-2xl font-bold tracking-tight">{value}</h3>
+          {description && <p className="text-xs text-muted-foreground">{description}</p>}
+        </div>
+      </div>
+    </CardContent>
+  </Card>
 );
 
 const QuickAccessItem: React.FC<QuickAccessItemProps> = ({ id, title, description, icon, onClick }) => (
-  <button
-    className="flex flex-col items-center p-4 rounded-lg border shadow-sm bg-card hover:bg-accent/50 transition-colors text-center"
-    onClick={onClick}
-  >
-    <div className="rounded-full bg-primary/10 w-12 h-12 flex items-center justify-center mb-3">
-      {icon}
-    </div>
-    <h3 className="font-medium text-sm">{title}</h3>
-    <p className="text-xs text-muted-foreground mt-1">{description}</p>
-  </button>
+  <Card className="overflow-hidden h-full">
+    <button
+      className="h-full w-full text-left"
+      onClick={onClick}
+    >
+      <CardHeader className="pb-2">
+        <div className="rounded-full bg-primary/10 w-12 h-12 flex items-center justify-center mb-2">
+          {icon}
+        </div>
+        <CardTitle className="text-base">{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
+      </CardHeader>
+    </button>
+  </Card>
 );
 
 export function Dashboard({ onItemClick }: DashboardProps) {
@@ -102,108 +115,154 @@ export function Dashboard({ onItemClick }: DashboardProps) {
   ];
   
   const recentItems = [
-    { id: '1', title: 'Sample Item 1', lastModified: 'Today' },
-    { id: '2', title: 'Sample Item 2', lastModified: 'Yesterday' },
-    { id: '3', title: 'Sample Item 3', lastModified: '3 days ago' },
-    { id: '4', title: 'Sample Item 4', lastModified: '1 week ago' }
+    { id: '1', title: 'Sample Item 1', lastModified: 'Today', status: 'active' },
+    { id: '2', title: 'Sample Item 2', lastModified: 'Yesterday', status: 'draft' },
+    { id: '3', title: 'Sample Item 3', lastModified: '3 days ago', status: 'active' },
+    { id: '4', title: 'Sample Item 4', lastModified: '1 week ago', status: 'archived' }
   ];
   
   return (
     <div className="space-y-8">
       {/* Welcome header */}
-      <div className="space-y-2">
+      <div className="space-y-2 pb-4 border-b section-divider">
         <h1 className="text-3xl font-bold tracking-tight">Welcome to {appConfig.displayName}</h1>
         <p className="text-muted-foreground">
           This dashboard provides an overview of your items and quick access to common actions.
         </p>
       </div>
       
-      {/* Stats grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat, index) => (
-          <StatCard
-            key={index}
-            title={stat.title}
-            value={stat.value}
-            icon={stat.icon}
-            color={stat.color}
-          />
-        ))}
-      </div>
-      
-      {/* Quick access section */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold tracking-tight">Quick Access</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          {quickAccess.map((item) => (
-            <QuickAccessItem
-              key={item.id}
-              id={item.id}
-              title={item.title}
-              description={item.description}
-              icon={item.icon}
-              onClick={item.onClick}
-            />
-          ))}
-        </div>
-      </div>
-      
-      {/* Recent items */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold tracking-tight">Recent Items</h2>
-        <div className="bg-card border rounded-lg overflow-hidden">
-          <div className="divide-y">
-            {recentItems.map((item) => (
-              <div 
-                key={item.id}
-                className="p-4 flex justify-between items-center hover:bg-accent/50 cursor-pointer transition-colors"
-                onClick={() => onItemClick(item.id)}
-              >
-                <div className="flex items-center">
-                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center mr-3">
-                    <ListTodo className="h-4 w-4 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-medium">{item.title}</p>
-                    <p className="text-xs text-muted-foreground">Last modified: {item.lastModified}</p>
-                  </div>
-                </div>
-                <button className="text-muted-foreground hover:text-foreground">
-                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </div>
+      {/* Top level tabs */}
+      <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full md:w-auto grid-cols-2 md:grid-cols-3 h-auto">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="settings">Settings</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="overview" className="space-y-8 mt-6">
+          {/* Stats grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pb-6 border-b section-divider">
+            {stats.map((stat, index) => (
+              <StatCard
+                key={index}
+                title={stat.title}
+                value={stat.value}
+                icon={stat.icon}
+                color={stat.color}
+              />
             ))}
           </div>
-          <div className="p-4 bg-muted/50 text-center">
-            <button 
-              className="text-sm text-primary font-medium hover:underline"
-              onClick={() => onItemClick('list')}
-            >
-              View all items
-            </button>
+          
+          {/* Quick access section */}
+          <div className="space-y-4 pb-6 border-b section-divider">
+            <h2 className="text-xl font-semibold tracking-tight">Quick Access</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+              {quickAccess.map((item) => (
+                <QuickAccessItem
+                  key={item.id}
+                  id={item.id}
+                  title={item.title}
+                  description={item.description}
+                  icon={item.icon}
+                  onClick={item.onClick}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      </div>
+          
+          {/* Recent items */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold tracking-tight">Recent Items</h2>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => onItemClick('list')}
+                className="text-sm text-primary"
+              >
+                View all
+                <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
+            </div>
+            <Card className="border">
+              <div className="divide-y">
+                {recentItems.map((item) => (
+                  <div 
+                    key={item.id}
+                    className="p-4 flex justify-between items-center hover:bg-accent/50 cursor-pointer transition-colors"
+                    onClick={() => onItemClick(item.id)}
+                  >
+                    <div className="flex items-center">
+                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                        <ListTodo className="h-4 w-4 text-primary" />
+                      </div>
+                      <div>
+                        <div className="flex items-center">
+                          <p className="font-medium">{item.title}</p>
+                          <Badge 
+                            variant={item.status === 'active' ? 'default' : 
+                                   item.status === 'draft' ? 'secondary' : 'outline'} 
+                            className="ml-2 text-xs"
+                          >
+                            {item.status}
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground">Last modified: {item.lastModified}</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="analytics" className="mt-6">
+          <Card className="border">
+            <CardHeader className="border-b">
+              <CardTitle>Analytics</CardTitle>
+              <CardDescription>View detailed analytics for your items and usage</CardDescription>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <p className="text-muted-foreground">Analytics content will appear here.</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="settings" className="mt-6">
+          <Card className="border">
+            <CardHeader className="border-b">
+              <CardTitle>Settings</CardTitle>
+              <CardDescription>Configure your app preferences</CardDescription>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <p className="text-muted-foreground">Settings content will appear here.</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
       
       {/* App information */}
-      <div className="bg-card border rounded-lg p-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h2 className="text-xl font-semibold tracking-tight">{appConfig.displayName}</h2>
-            <p className="text-sm text-muted-foreground mt-1">{appConfig.description}</p>
+      <Card className="border mt-8">
+        <CardHeader className="border-b">
+          <CardTitle>{appConfig.displayName}</CardTitle>
+          <CardDescription>{appConfig.description}</CardDescription>
+        </CardHeader>
+        <CardFooter className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-6">
+          <div className="text-sm text-muted-foreground">
+            Version {appConfig.version}
           </div>
           <div className="flex flex-col sm:flex-row gap-2">
-            <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors">
+            <Button variant="default" size="sm">
               Documentation
-            </button>
-            <button className="px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90 transition-colors">
+            </Button>
+            <Button variant="outline" size="sm">
               Get Support
-            </button>
+            </Button>
           </div>
-        </div>
-      </div>
+        </CardFooter>
+      </Card>
     </div>
   );
 }
