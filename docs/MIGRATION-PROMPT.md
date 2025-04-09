@@ -129,6 +129,16 @@ Each mini-app in Mixcore should be designed as a self-contained mini-application
 
 To accelerate mini-app development, we've created a comprehensive starter template located at `/src/templates/mini-app`. This template provides all the essential components and infrastructure needed to build a fully functional mini-app with minimal setup.
 
+#### Template Demos & Preview
+
+- **Source Code**: [GitHub Repository](https://github.com/mixcore/mix.portal.react/tree/main/src/templates/mini-app)
+- **Online Demo**: [Mixcore Mini-App Demo](https://demo.mixcore.org/dashboard/apps/demo-mini-app)
+- **HTML Demo Page**: [Interactive Preview](https://mixcore.github.io/mix.portal.react/templates/mini-app/demo/) (View features & code samples)
+- **Code Explorer**: [GitHub Code Browser](https://github.dev/mixcore/mix.portal.react/blob/main/src/templates/mini-app)
+- **Local Path**: `/src/templates/mini-app` in the main repository
+
+You can explore the template structure and code directly in the repository or via the online demos to better understand how the various features are implemented and work together. The HTML demo page provides code examples and feature highlights that can be viewed without installing anything.
+
 #### Template Features
 
 - **Complete Project Structure**: Pre-organized directories for components, layouts, hooks, and libraries

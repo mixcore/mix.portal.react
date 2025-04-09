@@ -5,6 +5,14 @@
 
 A comprehensive template for creating mini-apps for Mixcore CMS based on Next.js and React. This template provides a complete foundation for building integrated applications within the Mixcore ecosystem.
 
+## Demo & Preview
+
+- **Source Code**: [GitHub Repository](https://github.com/mixcore/mix.portal.react/tree/main/src/templates/mini-app)
+- **Online Demo**: [Mixcore Mini-App Demo](https://demo.mixcore.org/dashboard/apps/demo-mini-app)
+- **Code Explorer**: [GitHub Code Browser](https://github.dev/mixcore/mix.portal.react/blob/main/src/templates/mini-app)
+
+[![Mini-App Template Preview](https://raw.githubusercontent.com/mixcore/mix.portal.react/main/src/templates/mini-app/assets/preview.png)](https://demo.mixcore.org/dashboard/apps/demo-mini-app)
+
 ## Features
 
 - **Modern Design**: Clean, responsive UI with Tailwind CSS
