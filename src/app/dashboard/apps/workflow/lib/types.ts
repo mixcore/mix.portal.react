@@ -1,4 +1,4 @@
-import { Node } from 'reactflow';
+import { Node, Edge } from 'reactflow';
 
 export interface NodeTypePort {
   name: string;
@@ -35,4 +35,47 @@ export interface WorkflowNodeData {
 
 export interface WorkflowNode extends Node {
   data: WorkflowNodeData;
+}
+
+// Workflow type definitions
+
+export interface Workflow {
+  id?: string;
+  name: string;
+  description?: string;
+  nodes: Node[];
+  edges: Edge[];
+  active: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  runCount?: number;
+  lastRun?: string;
+  schedule?: {
+    enabled: boolean;
+    cron?: string;
+  };
+  tags?: string[];
+}
+
+export interface WorkflowTemplate {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  tags: string[];
+  image: string;
+  author: string;
+  nodes: number;
+  connections: number;
+}
+
+export interface ExecutionRecord {
+  id: string;
+  workflowId: string;
+  status: 'success' | 'failed' | 'running';
+  startTime: string;
+  endTime?: string;
+  duration?: number;
+  error?: string;
+  nodeCount: number;
 } 
