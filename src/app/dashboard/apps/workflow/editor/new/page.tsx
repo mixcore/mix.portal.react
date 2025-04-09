@@ -7,17 +7,19 @@ import { WorkflowEditor } from '../../components/editor/WorkflowEditor';
 
 export default function NewWorkflowPage() {
   return (
-    <div className="h-full flex flex-col">
-      <div className="border-b p-2">
+    <div className="h-full flex flex-col overflow-hidden">
+      <div className="absolute top-0 left-0 z-20 m-4">
         <Link 
           href="/dashboard/apps?app=workflow" 
-          className="flex items-center text-sm text-muted-foreground hover:text-primary transition-colors"
+          className="flex items-center gap-1 text-sm bg-background/90 backdrop-blur-sm hover:bg-background border rounded-md px-3 py-1.5 shadow-md hover:shadow-lg transition-all"
         >
-          <ChevronLeft className="h-4 w-4 mr-1" />
-          Back to Workflow App
+          <ChevronLeft className="h-4 w-4" />
+          Back to Workflows
         </Link>
       </div>
-      <div className="h-full flex-1 overflow-hidden">
+      
+      {/* Full-height/width editor */}
+      <div className="h-full flex-1">
         <WorkflowEditor />
       </div>
     </div>

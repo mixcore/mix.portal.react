@@ -10,11 +10,6 @@ export default function WorkflowEditorPage() {
   const workflowId = searchParams.get('id');
   const isFluidLayout = useContainerStatus();
   
-  return (
-    <div className="h-full flex flex-col">
-      <div className="h-full flex-1 overflow-hidden">
-        <WorkflowEditor workflowId={workflowId || undefined} />
-      </div>
-    </div>
-  );
+  // Return the WorkflowEditor directly to maximize available space
+  return <WorkflowEditor workflowId={workflowId || undefined} />;
 } 

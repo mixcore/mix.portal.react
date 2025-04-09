@@ -10,7 +10,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <h1 className="text-2xl font-bold">Workflow Automation</h1>
       </div>
       
-      {/* App content area */}
+      {/* App content area - no padding to allow full-width/height canvas */}
       <div className="workflow-app-content">
         {children}
       </div>

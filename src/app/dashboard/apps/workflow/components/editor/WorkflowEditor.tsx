@@ -21,7 +21,7 @@ import { Properties } from './sidebar/Properties';
 import { nodeTypes } from './nodes';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Play, Save, Undo, Redo, ZoomIn, ZoomOut, Maximize2, Download } from 'lucide-react';
+import { Play, Save, Undo, Redo, ZoomIn, ZoomOut, Maximize2, Download, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useWorkflow } from '../../hooks/useWorkflow';
 import { getNodeType } from '../../lib/nodeRegistry';
 import { WorkflowNodeData } from '../../lib/types';
@@ -42,6 +42,7 @@ function WorkflowEditorContent({ workflowId }: WorkflowEditorProps) {
   const [workflowDesc, setWorkflowDesc] = useState('');
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const reactFlowInstance = useReactFlow();
   
   // Load workflow data when available
@@ -162,6 +163,10 @@ function WorkflowEditorContent({ workflowId }: WorkflowEditorProps) {
     reactFlowInstance.fitView();
   }, [reactFlowInstance]);
   
+  const toggleSidebar = useCallback(() => {
+    setSidebarCollapsed(prev => !prev);
+  }, []);
+  
   if (loading) {
     return (
       <div className="h-full flex items-center justify-center">
@@ -203,23 +208,48 @@ function WorkflowEditorContent({ workflowId }: WorkflowEditorProps) {
         </div>
       </div>
       
-      <div className="flex flex-1 h-full overflow-hidden">
-        <div className="workflow-sidebar">
-          <Tabs defaultValue="nodes">
-            <TabsList className="w-full">
-              <TabsTrigger value="nodes" className="flex-1">Nodes</TabsTrigger>
-              <TabsTrigger value="properties" className="flex-1">Properties</TabsTrigger>
-            </TabsList>
-            <TabsContent value="nodes" className="mt-2 overflow-auto h-[calc(100%-40px)]">
-              <NodePalette />
-            </TabsContent>
-            <TabsContent value="properties" className="mt-2 overflow-auto h-[calc(100%-40px)]">
-              <Properties 
-                node={selectedNode} 
-                onChange={handleNodeUpdate} 
-              />
-            </TabsContent>
-          </Tabs>
+      <div className="workflow-editor-main">
+        <div className={`workflow-sidebar ${sidebarCollapsed ? 'workflow-sidebar-collapsed' : ''}`}>
+          {sidebarCollapsed ? (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="m-2" 
+              onClick={toggleSidebar}
+              title="Expand Sidebar"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          ) : (
+            <>
+              <div className="flex items-center justify-between p-2 border-b">
+                <span className="font-medium">Editor Tools</span>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={toggleSidebar}
+                  title="Collapse Sidebar"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+              </div>
+              <Tabs defaultValue="nodes">
+                <TabsList className="w-full">
+                  <TabsTrigger value="nodes" className="flex-1">Nodes</TabsTrigger>
+                  <TabsTrigger value="properties" className="flex-1">Properties</TabsTrigger>
+                </TabsList>
+                <TabsContent value="nodes" className="mt-2 overflow-auto h-[calc(100%-40px)]">
+                  <NodePalette />
+                </TabsContent>
+                <TabsContent value="properties" className="mt-2 overflow-auto h-[calc(100%-40px)]">
+                  <Properties 
+                    node={selectedNode} 
+                    onChange={handleNodeUpdate} 
+                  />
+                </TabsContent>
+              </Tabs>
+            </>
+          )}
         </div>
         
         <div className="workflow-editor-canvas">
@@ -239,6 +269,12 @@ function WorkflowEditorContent({ workflowId }: WorkflowEditorProps) {
             <Background />
             <Controls showInteractive={false} />
             <MiniMap />
+            
+            <Panel position="top-center" className="bg-background shadow rounded p-2 m-2">
+              {workflowName && (
+                <h2 className="text-lg font-semibold">{workflowName}</h2>
+              )}
+            </Panel>
           </ReactFlow>
         </div>
       </div>
@@ -251,32 +287,30 @@ function WorkflowEditorContent({ workflowId }: WorkflowEditorProps) {
               Enter a name and description for your workflow.
             </AlertDialogDescription>
           </AlertDialogHeader>
+          
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="workflow-name">Name</Label>
-              <Input
-                id="workflow-name"
+              <Label htmlFor="workflow-name">Workflow Name</Label>
+              <Input 
+                id="workflow-name" 
                 value={workflowName}
                 onChange={(e) => setWorkflowName(e.target.value)}
-                placeholder="Workflow name"
               />
             </div>
+            
             <div className="grid gap-2">
-              <Label htmlFor="workflow-desc">Description</Label>
-              <Input
-                id="workflow-desc"
+              <Label htmlFor="workflow-desc">Description (optional)</Label>
+              <Input 
+                id="workflow-desc" 
                 value={workflowDesc}
                 onChange={(e) => setWorkflowDesc(e.target.value)}
-                placeholder="Workflow description"
               />
             </div>
           </div>
+          
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={handleSaveConfirm}
-              disabled={isSaving || !workflowName.trim()}
-            >
+            <AlertDialogCancel disabled={isSaving}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleSaveConfirm} disabled={isSaving}>
               {isSaving ? 'Saving...' : 'Save'}
             </AlertDialogAction>
           </AlertDialogFooter>
