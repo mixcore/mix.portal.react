@@ -176,11 +176,11 @@ export default function WhatsAppTemplateDetailPage() {
     <div className="container mx-auto py-6 px-4 max-w-7xl">
       <div className="mb-6">
         <Link 
-          href="/dashboard/apps/workflow/templates" 
+          href="/dashboard/apps?app=workflow" 
           className="flex items-center text-muted-foreground hover:text-primary transition-colors mb-4"
         >
           <ChevronLeft className="h-4 w-4 mr-1" />
-          Back to Templates
+          Back to Workflow App
         </Link>
         
         <div className="flex items-start justify-between">
@@ -216,9 +216,11 @@ export default function WhatsAppTemplateDetailPage() {
               <Download className="h-4 w-4 mr-2" />
               Download
             </Button>
-            <Button size="sm">
-              <Play className="h-4 w-4 mr-2" />
-              Use Template
+            <Button size="sm" asChild>
+              <Link href={`/dashboard/apps/workflow/editor/new?template=${templateData.id}`}>
+                <Play className="h-4 w-4 mr-2" />
+                Use Template
+              </Link>
             </Button>
           </div>
         </div>
@@ -430,9 +432,11 @@ export default function WhatsAppTemplateDetailPage() {
             ))}
             
             <div className="mt-8 flex justify-center">
-              <Button size="lg" className="gap-2">
-                Use This Template
-                <ArrowRight className="h-4 w-4" />
+              <Button size="lg" asChild className="gap-2">
+                <Link href={`/dashboard/apps/workflow/editor/new?template=${templateData.id}`}>
+                  <Play className="h-4 w-4 mr-1" />
+                  Use This Template
+                </Link>
               </Button>
             </div>
           </div>
@@ -552,9 +556,11 @@ export default function WhatsAppTemplateDetailPage() {
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-2">Ready to automate your customer support?</h2>
           <p className="text-lg text-muted-foreground mb-6">Start using this template in your Mixcore Workflow app.</p>
-          <Button size="lg" className="gap-2">
-            <Play className="h-4 w-4 mr-1" />
-            Use This Template
+          <Button size="lg" asChild className="gap-2">
+            <Link href={`/dashboard/apps/workflow/editor/new?template=${templateData.id}`}>
+              <Play className="h-4 w-4 mr-1" />
+              Use This Template
+            </Link>
           </Button>
         </div>
       </div>

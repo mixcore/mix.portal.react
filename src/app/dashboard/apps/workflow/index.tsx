@@ -8,14 +8,36 @@ import { Button } from '@/components/ui/button';
 import { PlusCircle, Clock, Layout, Activity, Star, MessagesSquare, Database } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useRouter } from 'next/navigation';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Plus, Edit, Play, MoreHorizontal, Trash2 } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 export interface WorkflowAppProps {
   // Define app-specific props
 }
 
+interface Workflow {
+  id: string;
+  name: string;
+  description?: string;
+  active: boolean;
+  updatedAt?: string;
+}
+
 export function WorkflowApp(props: WorkflowAppProps) {
   const [isInitialized, setIsInitialized] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const router = useRouter();
+  
+  // State for workflows
+  const [workflows, setWorkflows] = useState<Workflow[]>([]);
+  
+  // Featured templates data
   const [featuredTemplates, setFeaturedTemplates] = useState([
     {
       id: 'whatsapp-support',
@@ -52,6 +74,20 @@ export function WorkflowApp(props: WorkflowAppProps) {
     }
   ]);
   
+  // Load workflows from localStorage for demo
+  useEffect(() => {
+    try {
+      // Get workflows from localStorage
+      const storedWorkflows = localStorage.getItem('mixcore_workflows');
+      if (storedWorkflows) {
+        const parsedWorkflows = JSON.parse(storedWorkflows);
+        setWorkflows(parsedWorkflows);
+      }
+    } catch (err) {
+      console.error('Error loading workflows:', err);
+    }
+  }, []);
+  
   // Initialize app if needed
   useEffect(() => {
     const appInitKey = 'mixcore_workflow_initialized';
@@ -74,6 +110,50 @@ export function WorkflowApp(props: WorkflowAppProps) {
         });
     }
   }, []);
+  
+  // Workflow management functions
+  const handleCreateWorkflow = () => {
+    router.push('/dashboard/apps/workflow/editor/new');
+  };
+  
+  const handleEditWorkflow = (id: string) => {
+    router.push(`/dashboard/apps/workflow/editor/${id}`);
+  };
+  
+  const handleDeleteWorkflow = (id: string) => {
+    // Filter out the workflow with the given ID
+    const updatedWorkflows = workflows.filter(workflow => workflow.id !== id);
+    setWorkflows(updatedWorkflows);
+    
+    // Update localStorage
+    localStorage.setItem('mixcore_workflows', JSON.stringify(updatedWorkflows));
+  };
+  
+  const handleToggleActive = (id: string, active: boolean) => {
+    // Update the active status of the workflow
+    const updatedWorkflows = workflows.map(workflow => {
+      if (workflow.id === id) {
+        return { ...workflow, active };
+      }
+      return workflow;
+    });
+    
+    setWorkflows(updatedWorkflows);
+    
+    // Update localStorage
+    localStorage.setItem('mixcore_workflows', JSON.stringify(updatedWorkflows));
+  };
+  
+  const handleExecuteWorkflow = (id: string) => {
+    console.log(`Executing workflow: ${id}`);
+    // In a real implementation, this would call an API
+    alert(`Workflow ${id} executed successfully`);
+  };
+  
+  const handleUseTemplate = (templateId: string) => {
+    // Redirect to the editor with the template
+    router.push(`/dashboard/apps/workflow/editor/new?template=${templateId}`);
+  };
   
   // Show loading state
   if (isLoading) {
@@ -108,147 +188,303 @@ export function WorkflowApp(props: WorkflowAppProps) {
       
       <div className="workflow-app-content p-4">
         <div className="workflow-app-container">
-          <p className="text-lg mb-6">Design and automate your workflows with a visual editor</p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-            <div className="bg-card p-6 rounded-lg shadow-sm border">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="font-medium flex items-center">
-                  <Clock className="h-5 w-5 mr-2 text-primary" />
-                  Recent Workflows
-                </h3>
-                <Button variant="ghost" size="sm" asChild>
-                  <Link href="/dashboard/apps/workflow/list">View All</Link>
-                </Button>
-              </div>
-              <p className="text-sm text-muted-foreground mt-2">No recent workflows</p>
-              <div className="mt-4">
-                <Button variant="outline" size="sm" asChild className="w-full">
-                  <Link href="/dashboard/apps/workflow/editor/new">
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    Create New Workflow
-                  </Link>
-                </Button>
-              </div>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="mx-auto">
+            <div className="flex justify-center mb-4">
+              <TabsList>
+                <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+                <TabsTrigger value="workflows">My Workflows</TabsTrigger>
+                <TabsTrigger value="templates">Templates</TabsTrigger>
+              </TabsList>
             </div>
             
-            <div className="bg-card p-6 rounded-lg shadow-sm border">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="font-medium flex items-center">
-                  <Layout className="h-5 w-5 mr-2 text-primary" />
-                  Templates
-                </h3>
-                <Button variant="ghost" size="sm" asChild>
-                  <Link href="/dashboard/apps/workflow/list?tab=templates">View All</Link>
-                </Button>
-              </div>
-              <p className="text-sm text-muted-foreground mt-2">No templates available</p>
-              <div className="mt-4">
-                <Button variant="outline" size="sm" asChild className="w-full">
-                  <Link href="/dashboard/apps/workflow/list?tab=templates">
-                    Browse Templates
-                  </Link>
-                </Button>
-              </div>
-            </div>
-            
-            <div className="bg-card p-6 rounded-lg shadow-sm border">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="font-medium flex items-center">
-                  <Activity className="h-5 w-5 mr-2 text-primary" />
-                  Activity
-                </h3>
-                <Button variant="ghost" size="sm" asChild>
-                  <Link href="/dashboard/apps/workflow/activity">View All</Link>
-                </Button>
-              </div>
-              <p className="text-sm text-muted-foreground mt-2">No recent activity</p>
-              <div className="mt-4">
-                <Button variant="outline" size="sm" asChild className="w-full">
-                  <Link href="/dashboard/apps/workflow/list">
-                    Go to Workflows
-                  </Link>
-                </Button>
-              </div>
-            </div>
-          </div>
-          
-          <div className="mt-12">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold">Featured Templates</h2>
-              <Button variant="outline" size="sm" asChild>
-                <Link href="/dashboard/apps/workflow/templates">
-                  Explore all templates
-                </Link>
-              </Button>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredTemplates.map((template) => (
-                <Card key={template.id} className="overflow-hidden border hover:shadow-md transition-shadow">
-                  <div className="relative h-40 bg-slate-100 overflow-hidden">
-                    <div className="absolute inset-0 opacity-80 bg-gradient-to-tr from-blue-50 to-indigo-50">
-                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-primary opacity-20"></div>
-                      <div className="absolute top-1/4 left-1/4 w-8 h-8 rounded-full bg-blue-400 opacity-20"></div>
-                      <div className="absolute bottom-1/4 right-1/4 w-8 h-8 rounded-full bg-indigo-400 opacity-20"></div>
-                      <div className="absolute top-1/3 right-1/3 w-6 h-6 rounded-full bg-green-400 opacity-20"></div>
-                      <div className="absolute bottom-1/3 left-1/3 w-6 h-6 rounded-full bg-purple-400 opacity-20"></div>
-                      <div className="absolute top-1/2 left-1/2 w-20 h-1 bg-gray-300 opacity-30 -rotate-45 -translate-x-10 -translate-y-2"></div>
-                      <div className="absolute top-1/2 left-1/2 w-20 h-1 bg-gray-300 opacity-30 rotate-45 -translate-x-10 -translate-y-2"></div>
-                      <div className="absolute top-1/3 left-1/3 w-15 h-1 bg-gray-300 opacity-30 rotate-90 -translate-x-5"></div>
-                    </div>
-                    <div className="absolute bottom-2 right-2">
-                      <div className="flex items-center text-xs text-muted-foreground">
-                        <span className="flex items-center mr-2"><MessagesSquare className="h-3 w-3 mr-1" />{template.nodes}</span>
-                        <span className="flex items-center"><Database className="h-3 w-3 mr-1" />{template.connections}</span>
-                      </div>
-                    </div>
+            <TabsContent value="dashboard" className="mt-0">
+              <p className="text-lg mb-6">Design and automate your workflows with a visual editor</p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+                <div className="bg-card p-6 rounded-lg shadow-sm border">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="font-medium flex items-center">
+                      <Clock className="h-5 w-5 mr-2 text-primary" />
+                      Recent Workflows
+                    </h3>
+                    <Button variant="ghost" size="sm" onClick={() => setActiveTab('workflows')}>
+                      View All
+                    </Button>
                   </div>
-                  
-                  <CardHeader className="pb-2">
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-lg font-medium">{template.title}</CardTitle>
-                      <Badge variant="secondary" className="ml-2">{template.category}</Badge>
-                    </div>
-                    <CardDescription className="text-sm mt-1">
-                      {template.description}
-                    </CardDescription>
-                  </CardHeader>
-                  
-                  <CardContent className="pb-2">
-                    <div className="flex flex-wrap gap-1">
-                      {template.tags.map(tag => (
-                        <Badge key={tag} variant="outline" className="text-xs">{tag}</Badge>
+                  {workflows.length === 0 ? (
+                    <p className="text-sm text-muted-foreground mt-2">No recent workflows</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {workflows.slice(0, 3).map(workflow => (
+                        <div key={workflow.id} className="flex items-center justify-between text-sm">
+                          <span>{workflow.name}</span>
+                          <Badge variant={workflow.active ? "default" : "outline"}>
+                            {workflow.active ? "Active" : "Inactive"}
+                          </Badge>
+                        </div>
                       ))}
                     </div>
-                  </CardContent>
-                  
-                  <CardFooter className="flex justify-between items-center pt-2">
-                    <div className="text-xs text-muted-foreground">
-                      Created by {template.author}
-                    </div>
-                    <Button size="sm" variant="default" asChild>
-                      <Link href={`/dashboard/apps/workflow/templates/${template.id}`}>
-                        Use Template
+                  )}
+                  <div className="mt-4">
+                    <Button variant="outline" size="sm" asChild className="w-full">
+                      <Link href="/dashboard/apps/workflow/editor/new">
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        Create New Workflow
                       </Link>
                     </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          </div>
-          
-          <div className="mt-10 text-center">
-            <h3 className="text-lg font-medium mb-4">Need help getting started?</h3>
-            <div className="flex justify-center gap-4">
-              <Button variant="secondary" asChild>
-                <Link href="/dashboard/apps/workflow/templates">Browse Templates</Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link href="/dashboard/help/workflow">View Documentation</Link>
-              </Button>
-            </div>
-          </div>
+                  </div>
+                </div>
+                
+                <div className="bg-card p-6 rounded-lg shadow-sm border">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="font-medium flex items-center">
+                      <Layout className="h-5 w-5 mr-2 text-primary" />
+                      Templates
+                    </h3>
+                    <Button variant="ghost" size="sm" onClick={() => setActiveTab('templates')}>
+                      View All
+                    </Button>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-2">No templates available</p>
+                  <div className="mt-4">
+                    <Button variant="outline" size="sm" onClick={() => setActiveTab('templates')} className="w-full">
+                      Browse Templates
+                    </Button>
+                  </div>
+                </div>
+                
+                <div className="bg-card p-6 rounded-lg shadow-sm border">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="font-medium flex items-center">
+                      <Activity className="h-5 w-5 mr-2 text-primary" />
+                      Activity
+                    </h3>
+                    <Button variant="ghost" size="sm" asChild>
+                      <Link href="/dashboard/apps/workflow/activity">View All</Link>
+                    </Button>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-2">No recent activity</p>
+                  <div className="mt-4">
+                    <Button variant="outline" size="sm" onClick={() => setActiveTab('workflows')} className="w-full">
+                      Go to Workflows
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-12">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-xl font-bold">Featured Templates</h2>
+                  <Button variant="outline" size="sm" onClick={() => setActiveTab('templates')}>
+                    Explore all templates
+                  </Button>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {featuredTemplates.map((template) => (
+                    <Card key={template.id} className="overflow-hidden border hover:shadow-md transition-shadow">
+                      <div className="relative h-40 bg-slate-100 overflow-hidden">
+                        <div className="absolute inset-0 opacity-80 bg-gradient-to-tr from-blue-50 to-indigo-50">
+                          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-primary opacity-20"></div>
+                          <div className="absolute top-1/4 left-1/4 w-8 h-8 rounded-full bg-blue-400 opacity-20"></div>
+                          <div className="absolute bottom-1/4 right-1/4 w-8 h-8 rounded-full bg-indigo-400 opacity-20"></div>
+                          <div className="absolute top-1/3 right-1/3 w-6 h-6 rounded-full bg-green-400 opacity-20"></div>
+                          <div className="absolute bottom-1/3 left-1/3 w-6 h-6 rounded-full bg-purple-400 opacity-20"></div>
+                          <div className="absolute top-1/2 left-1/2 w-20 h-1 bg-gray-300 opacity-30 -rotate-45 -translate-x-10 -translate-y-2"></div>
+                          <div className="absolute top-1/2 left-1/2 w-20 h-1 bg-gray-300 opacity-30 rotate-45 -translate-x-10 -translate-y-2"></div>
+                          <div className="absolute top-1/3 left-1/3 w-15 h-1 bg-gray-300 opacity-30 rotate-90 -translate-x-5"></div>
+                        </div>
+                        <div className="absolute bottom-2 right-2">
+                          <div className="flex items-center text-xs text-muted-foreground">
+                            <span className="flex items-center mr-2"><MessagesSquare className="h-3 w-3 mr-1" />{template.nodes}</span>
+                            <span className="flex items-center"><Database className="h-3 w-3 mr-1" />{template.connections}</span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <CardHeader className="pb-2">
+                        <div className="flex justify-between items-start">
+                          <CardTitle className="text-lg font-medium">{template.title}</CardTitle>
+                          <Badge variant="secondary" className="ml-2">{template.category}</Badge>
+                        </div>
+                        <CardDescription className="text-sm mt-1">
+                          {template.description}
+                        </CardDescription>
+                      </CardHeader>
+                      
+                      <CardContent className="pb-2">
+                        <div className="flex flex-wrap gap-1">
+                          {template.tags.map(tag => (
+                            <Badge key={tag} variant="outline" className="text-xs">{tag}</Badge>
+                          ))}
+                        </div>
+                      </CardContent>
+                      
+                      <CardFooter className="flex justify-between items-center pt-2">
+                        <div className="text-xs text-muted-foreground">
+                          By {template.author}
+                        </div>
+                        <Button size="sm" variant="default" onClick={() => handleUseTemplate(template.id)}>
+                          Use Template
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="mt-10 text-center">
+                <h3 className="text-lg font-medium mb-4">Need help getting started?</h3>
+                <div className="flex justify-center gap-4">
+                  <Button variant="secondary" onClick={() => setActiveTab('templates')}>
+                    Browse Templates
+                  </Button>
+                  <Button variant="outline" asChild>
+                    <Link href="/dashboard/help/workflow">View Documentation</Link>
+                  </Button>
+                </div>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="workflows" className="mt-0">
+              {workflows.length === 0 ? (
+                <Alert>
+                  <AlertTitle>No workflows found</AlertTitle>
+                  <AlertDescription>
+                    Create your first workflow to get started. You can create a new workflow from scratch or use one of our templates.
+                  </AlertDescription>
+                </Alert>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {workflows.map(workflow => (
+                    <Card key={workflow.id}>
+                      <CardHeader className="pb-2">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <CardTitle className="text-lg">{workflow.name}</CardTitle>
+                            <CardDescription className="mt-1">
+                              {workflow.description || 'No description'}
+                            </CardDescription>
+                          </div>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => handleEditWorkflow(workflow.id)}>
+                                <Edit className="mr-2 h-4 w-4" />
+                                Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleExecuteWorkflow(workflow.id)}>
+                                <Play className="mr-2 h-4 w-4" />
+                                Run Now
+                              </DropdownMenuItem>
+                              <DropdownMenuItem 
+                                onClick={() => handleDeleteWorkflow(workflow.id)}
+                                className="text-destructive"
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="pb-2">
+                        <div className="flex items-center justify-between">
+                          <Badge variant={workflow.active ? 'default' : 'outline'}>
+                            {workflow.active ? 'Active' : 'Inactive'}
+                          </Badge>
+                          {workflow.updatedAt && (
+                            <span className="text-xs text-muted-foreground">
+                              Updated {new Date(workflow.updatedAt).toLocaleDateString()}
+                            </span>
+                          )}
+                        </div>
+                      </CardContent>
+                      <CardFooter className="pt-2">
+                        <div className="flex items-center space-x-2">
+                          <Switch
+                            id={`active-${workflow.id}`}
+                            checked={workflow.active}
+                            onCheckedChange={(checked) => handleToggleActive(workflow.id, checked)}
+                          />
+                          <Label htmlFor={`active-${workflow.id}`}>
+                            {workflow.active ? 'Enabled' : 'Disabled'}
+                          </Label>
+                        </div>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="ml-auto"
+                          onClick={() => handleEditWorkflow(workflow.id)}
+                        >
+                          <Edit className="mr-2 h-4 w-4" />
+                          Edit
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+            
+            <TabsContent value="templates" className="mt-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {featuredTemplates.map((template) => (
+                  <Card key={template.id} className="overflow-hidden border hover:shadow-md transition-shadow">
+                    <div className="relative h-40 bg-slate-100 overflow-hidden">
+                      <div className="absolute inset-0 opacity-80 bg-gradient-to-tr from-blue-50 to-indigo-50">
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-primary opacity-20"></div>
+                        <div className="absolute top-1/4 left-1/4 w-8 h-8 rounded-full bg-blue-400 opacity-20"></div>
+                        <div className="absolute bottom-1/4 right-1/4 w-8 h-8 rounded-full bg-indigo-400 opacity-20"></div>
+                        <div className="absolute top-1/3 right-1/3 w-6 h-6 rounded-full bg-green-400 opacity-20"></div>
+                        <div className="absolute bottom-1/3 left-1/3 w-6 h-6 rounded-full bg-purple-400 opacity-20"></div>
+                        <div className="absolute top-1/2 left-1/2 w-20 h-1 bg-gray-300 opacity-30 -rotate-45 -translate-x-10 -translate-y-2"></div>
+                        <div className="absolute top-1/2 left-1/2 w-20 h-1 bg-gray-300 opacity-30 rotate-45 -translate-x-10 -translate-y-2"></div>
+                        <div className="absolute top-1/3 left-1/3 w-15 h-1 bg-gray-300 opacity-30 rotate-90 -translate-x-5"></div>
+                      </div>
+                      <div className="absolute bottom-2 right-2">
+                        <div className="flex items-center text-xs text-muted-foreground">
+                          <span className="flex items-center mr-2"><MessagesSquare className="h-3 w-3 mr-1" />{template.nodes}</span>
+                          <span className="flex items-center"><Database className="h-3 w-3 mr-1" />{template.connections}</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <CardHeader className="pb-2">
+                      <div className="flex justify-between items-start">
+                        <CardTitle className="text-lg font-medium">{template.title}</CardTitle>
+                        <Badge variant="secondary" className="ml-2">{template.category}</Badge>
+                      </div>
+                      <CardDescription className="text-sm mt-1">
+                        {template.description}
+                      </CardDescription>
+                    </CardHeader>
+                    
+                    <CardContent className="pb-2">
+                      <div className="flex flex-wrap gap-1">
+                        {template.tags.map(tag => (
+                          <Badge key={tag} variant="outline" className="text-xs">{tag}</Badge>
+                        ))}
+                      </div>
+                    </CardContent>
+                    
+                    <CardFooter className="flex justify-between items-center pt-2">
+                      <div className="text-xs text-muted-foreground">
+                        By {template.author}
+                      </div>
+                      <Button size="sm" variant="default" onClick={() => handleUseTemplate(template.id)}>
+                        Use Template
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
       

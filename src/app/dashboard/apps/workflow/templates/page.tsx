@@ -133,7 +133,7 @@ export default function TemplatesPage() {
     <div className="container mx-auto py-6 px-4 max-w-7xl">
       <div className="mb-6">
         <Link 
-          href="/dashboard/apps/workflow" 
+          href="/dashboard/apps?app=workflow" 
           className="flex items-center text-muted-foreground hover:text-primary transition-colors mb-4"
         >
           <ChevronLeft className="h-4 w-4 mr-1" />
