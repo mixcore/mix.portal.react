@@ -179,6 +179,27 @@ The mini-app template can be used in multiple ways:
    cp -r src/templates/mini-app src/app/dashboard/apps/your-app-name
    ```
 
+4. **Preview in Dashboard**:
+   ```bash
+   # Create a symbolic link to preview the template in the dashboard
+   mkdir -p src/app/dashboard/apps
+   ln -s "$(pwd)/src/templates/mini-app" src/app/dashboard/apps/mini-app
+   ```
+   This creates a symbolic link allowing you to view and test the template directly in the dashboard at `/dashboard/apps/mini-app` without copying it. Using absolute paths ensures the symbolic link works correctly across different environments.
+   
+   Alternatively, you can use the provided scripts:
+   ```bash
+   # For all platforms (detects OS automatically)
+   npm run --prefix src/templates/mini-app link
+   
+   # To remove the link
+   npm run --prefix src/templates/mini-app unlink
+   
+   # Platform-specific scripts
+   npm run --prefix src/templates/mini-app link:unix  # For macOS/Linux
+   npm run --prefix src/templates/mini-app link:win   # For Windows
+   ```
+
 #### Template Structure
 
 ```

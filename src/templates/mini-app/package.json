@@ -12,7 +12,11 @@
     "prepublishOnly": "npm run build",
     "lint": "eslint --ext .ts,.tsx .",
     "test": "jest",
-    "create": "node ./cli/create-mixcore-mini-app.js"
+    "create": "node ./cli/create-mixcore-mini-app.js",
+    "link:unix": "./cli/link-mini-app.sh",
+    "link:win": "cli\\link-mini-app.bat",
+    "link": "node -e \"require('os').platform() === 'win32' ? require('child_process').execSync('npm run link:win', {stdio: 'inherit'}) : require('child_process').execSync('npm run link:unix', {stdio: 'inherit'})\"",
+    "unlink": "node -e \"const fs=require('fs'); const path=require('path'); const appPath=path.resolve(process.cwd(), 'src/app/dashboard/apps/mini-app'); if(fs.existsSync(appPath)) { process.platform === 'win32' ? require('child_process').execSync('rmdir /s /q \"' + appPath + '\"') : require('child_process').execSync('rm -rf \"' + appPath + '\"'); console.log('Unlinked mini-app'); }\""
   },
   "repository": {
     "type": "git",
