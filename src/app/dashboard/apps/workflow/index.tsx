@@ -5,7 +5,7 @@ import Link from 'next/link';
 import './app-globals.css';
 import { initializeApp } from './app-loader';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Clock, Layout, Activity, Star, MessagesSquare, Database } from 'lucide-react';
+import { PlusCircle, Clock, Layout, Activity, Star, MessagesSquare, Database, Eye } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useRouter } from 'next/navigation';
@@ -118,6 +118,10 @@ export function WorkflowApp(props: WorkflowAppProps) {
   
   const handleEditWorkflow = (id: string) => {
     router.push(`/dashboard/apps/workflow/editor/${id}`);
+  };
+  
+  const handleViewWorkflowDetails = (id: string) => {
+    router.push(`/dashboard/apps/workflow/${id}`);
   };
   
   const handleDeleteWorkflow = (id: string) => {
@@ -357,75 +361,54 @@ export function WorkflowApp(props: WorkflowAppProps) {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {workflows.map(workflow => (
-                    <Card key={workflow.id}>
-                      <CardHeader className="pb-2">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <CardTitle className="text-lg">{workflow.name}</CardTitle>
-                            <CardDescription className="mt-1">
-                              {workflow.description || 'No description'}
-                            </CardDescription>
-                          </div>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => handleEditWorkflow(workflow.id)}>
-                                <Edit className="mr-2 h-4 w-4" />
-                                Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleExecuteWorkflow(workflow.id)}>
-                                <Play className="mr-2 h-4 w-4" />
-                                Run Now
-                              </DropdownMenuItem>
-                              <DropdownMenuItem 
-                                onClick={() => handleDeleteWorkflow(workflow.id)}
-                                className="text-destructive"
-                              >
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="pb-2">
-                        <div className="flex items-center justify-between">
-                          <Badge variant={workflow.active ? 'default' : 'outline'}>
-                            {workflow.active ? 'Active' : 'Inactive'}
+                    <div key={workflow.id} className="group relative flex items-center justify-between p-4 bg-card rounded-md border hover:shadow-md transition-shadow">
+                      <div onClick={() => handleViewWorkflowDetails(workflow.id)} className="cursor-pointer flex-1">
+                        <div className="flex items-center">
+                          <h3 className="font-medium">{workflow.name}</h3>
+                          <Badge variant={workflow.active ? "default" : "outline"} className="ml-2">
+                            {workflow.active ? "Active" : "Inactive"}
                           </Badge>
-                          {workflow.updatedAt && (
-                            <span className="text-xs text-muted-foreground">
-                              Updated {new Date(workflow.updatedAt).toLocaleDateString()}
-                            </span>
-                          )}
                         </div>
-                      </CardContent>
-                      <CardFooter className="pt-2">
-                        <div className="flex items-center space-x-2">
-                          <Switch
-                            id={`active-${workflow.id}`}
-                            checked={workflow.active}
+                        {workflow.description && (
+                          <p className="text-sm text-muted-foreground mt-1">{workflow.description}</p>
+                        )}
+                      </div>
+                      
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
+                          <Switch 
+                            checked={workflow.active} 
                             onCheckedChange={(checked) => handleToggleActive(workflow.id, checked)}
                           />
-                          <Label htmlFor={`active-${workflow.id}`}>
-                            {workflow.active ? 'Enabled' : 'Disabled'}
-                          </Label>
                         </div>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="ml-auto"
-                          onClick={() => handleEditWorkflow(workflow.id)}
-                        >
-                          <Edit className="mr-2 h-4 w-4" />
-                          Edit
+                        
+                        <Button variant="ghost" size="icon" onClick={() => handleExecuteWorkflow(workflow.id)}>
+                          <Play className="h-4 w-4" />
                         </Button>
-                      </CardFooter>
-                    </Card>
+                        
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleViewWorkflowDetails(workflow.id)}>
+                              <Eye className="h-4 w-4 mr-2" />
+                              View Details
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleEditWorkflow(workflow.id)}>
+                              <Edit className="h-4 w-4 mr-2" />
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleDeleteWorkflow(workflow.id)}>
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </div>
                   ))}
                 </div>
               )}
