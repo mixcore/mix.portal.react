@@ -34,7 +34,6 @@ export default async function DashboardLayout({
               </div>
             </main>
 
-            <Footer />
           </SidebarInset>
         </SidebarProvider>
       </NavigationContextProvider>

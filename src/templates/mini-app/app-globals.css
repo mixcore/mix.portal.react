@@ -64,9 +64,8 @@
 /* Responsive container for app content */
 .app-container {
   width: 100%;
-  max-width: 1400px;
+  height: 100vh;
   margin: 0 auto;
-  padding: 1rem;
 }
 
 /* Card styling */
