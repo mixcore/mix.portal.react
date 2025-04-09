@@ -1,0 +1,158 @@
+{
+  "appId": "mini-app",
+  "version": "1.0.0",
+  "displayName": "Mini App Template",
+  "description": "A comprehensive template for creating mini-apps for Mixcore CMS",
+  "category": "template",
+  "icon": "apps",
+  "author": {
+    "name": "Mixcore Team",
+    "email": "support@mixcore.org",
+    "url": "https://mixcore.org"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mixcore/mix.portal.react"
+  },
+  "entryPoint": "index.tsx",
+  "init": {
+    "initOnInstall": true,
+    "schemaFile": "./mixdb.schema.json",
+    "demoDataFile": "./demo-data.json",
+    "createDefaultPermissions": true
+  },
+  "mainStyles": "app-globals.css",
+  "navigation": {
+    "position": "main",
+    "priority": 5,
+    "menuItem": {
+      "title": "Mini App",
+      "icon": "apps",
+      "url": "/dashboard/apps/mini-app",
+      "badge": null,
+      "contextId": "mini-app"
+    }
+  },
+  "permissions": [
+    {
+      "name": "mini-app.view",
+      "displayName": "View Mini App",
+      "description": "Can view the mini app"
+    },
+    {
+      "name": "mini-app.create",
+      "displayName": "Create Items",
+      "description": "Can create new items in the mini app"
+    },
+    {
+      "name": "mini-app.edit",
+      "displayName": "Edit Items",
+      "description": "Can edit existing items in the mini app"
+    },
+    {
+      "name": "mini-app.delete",
+      "displayName": "Delete Items",
+      "description": "Can delete items in the mini app"
+    },
+    {
+      "name": "mini-app.admin",
+      "displayName": "Administer Mini App",
+      "description": "Can administer the mini app configuration"
+    }
+  ],
+  "settings": {
+    "enableFullScreenByDefault": false,
+    "enableNotifications": true,
+    "showDetailPanel": true,
+    "defaultSortField": "createdDate",
+    "defaultSortDirection": "desc",
+    "enableComments": true,
+    "enableAttachments": true,
+    "enableSharing": true
+  },
+  "integrations": {
+    "cms": {
+      "enabled": true,
+      "createContentTypes": true
+    },
+    "mixdb": {
+      "enabled": true
+    },
+    "authentication": {
+      "enabled": true,
+      "requiredRoles": ["Administrator", "Editor", "Member"]
+    },
+    "notifications": {
+      "enabled": true,
+      "supportedChannels": ["inApp", "email"]
+    },
+    "search": {
+      "enabled": true,
+      "indexContent": true
+    }
+  },
+  "ui": {
+    "theme": {
+      "useSystemTheme": true,
+      "colors": {
+        "primary": "blue",
+        "secondary": "gray",
+        "accent": "purple",
+        "danger": "red",
+        "success": "green",
+        "warning": "amber"
+      }
+    },
+    "layout": {
+      "fluid": true,
+      "container": "max-w-7xl",
+      "padding": "p-4 md:p-6"
+    },
+    "animations": {
+      "enabled": true,
+      "transition": "ease-in-out"
+    }
+  },
+  "storage": {
+    "local": {
+      "enabled": true,
+      "prefix": "mixcore_mini_app_"
+    },
+    "persistent": {
+      "enabled": true,
+      "schema": "./mixdb.schema.json"
+    }
+  },
+  "extensions": {
+    "dashboard": {
+      "widgets": [
+        {
+          "id": "mini-app-summary",
+          "title": "Mini App Summary",
+          "description": "Shows a summary of mini app items",
+          "size": "normal",
+          "permissions": ["mini-app.view"]
+        }
+      ]
+    },
+    "contextMenu": {
+      "items": [
+        {
+          "id": "open-in-mini-app",
+          "title": "Open in Mini App",
+          "icon": "apps",
+          "condition": "item.type === 'mini-app-item'",
+          "action": "openInApp",
+          "permissions": ["mini-app.view"]
+        }
+      ]
+    }
+  },
+  "documentation": {
+    "gettingStarted": "README.md",
+    "userGuide": "docs/USER-GUIDE.md",
+    "apiReference": "docs/API-REFERENCE.md",
+    "developerGuide": "docs/DEVELOPER-GUIDE.md"
+  }
+} 

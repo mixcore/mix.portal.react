@@ -120,6 +120,171 @@ Each mini-app in Mixcore should be designed as a self-contained mini-application
 - **Isolated Shell Layouts**: Each mini-app has its own shell layout displayed within the `<main>` element of /dashboard/apps/
 - **Contextual UI**: UI elements adapt based on the active app
 - **Code Splitting**: Only load code necessary for the current app
+- **Authentication Integration**: Built-in authentication sync with dashboard
+- **Role-Based Access Control**: Support for role and permission-based UI adaption
+- **Internationalization**: Multi-language support with culture handling
+- **API Integration**: Standardized API client for consistent data access
+
+### Mini-App Template
+
+To accelerate mini-app development, we've created a comprehensive starter template located at `/src/templates/mini-app`. This template provides all the essential components and infrastructure needed to build a fully functional mini-app with minimal setup.
+
+#### Template Features
+
+- **Complete Project Structure**: Pre-organized directories for components, layouts, hooks, and libraries
+- **Authentication System**: Ready-to-use authentication with role-based access control
+- **Internationalization**: Built-in localization with culture-aware formatting 
+- **API Client**: Type-safe MixDB API client with automatic auth and culture integration
+- **Modern UI Components**: shadcn/ui based components with light/dark mode support
+- **Documentation**: Comprehensive README with usage examples and best practices
+
+#### Template Structure
+
+```
+mini-app/
+├── app-globals.css        # App-specific styles
+├── app-loader.ts          # Initialization and registration
+├── index.tsx              # Main entry point
+├── components/            # UI components
+│   └── Dashboard.tsx      # Main dashboard component
+├── config/                # Configuration files
+│   ├── app.config.json    # App configuration
+│   ├── demo-data.json     # Demo data
+│   └── mixdb.schema.json  # Database schema
+├── hooks/                 # Custom hooks
+│   ├── useBreadcrumb.ts   # Breadcrumb integration
+│   └── useContainerStatus.ts # Layout detection
+├── layouts/               # Layout components
+│   └── AppShell.tsx       # Main app shell layout
+└── lib/                   # Utility functions and types
+    ├── mixdb-api.ts       # MixDB API client for data access
+    ├── auth.ts            # Authentication and authorization
+    ├── culture.ts         # Localization and culture handling
+    ├── types.ts           # Common types for API interaction
+    ├── sample-usage.ts    # Example usage of the API client
+    └── index.ts           # Exports all components for easy importing
+```
+
+#### Authentication & Role-Based Access Control
+
+The template includes a robust authentication system that integrates with Mixcore Dashboard:
+
+```typescript
+// Initialize the auth service
+const authService = new AuthService({
+  authEndpoint: '/api/auth',
+  persistToken: true
+});
+
+// Login a user
+const user = await authService.login('username', 'password');
+
+// Check if user has a role
+if (authService.hasRole('Admin')) {
+  // Show admin features
+}
+
+// Check if user has a permission
+if (authService.hasPermission('products.edit')) {
+  // Show edit button
+}
+
+// Create reusable permission guards
+const canEditProducts = createPermissionGuard(authService, ['products.edit']);
+const isAdminOrEditor = createRoleGuard(authService, ['Admin', 'Editor']);
+```
+
+The authentication service:
+- Automatically syncs with dashboard authentication
+- Handles token refresh and storage
+- Provides role and permission checking
+- Offers guard functions for conditional UI rendering
+
+#### Internationalization & Culture Support
+
+The template includes comprehensive internationalization:
+
+```typescript
+// Initialize the culture service
+const cultureService = new CultureService({
+  defaultCulture: 'en-US'
+});
+
+// Create a translator function
+const t = createTranslator(cultureService);
+const greeting = t('hello', 'Hello');
+
+// Format dates and numbers according to culture
+const formattedDate = cultureService.formatDate(new Date());
+const formattedNumber = cultureService.formatNumber(1234.56);
+const formattedCurrency = cultureService.formatCurrency(99.99, 'EUR');
+```
+
+The culture service:
+- Supports multiple languages and cultures
+- Handles RTL languages automatically
+- Provides culture-aware formatting for dates, numbers, and currencies
+- Synchronizes with dashboard language settings
+- Includes translation helpers with parameter support
+
+#### API Integration
+
+The template includes a comprehensive MixDB API client:
+
+```typescript
+// Initialize the API client with auth and culture services
+const api = new MixDbApi({
+  basePath: '/api/v2/mixdb',
+  authService,          // Automatic auth integration
+  cultureService,       // Automatic culture integration
+  includeCulture: true  // Include culture in requests
+});
+
+// Get paginated data (auth headers and culture are automatically included)
+const products = await api.getItems('product', {
+  page: 1,
+  pageSize: 10,
+  filter: { status: 'Published' }
+});
+```
+
+The API client:
+- Automatically includes authentication headers
+- Adds culture/language headers to requests
+- Provides type-safe methods for CRUD operations
+- Supports file uploads and batch operations
+- Includes helper methods for common query patterns
+
+#### Using the Template
+
+1. **Copy the Template**: 
+   ```bash
+   cp -r src/templates/mini-app src/app/dashboard/apps/your-app-name
+   ```
+
+2. **Configure the App**:
+   - Update `config/app.config.json` with your app details
+   - Modify `README.md` with your app's documentation
+   - Adjust `app-globals.css` for app-specific styling
+
+3. **Initialize Core Services**:
+   ```tsx
+   import { initializeCoreServices } from './lib';
+   
+   const { api, auth, culture, translate } = initializeCoreServices({
+     apiBasePath: '/api/v2/mixdb',
+     defaultCulture: 'en-US',
+     authEndpoint: '/api/auth'
+   });
+   ```
+
+4. **Implement Your Features**: Build on top of the template's foundation:
+   - Use `auth.ts` for authentication and permissions
+   - Use `culture.ts` for translations and localization
+   - Use `mixdb-api.ts` for data access
+   - See `sample-usage.ts` for comprehensive examples
+
+The template significantly reduces boilerplate code and ensures consistency across all mini-apps. It handles the complex integration with the dashboard shell, providing hooks into authentication, localization, and navigation systems.
 
 ### Implementation
 
@@ -132,6 +297,11 @@ Each mini-app in Mixcore should be designed as a self-contained mini-application
     /layouts
       AppShell.tsx  # App-specific shell layout
     /lib
+      /auth.ts      # Authentication utilities
+      /culture.ts   # Localization utilities
+      /mixdb-api.ts # API client
+      /types.ts     # Type definitions
+      /index.ts     # Library exports
     index.tsx       # Entry point
   /mixdb
     ...
@@ -154,15 +324,44 @@ const APPS = {
 ```tsx
 // apps/[app-name]/layouts/AppShell.tsx
 export function AppShell({ children }: { children: React.ReactNode }) {
+  // Initialize core services
+  const { api, auth, culture, translate } = useCoreServices();
+  const t = translate;
+
   return (
     <div className="app-shell">
       {/* App-specific header elements */}
+      <div className="app-header">
+        {auth.isAuthenticated() && (
+          <div className="user-controls">
+            <span>{auth.getUser()?.displayName}</span>
+            <LanguageSelector 
+              cultures={culture.getAvailableCultures()} 
+              activeCulture={culture.getCurrentCulture()?.code} 
+              onChange={(code) => culture.setCulture(code)}
+            />
+          </div>
+        )}
+      </div>
       <div className="app-content">
         {children}
       </div>
       {/* App-specific footer elements */}
     </div>
   );
+}
+
+// Core services hook
+function useCoreServices() {
+  const [services] = useState(() => 
+    initializeCoreServices({
+      apiBasePath: '/api/v2/mixdb',
+      defaultCulture: 'en-US',
+      authEndpoint: '/api/auth'
+    })
+  );
+  
+  return services;
 }
 ```
 
@@ -210,7 +409,17 @@ Each mini-app must include the following files and features to ensure proper int
    /src/app/dashboard/apps/[app-name]/app-loader.ts
    ```
 
-4. **Documentation**: Basic usage and development guides
+4. **Core Library Files**: For authentication, API, and internationalization
+   ```
+   /src/app/dashboard/apps/[app-name]/lib/
+   ├── auth.ts              # Authentication and authorization 
+   ├── culture.ts           # Localization and culture handling
+   ├── mixdb-api.ts         # API client for data access
+   ├── types.ts             # Common type definitions
+   └── index.ts             # Exports all utilities
+   ```
+
+5. **Documentation**: Basic usage and development guides
    ```
    /src/app/dashboard/apps/[app-name]/README.md
    ```
@@ -273,8 +482,142 @@ The `app.config.json` should follow this structure:
     "authentication": {
       "enabled": true,
       "requiredRoles": ["Administrator", "Editor"]
+    },
+    "localization": {
+      "enabled": true,
+      "defaultCulture": "en-US",
+      "supportedCultures": ["en-US", "fr-FR", "es-ES", "ar-SA"]
     }
   }
+}
+```
+
+#### Authentication & Authorization
+
+Each mini-app should implement authentication and authorization:
+
+```tsx
+import { AuthService, createPermissionGuard, createRoleGuard } from '../lib/auth';
+
+// Initialize authentication service
+const authService = new AuthService({
+  authEndpoint: '/api/auth',
+  persistToken: true,
+  onAuthError: (error) => {
+    // Handle authentication errors
+  }
+});
+
+// Check user roles and permissions
+if (authService.hasRole('Admin')) {
+  // Show admin-only features
+}
+
+// Create reusable permission guards
+const canEditItems = createPermissionGuard(authService, ['items.edit']);
+const isAdminOrEditor = createRoleGuard(authService, ['Admin', 'Editor']);
+
+// Use in components
+function AdminPanel() {
+  if (!isAdminOrEditor()) {
+    return <AccessDenied />;
+  }
+  
+  return (
+    <div>
+      {/* Admin panel content */}
+      {canEditItems() && <EditButton />}
+    </div>
+  );
+}
+```
+
+#### Localization & Internationalization
+
+Each mini-app should implement localization:
+
+```tsx
+import { CultureService, createTranslator } from '../lib/culture';
+
+// Initialize culture service
+const cultureService = new CultureService({
+  defaultCulture: 'en-US',
+  onCultureChange: (culture) => {
+    // Update UI when culture changes
+    document.dir = culture.direction; // Handle RTL languages
+  }
+});
+
+// Create translator function
+const t = createTranslator(cultureService);
+
+// Use in components
+function WelcomeMessage({ username }: { username: string }) {
+  return (
+    <div>
+      <h1>{t('welcome', 'Welcome to Mixcore')}</h1>
+      <p>{t('hello_user', 'Hello, {name}!', { name: username })}</p>
+      
+      {/* Format dates and numbers */}
+      <p>
+        {t('today_is', 'Today is {date}', { 
+          date: cultureService.formatDate(new Date(), { dateStyle: 'full' })
+        })}
+      </p>
+      <p>
+        {t('price_is', 'Price: {price}', {
+          price: cultureService.formatCurrency(99.99)
+        })}
+      </p>
+    </div>
+  );
+}
+```
+
+#### API Integration
+
+Each mini-app should use the standardized MixDB API client:
+
+```tsx
+import { MixDbApi } from '../lib/mixdb-api';
+import { MixDbEntity } from '../lib/types';
+
+// Initialize API client with auth and culture
+const api = new MixDbApi({
+  basePath: '/api/v2/mixdb',
+  authService,
+  cultureService,
+  includeCulture: true // Include culture in requests
+});
+
+// Define typed entities
+interface Product extends MixDbEntity {
+  name: string;
+  price: number;
+  description?: string;
+  nameTranslations?: Record<string, string>; // Multi-language support
+}
+
+// Get data with automatic auth headers and culture
+async function fetchProducts() {
+  const products = await api.getItems<Product>('product', {
+    page: 1,
+    pageSize: 10,
+    filter: { status: 'Published' }
+  });
+  
+  return products;
+}
+
+// Create multilingual content
+async function createProduct(product: Partial<Product>) {
+  return api.createItem<Product>('product', {
+    ...product,
+    nameTranslations: {
+      'en-US': product.name,
+      'fr-FR': product.nameTranslations?.['fr-FR'] || product.name
+    }
+  });
 }
 ```
 
@@ -288,11 +631,13 @@ Each mini-app should initialize itself when first loaded:
 
 import { useState, useEffect } from 'react';
 import { initializeApp } from './app-loader';
+import { initializeCoreServices } from './lib';
 import './app-globals.css';
 
 export function MyApp() {
   const [isInitialized, setIsInitialized] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const { api, auth, culture, translate } = initializeCoreServices();
   
   // Initialize app if needed
   useEffect(() => {
@@ -337,26 +682,6 @@ export function MyApp() {
 
 export default MyApp;
 ```
-
-#### Container Adaptability
-
-All mini-apps should adapt to their container size properly:
-
-1. Create a `useContainerStatus` hook to detect fluid/container mode
-2. Implement responsive layouts for all views
-3. Handle both windowed and full-screen modes
-4. Use CSS variables for consistent spacing
-5. Ensure proper scrolling behavior inside containers
-
-#### Testing Requirements
-
-Before submitting a mini-app, ensure:
-
-1. It initializes correctly with proper database schema and demo data
-2. It adapts properly to container size changes
-3. All views render correctly in both light and dark theme
-4. Permissions are properly applied to UI elements and actions
-5. Error states and loading indicators display correctly
 
 ## Component Templates
 
@@ -878,4 +1203,25 @@ The workflow editor maintains accessibility standards while providing a rich int
    - Virtualized rendering for large workflows
    - Lazy loading of node components
    - Optimized SVG rendering for connections
+```
+
+#### Container Adaptability
+
+All mini-apps should adapt to their container size properly:
+
+1. Create a `useContainerStatus` hook to detect fluid/container mode
+2. Implement responsive layouts for all views
+3. Handle both windowed and full-screen modes
+4. Use CSS variables for consistent spacing
+5. Ensure proper scrolling behavior inside containers
+
+#### Testing Requirements
+
+Before submitting a mini-app, ensure:
+
+1. It initializes correctly with proper database schema and demo data
+2. It adapts properly to container size changes
+3. All views render correctly in both light and dark theme
+4. Permissions are properly applied to UI elements and actions
+5. Error states and loading indicators display correctly
 ``` 

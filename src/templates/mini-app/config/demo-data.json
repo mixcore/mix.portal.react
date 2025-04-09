@@ -1,0 +1,166 @@
+{
+  "appId": "mini-app",
+  "version": "1.0.0",
+  "description": "Demo data for the Mini App Template",
+  "data": {
+    "items": [
+      {
+        "id": "item-001",
+        "title": "Getting Started with Mini App",
+        "description": "Learn how to use the mini app with this introductory guide.",
+        "status": "published",
+        "category": "Documentation",
+        "tags": ["guide", "introduction", "beginner"],
+        "createdBy": "system",
+        "createdDate": "2023-01-01T09:00:00Z",
+        "modifiedBy": "system",
+        "modifiedDate": "2023-01-01T09:00:00Z",
+        "metadata": {
+          "featuredImage": "/assets/images/mini-app/getting-started.jpg",
+          "readTime": "5 min",
+          "priority": "high"
+        }
+      },
+      {
+        "id": "item-002",
+        "title": "Advanced Features",
+        "description": "Discover the advanced features and capabilities of the mini app.",
+        "status": "published",
+        "category": "Documentation",
+        "tags": ["advanced", "features", "pro-tips"],
+        "createdBy": "system",
+        "createdDate": "2023-01-02T10:30:00Z",
+        "modifiedBy": "system",
+        "modifiedDate": "2023-01-02T10:30:00Z",
+        "metadata": {
+          "featuredImage": "/assets/images/mini-app/advanced-features.jpg",
+          "readTime": "10 min",
+          "priority": "medium"
+        }
+      },
+      {
+        "id": "item-003",
+        "title": "Customization Options",
+        "description": "Learn how to customize the mini app to suit your specific needs.",
+        "status": "published",
+        "category": "Tutorial",
+        "tags": ["customization", "configuration", "settings"],
+        "createdBy": "system",
+        "createdDate": "2023-01-03T14:45:00Z",
+        "modifiedBy": "system",
+        "modifiedDate": "2023-01-03T14:45:00Z",
+        "metadata": {
+          "featuredImage": "/assets/images/mini-app/customization.jpg",
+          "readTime": "7 min",
+          "priority": "medium"
+        }
+      },
+      {
+        "id": "item-004",
+        "title": "Integration with Other Apps",
+        "description": "Discover how to integrate the mini app with other Mixcore apps.",
+        "status": "draft",
+        "category": "Tutorial",
+        "tags": ["integration", "api", "mixcore"],
+        "createdBy": "system",
+        "createdDate": "2023-01-04T11:15:00Z",
+        "modifiedBy": "system",
+        "modifiedDate": "2023-01-04T11:15:00Z",
+        "metadata": {
+          "featuredImage": "/assets/images/mini-app/integration.jpg",
+          "readTime": "12 min",
+          "priority": "low"
+        }
+      },
+      {
+        "id": "item-005",
+        "title": "Troubleshooting Common Issues",
+        "description": "Solutions to common problems you might encounter while using the mini app.",
+        "status": "published",
+        "category": "Support",
+        "tags": ["troubleshooting", "help", "support"],
+        "createdBy": "system",
+        "createdDate": "2023-01-05T16:20:00Z",
+        "modifiedBy": "system",
+        "modifiedDate": "2023-01-05T16:20:00Z",
+        "metadata": {
+          "featuredImage": "/assets/images/mini-app/troubleshooting.jpg",
+          "readTime": "8 min",
+          "priority": "high"
+        }
+      }
+    ],
+    "item_comments": [
+      {
+        "id": "comment-001",
+        "itemId": "item-001",
+        "content": "This was really helpful for getting started! Thank you.",
+        "author": "user1",
+        "createdDate": "2023-01-02T14:30:00Z"
+      },
+      {
+        "id": "comment-002",
+        "itemId": "item-001",
+        "content": "Could you add more screenshots to this guide?",
+        "author": "user2",
+        "createdDate": "2023-01-03T09:15:00Z"
+      },
+      {
+        "id": "comment-003",
+        "itemId": "item-002",
+        "content": "The advanced features section is great, but I'm having trouble with the API integration part.",
+        "author": "user3",
+        "createdDate": "2023-01-04T16:45:00Z"
+      },
+      {
+        "id": "comment-004",
+        "itemId": "item-005",
+        "content": "This solved my issue, thanks!",
+        "author": "user4",
+        "createdDate": "2023-01-06T11:20:00Z"
+      }
+    ],
+    "item_attachments": [
+      {
+        "id": "attachment-001",
+        "itemId": "item-001",
+        "fileName": "getting-started-guide.pdf",
+        "fileSize": 1245678,
+        "fileType": "application/pdf",
+        "filePath": "/uploads/mini-app/getting-started-guide.pdf",
+        "uploadedBy": "system",
+        "uploadDate": "2023-01-01T09:05:00Z"
+      },
+      {
+        "id": "attachment-002",
+        "itemId": "item-002",
+        "fileName": "advanced-features-cheatsheet.pdf",
+        "fileSize": 987654,
+        "fileType": "application/pdf",
+        "filePath": "/uploads/mini-app/advanced-features-cheatsheet.pdf",
+        "uploadedBy": "system",
+        "uploadDate": "2023-01-02T10:35:00Z"
+      },
+      {
+        "id": "attachment-003",
+        "itemId": "item-003",
+        "fileName": "customization-examples.zip",
+        "fileSize": 3456789,
+        "fileType": "application/zip",
+        "filePath": "/uploads/mini-app/customization-examples.zip",
+        "uploadedBy": "system",
+        "uploadDate": "2023-01-03T14:50:00Z"
+      },
+      {
+        "id": "attachment-004",
+        "itemId": "item-005",
+        "fileName": "troubleshooting-guide.pdf",
+        "fileSize": 1234567,
+        "fileType": "application/pdf",
+        "filePath": "/uploads/mini-app/troubleshooting-guide.pdf",
+        "uploadedBy": "system",
+        "uploadDate": "2023-01-05T16:25:00Z"
+      }
+    ]
+  }
+}
