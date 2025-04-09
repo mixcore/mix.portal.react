@@ -1,0 +1,82 @@
+{
+  "name": "@mixcore/mini-app-template",
+  "version": "1.0.0",
+  "description": "A comprehensive template for creating mini-apps for Mixcore CMS based on Next.js and React",
+  "main": "index.tsx",
+  "types": "index.d.ts",
+  "bin": {
+    "create-mixcore-mini-app": "./cli/create-mixcore-mini-app.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "lint": "eslint --ext .ts,.tsx .",
+    "test": "jest",
+    "create": "node ./cli/create-mixcore-mini-app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mixcore/mix.portal.react.git"
+  },
+  "keywords": [
+    "mixcore",
+    "cms",
+    "mini-app",
+    "template",
+    "react",
+    "nextjs",
+    "typescript"
+  ],
+  "author": {
+    "name": "Mixcore Team",
+    "email": "info@mixcore.org",
+    "url": "https://mixcore.org"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mixcore/mix.portal.react/issues"
+  },
+  "homepage": "https://mixcore.org",
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "next": "^13.0.0"
+  },
+  "dependencies": {
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.0.0",
+    "date-fns": "^2.30.0",
+    "lucide-react": "^0.293.0",
+    "tailwind-merge": "^2.0.0",
+    "tailwindcss-animate": "^1.0.6",
+    "zod": "^3.22.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.5.7",
+    "@types/react": "^18.2.21",
+    "@types/react-dom": "^18.2.7",
+    "autoprefixer": "^10.4.15",
+    "eslint": "^8.48.0",
+    "eslint-config-next": "^13.4.19",
+    "jest": "^29.6.4",
+    "postcss": "^8.4.29",
+    "tailwindcss": "^3.3.3",
+    "typescript": "^5.2.2"
+  },
+  "files": [
+    "**/*.{ts,tsx,js,jsx,css}",
+    "!**/*.test.{ts,tsx,js,jsx}",
+    "!**/*.spec.{ts,tsx,js,jsx}",
+    "!**/__tests__/**",
+    "!**/__mocks__/**",
+    "*.md",
+    "LICENSE",
+    "cli/**"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+} 

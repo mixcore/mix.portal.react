@@ -138,6 +138,37 @@ To accelerate mini-app development, we've created a comprehensive starter templa
 - **Modern UI Components**: shadcn/ui based components with light/dark mode support
 - **Documentation**: Comprehensive README with usage examples and best practices
 
+#### Package Installation Options
+
+The mini-app template can be used in multiple ways:
+
+1. **From NPM Registry**:
+   ```bash
+   # Using npm
+   npm install @mixcore/mini-app-template
+   
+   # Using yarn
+   yarn add @mixcore/mini-app-template
+   
+   # Using CLI (creates a new app in current directory)
+   npx create-mixcore-mini-app my-app
+   ```
+
+2. **From Repository**:
+   ```bash
+   # Clone repository
+   git clone https://github.com/mixcore/mini-app-template.git
+   
+   # Copy to your project
+   cp -r mini-app-template/. your-project/src/app/dashboard/apps/your-app-name
+   ```
+
+3. **From Local Template**:
+   ```bash
+   # Copy from existing project template
+   cp -r src/templates/mini-app src/app/dashboard/apps/your-app-name
+   ```
+
 #### Template Structure
 
 ```
