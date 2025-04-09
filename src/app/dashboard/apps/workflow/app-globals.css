@@ -1,0 +1,182 @@
+/* Workflow Automation App Styles */
+
+.workflow-app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.workflow-app-header {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+  background-color: var(--background);
+}
+
+.workflow-app-content {
+  flex: 1;
+  padding: 1.5rem;
+  overflow: auto;
+}
+
+.workflow-app-footer {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--border);
+  background-color: var(--background);
+  text-align: center;
+}
+
+/* Workflow Editor Styles */
+.workflow-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.workflow-editor-toolbar {
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--border);
+  background-color: var(--background);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.workflow-editor-canvas {
+  flex: 1;
+  background-color: var(--muted);
+  position: relative;
+}
+
+/* Node styles */
+.workflow-node {
+  border: 1px solid var(--border);
+  border-radius: 0.25rem;
+  background-color: var(--background);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 0.75rem;
+  width: 200px;
+}
+
+.workflow-node-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.workflow-node-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background-color: var(--primary);
+  color: white;
+}
+
+.workflow-node-title {
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.workflow-node-ports {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.workflow-node-port {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.workflow-node-port-handle {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--primary);
+}
+
+/* Sidebar styles */
+.workflow-sidebar {
+  width: 260px;
+  border-right: 1px solid var(--border);
+  background-color: var(--card);
+  overflow-y: auto;
+}
+
+.workflow-sidebar-section {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.workflow-sidebar-title {
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Node palette */
+.node-palette-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.node-palette-item:hover {
+  background-color: var(--accent);
+}
+
+.node-palette-item-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background-color: var(--primary);
+  color: white;
+  font-size: 0.75rem;
+}
+
+.node-palette-item-title {
+  font-size: 0.875rem;
+}
+
+/* Properties panel */
+.properties-panel {
+  padding: 1rem;
+}
+
+.properties-panel-empty {
+  text-align: center;
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  padding: 2rem 1rem;
+}
+
+.properties-form-row {
+  margin-bottom: 1rem;
+}
+
+.properties-form-label {
+  display: block;
+  font-size: 0.75rem;
+  margin-bottom: 0.25rem;
+  color: var(--muted-foreground);
+}
+
+/* Dark mode adjustments */
+:root[class~="dark"] .workflow-node {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+} 

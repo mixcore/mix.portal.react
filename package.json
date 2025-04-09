@@ -103,6 +103,7 @@
     "react-hotkeys-hook": "^4.6.1",
     "react-resizable-panels": "^2.1.7",
     "react-responsive": "^10.0.0",
+    "reactflow": "^11.11.4",
     "recharts": "^2.15.1",
     "sharp": "^0.33.5",
     "sonner": "^1.7.1",

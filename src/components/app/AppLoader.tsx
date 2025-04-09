@@ -7,7 +7,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 const APPS = {
   cms: () => import('@/app/dashboard/apps/cms'),
   mixdb: () => import('@/app/dashboard/apps/mixdb'),
-  projects: () => import('@/app/dashboard/apps/projects')
+  projects: () => import('@/app/dashboard/apps/projects'),
+  workflow: () => import('@/app/dashboard/apps/workflow')
   // Additional apps can be registered here
 };
 

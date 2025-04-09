@@ -476,3 +476,406 @@ When implementing toolbars, such as those in the Gantt chart component:
 ```
 
 By following these standards, we ensure that all parts of the application look and feel consistent, which improves user experience and makes maintenance easier. 
+
+## Workflow Automation Mini-App
+
+The Workflow Automation mini-app provides no-code/low-code automation capabilities similar to n8n, allowing users to create, edit, and manage automated workflows through a visual editor interface.
+
+### Key Features
+
+- **Visual Workflow Editor**: Drag-and-drop interface for creating complex workflows
+- **Node-Based Architecture**: Connect nodes to build automation flows
+- **Triggers and Actions**: Support for various event triggers and action types
+- **Data Transformation**: Tools for mapping, filtering, and transforming data between nodes
+- **Scheduling**: Time-based execution with cron expressions
+- **Error Handling**: Built-in retry mechanisms and error paths
+- **Execution History**: Track and debug workflow runs
+- **Templates**: Pre-built workflow templates for common automation tasks
+- **Integration with Mixcore Apps**: Seamless connection with CMS, MixDB, and other mini-apps
+
+### Implementation
+
+The Workflow Automation mini-app follows the standard mini-app architecture with specific focus on the workflow editor component:
+
+1. **App Module Structure**:
+```
+/src/app/dashboard/apps
+  /workflow
+    /components
+      /editor
+        /canvas
+          Canvas.tsx         # Main workflow canvas
+          NodeComponent.tsx  # Visualization of workflow nodes
+          ConnectionLine.tsx # Connection between nodes
+          Controls.tsx       # Zoom/pan controls
+        /sidebar
+          NodePalette.tsx    # Available node types
+          Properties.tsx     # Node configuration panel
+        /nodes
+          TriggerNodes.tsx   # Event trigger node implementations
+          ActionNodes.tsx    # Action node implementations
+          LogicNodes.tsx     # Flow control node implementations
+        WorkflowEditor.tsx   # Main editor component
+      /execution
+        RunHistory.tsx       # Execution history and logs
+        Debugger.tsx         # Real-time debugging tools
+      /shared
+        NodeIcon.tsx         # Node type icons
+        ConnectionPath.tsx   # SVG path generator for connections
+    /hooks
+      useWorkflow.ts         # Workflow state management
+      useNodeTypes.ts        # Node type registry
+      useConnections.ts      # Connection handling logic
+      useExecutionHistory.ts # Execution history management
+    /layouts
+      AppShell.tsx           # App-specific shell layout
+    /lib
+      workflowEngine.ts      # Core workflow execution engine
+      nodeRegistry.ts        # Node type registration system
+      validationUtils.ts     # Workflow validation utilities
+    index.tsx                # Entry point
+    /config
+      app.config.json        # App configuration
+      demo-data.json         # Sample workflows for initialization
+      mixdb.schema.json      # MixDB schema for workflow storage
+```
+
+2. **Workflow Editor Implementation**:
+
+```tsx
+'use client';
+
+import React, { useState, useCallback } from 'react';
+import ReactFlow, {
+  Background,
+  Controls,
+  Connection,
+  Edge,
+  Node,
+  ReactFlowProvider,
+  useNodesState,
+  useEdgesState,
+  useReactFlow,
+} from 'reactflow';
+import 'reactflow/dist/style.css';
+import { NodePalette } from './sidebar/NodePalette';
+import { Properties } from './sidebar/Properties';
+import { nodeTypes } from './nodes';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Play, Save, Undo, Redo } from 'lucide-react';
+import { useWorkflow } from '../../hooks/useWorkflow';
+
+export function WorkflowEditor({ workflowId }: { workflowId?: string }) {
+  const { workflow, saveWorkflow, executeWorkflow } = useWorkflow(workflowId);
+  const [nodes, setNodes, onNodesChange] = useNodesState(workflow?.nodes || []);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(workflow?.edges || []);
+  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  const reactFlowInstance = useReactFlow();
+
+  const onConnect = useCallback((connection: Connection) => {
+    // Logic to connect nodes
+  }, []);
+
+  const onNodeClick = useCallback((_, node: Node) => {
+    setSelectedNode(node);
+  }, []);
+
+  const onDragOver = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+  }, []);
+
+  const onDrop = useCallback((event: React.DragEvent) => {
+    // Logic to add new nodes from palette
+  }, [reactFlowInstance]);
+
+  const handleSave = useCallback(() => {
+    saveWorkflow({
+      ...workflow,
+      nodes,
+      edges,
+    });
+  }, [workflow, nodes, edges, saveWorkflow]);
+
+  const handleExecute = useCallback(() => {
+    executeWorkflow();
+  }, [executeWorkflow]);
+
+  return (
+    <div className="h-full flex flex-col">
+      <div className="flex items-center gap-2 p-2 border-b">
+        <Button variant="outline" size="sm" onClick={handleSave}>
+          <Save className="h-4 w-4 mr-1" />
+          Save
+        </Button>
+        <Button variant="outline" size="sm" onClick={handleExecute}>
+          <Play className="h-4 w-4 mr-1" />
+          Run
+        </Button>
+      </div>
+      
+      <div className="flex flex-1 h-full">
+        <div className="w-64 border-r p-4 h-full overflow-auto">
+          <Tabs defaultValue="nodes">
+            <TabsList className="w-full">
+              <TabsTrigger value="nodes" className="flex-1">Nodes</TabsTrigger>
+              <TabsTrigger value="properties" className="flex-1">Properties</TabsTrigger>
+            </TabsList>
+            <TabsContent value="nodes" className="mt-2">
+              <NodePalette />
+            </TabsContent>
+            <TabsContent value="properties" className="mt-2">
+              <Properties node={selectedNode} onChange={(updated) => {
+                // Logic to update node properties
+              }} />
+            </TabsContent>
+          </Tabs>
+        </div>
+        
+        <div className="flex-1 h-full">
+          <ReactFlowProvider>
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              onConnect={onConnect}
+              onNodeClick={onNodeClick}
+              onDragOver={onDragOver}
+              onDrop={onDrop}
+              nodeTypes={nodeTypes}
+              fitView
+              attributionPosition="bottom-right"
+            >
+              <Background />
+              <Controls />
+            </ReactFlow>
+          </ReactFlowProvider>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+3. **Node Types Registry**:
+
+```tsx
+// nodeRegistry.ts
+import { NodeType } from './types';
+
+const nodeTypes: Record<string, NodeType> = {};
+
+export function registerNodeType(type: string, nodeConfig: NodeType) {
+  nodeTypes[type] = nodeConfig;
+}
+
+export function getNodeTypes(): Record<string, NodeType> {
+  return nodeTypes;
+}
+
+export function getNodeCategories(): string[] {
+  const categories = new Set<string>();
+  Object.values(nodeTypes).forEach(node => {
+    categories.add(node.category);
+  });
+  return Array.from(categories);
+}
+
+// Example node registration
+registerNodeType('http.request', {
+  type: 'http.request',
+  label: 'HTTP Request',
+  category: 'HTTP',
+  description: 'Make HTTP requests to external services',
+  icon: 'globe',
+  inputs: [{
+    name: 'input',
+    label: 'Input',
+    multiple: false,
+  }],
+  outputs: [{
+    name: 'output',
+    label: 'Output',
+    multiple: true,
+  }],
+  properties: [
+    {
+      name: 'url',
+      label: 'URL',
+      type: 'string',
+      required: true,
+    },
+    {
+      name: 'method',
+      label: 'Method',
+      type: 'select',
+      options: ['GET', 'POST', 'PUT', 'DELETE'],
+      default: 'GET',
+    },
+    // Additional properties
+  ],
+  execute: async (inputs, properties) => {
+    // Execution logic
+  }
+});
+```
+
+### Workflow Schema
+
+The workflow schema stored in MixDB defines the structure of workflow documents:
+
+```json
+{
+  "name": "workflow",
+  "label": "Workflow",
+  "fields": [
+    {
+      "name": "name",
+      "label": "Name",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "description",
+      "label": "Description",
+      "type": "text"
+    },
+    {
+      "name": "active",
+      "label": "Active",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "name": "nodes",
+      "label": "Nodes",
+      "type": "json"
+    },
+    {
+      "name": "edges",
+      "label": "Edges",
+      "type": "json"
+    },
+    {
+      "name": "schedule",
+      "label": "Schedule",
+      "type": "object",
+      "fields": [
+        {
+          "name": "enabled",
+          "label": "Enabled",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "name": "cron",
+          "label": "Cron Expression",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Node Type Categories
+
+The Workflow Automation mini-app includes several categories of nodes:
+
+1. **Trigger Nodes**:
+   - Webhook: Trigger workflows via HTTP requests
+   - Schedule: Time-based triggers using cron expressions
+   - Event: React to system events
+   - Form Submission: Trigger on form submissions
+   - Database Changes: React to data changes in MixDB
+
+2. **Action Nodes**:
+   - HTTP Request: Make API calls
+   - Database Operations: CRUD operations on MixDB collections
+   - File Operations: Read/write files
+   - Email: Send emails
+   - Notification: Send system notifications
+
+3. **Logic Nodes**:
+   - Conditional: Branch based on conditions
+   - Switch: Multiple path routing
+   - Merge: Combine multiple inputs
+   - Iterator: Loop through arrays
+   - Delay: Pause execution
+
+4. **Transformation Nodes**:
+   - Mapper: Map data between formats
+   - Filter: Filter arrays or properties
+   - Aggregator: Combine multiple items
+   - Code: Custom JavaScript transformations
+   - Template: Text template rendering
+
+### Usage Examples
+
+The Workflow Automation mini-app can be used to automate various tasks:
+
+1. **Content Publishing Workflow**:
+   - Trigger: Schedule
+   - Actions: Query draft content, Publish if approved, Send notification
+
+2. **Form Processing**:
+   - Trigger: Form submission
+   - Actions: Validate submission, Store in database, Send email confirmation
+
+3. **Data Synchronization**:
+   - Trigger: Database change
+   - Actions: Transform data, Send to external API, Log result
+
+4. **Report Generation**:
+   - Trigger: Schedule
+   - Actions: Query analytics data, Generate PDF report, Email to stakeholders
+
+### Integration Points
+
+The Workflow Automation mini-app integrates with other Mixcore apps:
+
+1. **CMS Integration**:
+   - Content workflow automation
+   - Publishing schedules
+   - Content transformation and distribution
+
+2. **MixDB Integration**:
+   - Database triggers
+   - Data validation and transformation
+   - Automated CRUD operations
+
+3. **User System Integration**:
+   - User onboarding automation
+   - Permission-based workflow execution
+   - User notification actions
+
+4. **External Systems**:
+   - API integrations with third-party services
+   - Webhook connections
+   - Data import/export automation
+
+### Accessibility and Responsiveness
+
+The workflow editor maintains accessibility standards while providing a rich interactive experience:
+
+1. **Keyboard Navigation**:
+   - Tab navigation between nodes
+   - Keyboard shortcuts for common actions
+   - Focus indicators for active elements
+
+2. **Screen Reader Support**:
+   - ARIA labels for all interactive elements
+   - Meaningful node and connection descriptions
+   - Status announcements for actions
+
+3. **Responsive Design**:
+   - Collapsible sidebars for mobile view
+   - Touch-friendly controls
+   - Minimap for navigation on small screens
+
+4. **Performance Optimization**:
+   - Virtualized rendering for large workflows
+   - Lazy loading of node components
+   - Optimized SVG rendering for connections
+``` 

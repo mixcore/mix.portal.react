@@ -14,7 +14,8 @@ export default function AppsPage() {
   const appNames: Record<string, string> = {
     cms: 'Content Management',
     mixdb: 'MixDB',
-    projects: 'Projects'
+    projects: 'Projects',
+    workflow: 'Workflow Automation'
   };
   
   return (
