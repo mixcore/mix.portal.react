@@ -4,25 +4,25 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  width: 100%;
 }
 
 .workflow-app-header {
-  padding: 1rem;
-  border-bottom: 1px solid var(--border);
   background-color: var(--background);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem;
 }
 
 .workflow-app-content {
   flex: 1;
-  padding: 1.5rem;
   overflow: auto;
+  padding: 1.5rem;
 }
 
 .workflow-app-footer {
-  padding: 0.75rem 1rem;
-  border-top: 1px solid var(--border);
   background-color: var(--background);
-  text-align: center;
+  border-top: 1px solid var(--border);
+  padding: 0.75rem;
 }
 
 /* Workflow Editor Styles */
@@ -30,34 +30,32 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  overflow: hidden;
+  width: 100%;
 }
 
 .workflow-editor-toolbar {
-  padding: 0.5rem;
-  border-bottom: 1px solid var(--border);
   background-color: var(--background);
+  border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
+  padding: 0.5rem 1rem;
   gap: 0.5rem;
 }
 
 .workflow-editor-canvas {
   flex: 1;
-  background-color: var(--muted);
-  position: relative;
+  height: 100%;
 }
 
 /* Node styles */
 .workflow-node {
   border: 1px solid var(--border);
-  border-radius: 0.25rem;
+  border-radius: 0.5rem;
   background-color: var(--background);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  width: 180px;
   padding: 0.75rem;
-  width: 200px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  font-size: 0.875rem;
 }
 
 .workflow-node-header {
@@ -68,47 +66,79 @@
 }
 
 .workflow-node-icon {
-  width: 24px;
-  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 24px;
+  height: 24px;
   border-radius: 4px;
   background-color: var(--primary);
-  color: white;
+  color: var(--primary-foreground);
 }
 
 .workflow-node-title {
   font-weight: 500;
-  font-size: 0.875rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .workflow-node-ports {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  padding-top: 0.5rem;
 }
 
-.workflow-node-port {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.75rem;
+/* Node Type Styles */
+.trigger-node .workflow-node-icon {
+  background-color: #c084fc; /* Purple */
+  color: white;
 }
 
-.workflow-node-port-handle {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background-color: var(--primary);
+.http-node .workflow-node-icon {
+  background-color: #60a5fa; /* Blue */
+  color: white;
+}
+
+.database-node .workflow-node-icon {
+  background-color: #34d399; /* Green */
+  color: white;
+}
+
+.logic-node .workflow-node-icon {
+  background-color: #f97316; /* Orange */
+  color: white;
+}
+
+.text-node .workflow-node-icon {
+  background-color: #64748b; /* Slate */
+  color: white;
+}
+
+.ai-node .workflow-node-icon {
+  background-color: #ec4899; /* Pink */
+  color: white;
+}
+
+.message-node .workflow-node-icon {
+  background-color: #10b981; /* Emerald */
+  color: white;
+}
+
+/* Edges and Connections */
+.edge-label {
+  font-size: 10px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  background-color: var(--muted);
+  color: var(--muted-foreground);
 }
 
 /* Sidebar styles */
 .workflow-sidebar {
-  width: 260px;
+  width: 300px;
   border-right: 1px solid var(--border);
-  background-color: var(--card);
-  overflow-y: auto;
+  background-color: var(--background);
+  height: 100%;
+  overflow: hidden;
 }
 
 .workflow-sidebar-section {
@@ -123,30 +153,30 @@
 }
 
 /* Node palette */
+.node-palette {
+  padding: 0.5rem;
+}
+
 .node-palette-item {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem;
   border-radius: 0.25rem;
-  cursor: pointer;
-  user-select: none;
+  cursor: grab;
+  transition: background-color 0.2s;
 }
 
 .node-palette-item:hover {
-  background-color: var(--accent);
+  background-color: var(--muted);
 }
 
 .node-palette-item-icon {
-  width: 20px;
-  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
-  background-color: var(--primary);
-  color: white;
-  font-size: 0.75rem;
+  width: 20px;
+  height: 20px;
 }
 
 .node-palette-item-title {
@@ -155,25 +185,16 @@
 
 /* Properties panel */
 .properties-panel {
-  padding: 1rem;
+  padding: 0.5rem;
 }
 
-.properties-panel-empty {
-  text-align: center;
-  color: var(--muted-foreground);
-  font-size: 0.875rem;
-  padding: 2rem 1rem;
-}
-
-.properties-form-row {
+.property-group {
   margin-bottom: 1rem;
 }
 
-.properties-form-label {
-  display: block;
-  font-size: 0.75rem;
-  margin-bottom: 0.25rem;
-  color: var(--muted-foreground);
+.property-group-title {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
 }
 
 /* Dark mode adjustments */
