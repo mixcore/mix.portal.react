@@ -15,6 +15,9 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Plus, Edit, Play, MoreHorizontal, Trash2 } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { TemplateCard } from './components/shared/TemplateCard';
+import { WorkflowCard } from './components/shared/WorkflowCard';
+import { DashboardStatsCard } from './components/shared/DashboardStatsCard';
 
 export interface WorkflowAppProps {
   // Define app-specific props
@@ -205,16 +208,12 @@ export function WorkflowApp(props: WorkflowAppProps) {
               <p className="text-lg mb-6">Design and automate your workflows with a visual editor</p>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-                <div className="bg-card p-6 rounded-lg shadow-sm border">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="font-medium flex items-center">
-                      <Clock className="h-5 w-5 mr-2 text-primary" />
-                      Recent Workflows
-                    </h3>
-                    <Button variant="ghost" size="sm" onClick={() => setActiveTab('workflows')}>
-                      View All
-                    </Button>
-                  </div>
+                <DashboardStatsCard
+                  title="Recent Workflows"
+                  icon={<Clock className="h-5 w-5 mr-2 text-primary" />}
+                  actionText="Create New Workflow"
+                  onAction={() => setActiveTab('workflows')}
+                >
                   {workflows.length === 0 ? (
                     <p className="text-sm text-muted-foreground mt-2">No recent workflows</p>
                   ) : (
@@ -229,51 +228,25 @@ export function WorkflowApp(props: WorkflowAppProps) {
                       ))}
                     </div>
                   )}
-                  <div className="mt-4">
-                    <Button variant="outline" size="sm" asChild className="w-full">
-                      <Link href="/dashboard/apps/workflow/editor/new">
-                        <PlusCircle className="mr-2 h-4 w-4" />
-                        Create New Workflow
-                      </Link>
-                    </Button>
-                  </div>
-                </div>
+                </DashboardStatsCard>
                 
-                <div className="bg-card p-6 rounded-lg shadow-sm border">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="font-medium flex items-center">
-                      <Layout className="h-5 w-5 mr-2 text-primary" />
-                      Templates
-                    </h3>
-                    <Button variant="ghost" size="sm" onClick={() => setActiveTab('templates')}>
-                      View All
-                    </Button>
-                  </div>
+                <DashboardStatsCard
+                  title="Templates"
+                  icon={<Layout className="h-5 w-5 mr-2 text-primary" />}
+                  actionText="Browse Templates"
+                  onAction={() => setActiveTab('templates')}
+                >
                   <p className="text-sm text-muted-foreground mt-2">No templates available</p>
-                  <div className="mt-4">
-                    <Button variant="outline" size="sm" onClick={() => setActiveTab('templates')} className="w-full">
-                      Browse Templates
-                    </Button>
-                  </div>
-                </div>
+                </DashboardStatsCard>
                 
-                <div className="bg-card p-6 rounded-lg shadow-sm border">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="font-medium flex items-center">
-                      <Activity className="h-5 w-5 mr-2 text-primary" />
-                      Activity
-                    </h3>
-                    <Button variant="ghost" size="sm" asChild>
-                      <Link href="/dashboard/apps/workflow/activity">View All</Link>
-                    </Button>
-                  </div>
+                <DashboardStatsCard
+                  title="Activity"
+                  icon={<Activity className="h-5 w-5 mr-2 text-primary" />}
+                  actionText="Go to Workflows"
+                  onAction={() => setActiveTab('workflows')}
+                >
                   <p className="text-sm text-muted-foreground mt-2">No recent activity</p>
-                  <div className="mt-4">
-                    <Button variant="outline" size="sm" onClick={() => setActiveTab('workflows')} className="w-full">
-                      Go to Workflows
-                    </Button>
-                  </div>
-                </div>
+                </DashboardStatsCard>
               </div>
               
               <div className="mt-12">
@@ -361,54 +334,15 @@ export function WorkflowApp(props: WorkflowAppProps) {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {workflows.map(workflow => (
-                    <div key={workflow.id} className="group relative flex items-center justify-between p-4 bg-card rounded-md border hover:shadow-md transition-shadow">
-                      <div onClick={() => handleViewWorkflowDetails(workflow.id)} className="cursor-pointer flex-1">
-                        <div className="flex items-center">
-                          <h3 className="font-medium">{workflow.name}</h3>
-                          <Badge variant={workflow.active ? "default" : "outline"} className="ml-2">
-                            {workflow.active ? "Active" : "Inactive"}
-                          </Badge>
-                        </div>
-                        {workflow.description && (
-                          <p className="text-sm text-muted-foreground mt-1">{workflow.description}</p>
-                        )}
-                      </div>
-                      
-                      <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-1">
-                          <Switch 
-                            checked={workflow.active} 
-                            onCheckedChange={(checked) => handleToggleActive(workflow.id, checked)}
-                          />
-                        </div>
-                        
-                        <Button variant="ghost" size="icon" onClick={() => handleExecuteWorkflow(workflow.id)}>
-                          <Play className="h-4 w-4" />
-                        </Button>
-                        
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => handleViewWorkflowDetails(workflow.id)}>
-                              <Eye className="h-4 w-4 mr-2" />
-                              View Details
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleEditWorkflow(workflow.id)}>
-                              <Edit className="h-4 w-4 mr-2" />
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleDeleteWorkflow(workflow.id)}>
-                              <Trash2 className="h-4 w-4 mr-2" />
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    </div>
+                    <WorkflowCard
+                      key={workflow.id}
+                      workflow={workflow}
+                      onView={handleViewWorkflowDetails}
+                      onEdit={handleEditWorkflow}
+                      onDelete={handleDeleteWorkflow}
+                      onExecute={handleExecuteWorkflow}
+                      onToggleActive={handleToggleActive}
+                    />
                   ))}
                 </div>
               )}
@@ -417,53 +351,11 @@ export function WorkflowApp(props: WorkflowAppProps) {
             <TabsContent value="templates" className="mt-0">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {featuredTemplates.map((template) => (
-                  <Card key={template.id} className="overflow-hidden border hover:shadow-md transition-shadow">
-                    <div className="relative h-40 bg-slate-100 overflow-hidden">
-                      <div className="absolute inset-0 opacity-80 bg-gradient-to-tr from-blue-50 to-indigo-50">
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-primary opacity-20"></div>
-                        <div className="absolute top-1/4 left-1/4 w-8 h-8 rounded-full bg-blue-400 opacity-20"></div>
-                        <div className="absolute bottom-1/4 right-1/4 w-8 h-8 rounded-full bg-indigo-400 opacity-20"></div>
-                        <div className="absolute top-1/3 right-1/3 w-6 h-6 rounded-full bg-green-400 opacity-20"></div>
-                        <div className="absolute bottom-1/3 left-1/3 w-6 h-6 rounded-full bg-purple-400 opacity-20"></div>
-                        <div className="absolute top-1/2 left-1/2 w-20 h-1 bg-gray-300 opacity-30 -rotate-45 -translate-x-10 -translate-y-2"></div>
-                        <div className="absolute top-1/2 left-1/2 w-20 h-1 bg-gray-300 opacity-30 rotate-45 -translate-x-10 -translate-y-2"></div>
-                        <div className="absolute top-1/3 left-1/3 w-15 h-1 bg-gray-300 opacity-30 rotate-90 -translate-x-5"></div>
-                      </div>
-                      <div className="absolute bottom-2 right-2">
-                        <div className="flex items-center text-xs text-muted-foreground">
-                          <span className="flex items-center mr-2"><MessagesSquare className="h-3 w-3 mr-1" />{template.nodes}</span>
-                          <span className="flex items-center"><Database className="h-3 w-3 mr-1" />{template.connections}</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <CardHeader className="pb-2">
-                      <div className="flex justify-between items-start">
-                        <CardTitle className="text-lg font-medium">{template.title}</CardTitle>
-                        <Badge variant="secondary" className="ml-2">{template.category}</Badge>
-                      </div>
-                      <CardDescription className="text-sm mt-1">
-                        {template.description}
-                      </CardDescription>
-                    </CardHeader>
-                    
-                    <CardContent className="pb-2">
-                      <div className="flex flex-wrap gap-1">
-                        {template.tags.map(tag => (
-                          <Badge key={tag} variant="outline" className="text-xs">{tag}</Badge>
-                        ))}
-                      </div>
-                    </CardContent>
-                    
-                    <CardFooter className="flex justify-between items-center pt-2">
-                      <div className="text-xs text-muted-foreground">
-                        By {template.author}
-                      </div>
-                      <Button size="sm" variant="default" onClick={() => handleUseTemplate(template.id)}>
-                        Use Template
-                      </Button>
-                    </CardFooter>
-                  </Card>
+                  <TemplateCard
+                    key={template.id}
+                    template={template}
+                    onUseTemplate={handleUseTemplate}
+                  />
                 ))}
               </div>
             </TabsContent>

@@ -267,9 +267,16 @@ export default function TemplatesPage() {
                           <div className="text-xs text-muted-foreground">
                             By {template.author}
                           </div>
-                          <Button size="sm" variant="outline">
-                            View Details
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline">
+                              View Details
+                            </Button>
+                            <Button size="sm" variant="default" asChild>
+                              <Link href={`/dashboard/apps/workflow/editor/new?template=${template.id}`}>
+                                Use
+                              </Link>
+                            </Button>
+                          </div>
                         </CardFooter>
                       </Card>
                     </Link>

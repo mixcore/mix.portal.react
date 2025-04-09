@@ -242,6 +242,49 @@ export default function WhatsAppTemplateDetailPage() {
         </ReactFlow>
       </div>
       
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+          <CardContent className="pt-6 text-center">
+            <div className="mb-4 mx-auto bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center">
+              <Play className="h-6 w-6 text-primary" />
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Use Template</h3>
+            <p className="text-muted-foreground mb-4">Start with this pre-built workflow and customize it for your needs.</p>
+            <Button size="sm" className="w-full" asChild>
+              <Link href={`/dashboard/apps/workflow/editor/new?template=${templateData.id}`}>
+                Get Started <ArrowRight className="h-4 w-4 ml-2" />
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="pt-6 text-center">
+            <div className="mb-4 mx-auto bg-slate-100 w-12 h-12 rounded-full flex items-center justify-center">
+              <Copy className="h-6 w-6 text-slate-600" />
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Clone Template</h3>
+            <p className="text-muted-foreground mb-4">Make a copy and modify this workflow without affecting the original.</p>
+            <Button variant="outline" size="sm" className="w-full">
+              Clone Template <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="pt-6 text-center">
+            <div className="mb-4 mx-auto bg-slate-100 w-12 h-12 rounded-full flex items-center justify-center">
+              <Download className="h-6 w-6 text-slate-600" />
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Download</h3>
+            <p className="text-muted-foreground mb-4">Download this template to import into another Mixcore instance.</p>
+            <Button variant="outline" size="sm" className="w-full">
+              Download JSON <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+      
       <Tabs defaultValue="overview" className="mb-8">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -530,7 +573,7 @@ export default function WhatsAppTemplateDetailPage() {
                 <h3 className="font-medium text-lg mb-2">Enhance Response Templates</h3>
                 <p>Customize how responses are formatted with your branding and style guidelines.</p>
                 <div className="mt-3 bg-slate-50 p-3 rounded-md text-sm font-mono">
-                  response_template = "Hi {{name}}, thanks for reaching out..."
+                  response_template = "Hi {'{'}name{'}'}, thanks for reaching out..."
                 </div>
               </div>
             </div>
