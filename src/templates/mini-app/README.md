@@ -62,23 +62,7 @@ mini-app/
    - Modify `mixdb.schema.json` with your database schema
    - Customize `demo-data.json` with your sample data
 
-3. Initialize the MixDB API client in your components:
-   ```typescript
-   import { MixDbApi } from '../lib/mixdb-api';
-   import { MixDbEntity } from '../lib/types';
-   
-   // Create a new API client instance
-   const api = new MixDbApi({
-     basePath: '/api/v2/mixdb',
-     defaultHeaders: {
-       // Add your authentication headers if needed
-     }
-   });
-   
-   // See lib/sample-usage.ts for complete examples
-   ```
-
-4. Alternatively, use the simplified initialization helper:
+3. Alternatively, use the simplified initialization helper:
    ```typescript
    import { initializeCoreServices } from '../lib';
    
@@ -99,10 +83,35 @@ mini-app/
    }
    ```
 
-5. Update imports and paths throughout the application:
+4. Update imports and paths throughout the application:
    - Replace references to "mini-app" with your app name
    - Update navigation paths in `AppShell.tsx`
    - Update app ID references in `app-loader.ts`
+
+### Preview the Template
+
+You can create a symbolic link to view the template directly in the dashboard without copying it:
+
+1. Using the provided scripts:
+   ```bash
+   # For all platforms (detects OS automatically)
+   npm run --prefix src/templates/mini-app link
+   
+   # To remove the link
+   npm run --prefix src/templates/mini-app unlink
+   ```
+
+2. Or manually:
+   ```bash
+   # Create the symbolic link
+   mkdir -p src/app/dashboard/apps
+   ln -s "$(pwd)/src/templates/mini-app" src/app/dashboard/apps/mini-app
+   ```
+
+3. Then visit the mini-app in your browser:
+   ```
+   http://localhost:3000/dashboard/apps/mini-app
+   ```
 
 ## Key Components
 
