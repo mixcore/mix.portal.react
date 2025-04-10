@@ -340,4 +340,48 @@ export function requestToQueryOptions(request: Request): {
     order: direction,
     ...rest
   };
+}
+
+// Define a basic item type for CRUD operations
+export interface Item {
+  id: string;
+  title: string;
+  description: string;
+  status: 'active' | 'draft' | 'archived';
+  createdAt: string;
+  updatedAt: string;
+  tags: string[];
+  image?: string;
+}
+
+// Canvas editor element types
+export interface CanvasElement {
+  id: string;
+  type: 'rectangle' | 'circle' | 'text' | 'image' | 'line';
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  angle: number;
+  fill: string;
+  stroke?: string;
+  strokeWidth?: number;
+  text?: string;
+  fontSize?: number;
+  fontFamily?: string;
+  imageUrl?: string;
+  opacity: number;
+  zIndex: number;
+}
+
+export interface CanvasProject {
+  id: string;
+  name: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+  elements: CanvasElement[];
+  width: number;
+  height: number;
+  background: string;
 } 

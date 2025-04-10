@@ -80,7 +80,7 @@ const MobileHeader = ({
               onClick={() => handleViewChange('list')}
             >
               <ListTodo className="mr-2 h-5 w-5" />
-              List View
+              Items
             </Button>
             <Button
               variant={activeView === 'settings' ? 'default' : 'ghost'}
@@ -144,7 +144,7 @@ const Toolbar = ({
         </TabsTrigger>
         <TabsTrigger value="list" className="flex items-center gap-1">
           <ListTodo className="h-4 w-4" />
-          <span className="hidden sm:inline-block">List</span>
+          <span className="hidden sm:inline-block">Items</span>
         </TabsTrigger>
         <TabsTrigger value="detail" disabled={!selectedItemId} className="flex items-center gap-1">
           <File className="h-4 w-4" />
@@ -220,7 +220,7 @@ const Sidebar = ({
         onClick={() => handleViewChange('list')}
       >
         <ListTodo className="h-5 w-5 mr-2" />
-        {sidebarOpen && <span>List Items</span>}
+        {sidebarOpen && <span>Items</span>}
       </Button>
       <Separator className="my-2" />
       <Button

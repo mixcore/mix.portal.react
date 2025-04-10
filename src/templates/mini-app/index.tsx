@@ -132,8 +132,13 @@ export function MiniApp(props: MiniAppProps) {
   
   // Handle item selection
   const handleItemClick = (itemId: string) => {
-    setSelectedItemId(itemId);
-    setActiveView('detail');
+    if (itemId === 'list') {
+      setActiveView('list');
+      setSelectedItemId(null);
+    } else {
+      setSelectedItemId(itemId);
+      setActiveView('detail');
+    }
   };
   
   // Handle view change
@@ -266,67 +271,33 @@ export function MiniApp(props: MiniAppProps) {
     );
   }
   
-  // Render the appropriate view based on activeView state
+  // Render the active view
   const renderView = () => {
     switch (activeView) {
       case 'dashboard':
         return <Dashboard onItemClick={handleItemClick} />;
       case 'list':
-        return (
-          <div className="h-full">
-            <Card className="border">
-              <CardHeader className="border-b">
-                <CardTitle>List View</CardTitle>
-                <CardDescription>A list of all available items</CardDescription>
-              </CardHeader>
-              <CardContent className="pt-6">
-                <p className="text-muted-foreground">This is a placeholder for the list view.</p>
-              </CardContent>
-            </Card>
-          </div>
-        );
+        // Import ItemList dynamically if needed
+        const ItemList = require('./components/ItemList').default;
+        return <ItemList onItemClick={handleItemClick} />;
       case 'detail':
-        return (
-          <div className="h-full">
-            <Card className="border">
-              <CardHeader className="border-b">
-                <CardTitle>Detail View</CardTitle>
-                <CardDescription>Viewing detailed information</CardDescription>
-              </CardHeader>
-              <CardContent className="pt-6">
-                <p className="flex items-center gap-2">
-                  <span className="font-medium">Item ID:</span> 
-                  <code className="bg-muted px-2 py-1 rounded text-sm">{selectedItemId}</code>
-                </p>
-              </CardContent>
-              <CardFooter className="border-t pt-6 mt-4">
-                <div className="flex justify-end w-full gap-2">
-                  <Button variant="outline" size="sm">Cancel</Button>
-                  <Button variant="default" size="sm">Save</Button>
-                </div>
-              </CardFooter>
-            </Card>
-          </div>
-        );
+        if (selectedItemId) {
+          // Import ItemDetail dynamically if needed
+          const ItemDetail = require('./components/ItemDetail').default;
+          return <ItemDetail itemId={selectedItemId} onBack={() => handleViewChange('dashboard')} />;
+        }
+        return <div>No item selected</div>;
       case 'settings':
         return (
-          <div className="h-full">
-            <Card className="border">
-              <CardHeader className="border-b">
-                <CardTitle>Settings</CardTitle>
-                <CardDescription>Manage your app preferences</CardDescription>
-              </CardHeader>
-              <CardContent className="pt-6">
-                <p className="text-muted-foreground">This is a placeholder for the settings view.</p>
-              </CardContent>
-              <CardFooter className="border-t pt-6 mt-4">
-                <div className="flex justify-end w-full gap-2">
-                  <Button variant="outline" size="sm">Reset</Button>
-                  <Button variant="default" size="sm">Save Settings</Button>
-                </div>
-              </CardFooter>
-            </Card>
-          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Settings</CardTitle>
+              <CardDescription>Configure your app preferences</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p>Settings content will appear here.</p>
+            </CardContent>
+          </Card>
         );
       default:
         return <Dashboard onItemClick={handleItemClick} />;

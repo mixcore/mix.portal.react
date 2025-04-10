@@ -89,7 +89,7 @@ export function Dashboard({ onItemClick }: DashboardProps) {
       title: 'Create New Item', 
       description: 'Add a new item to your list', 
       icon: <Plus className="h-6 w-6 text-primary" />,
-      onClick: () => console.log('Create new item')
+      onClick: () => onItemClick('list')
     },
     { 
       id: 'list-view', 
