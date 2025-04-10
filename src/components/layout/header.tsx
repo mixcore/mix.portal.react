@@ -8,6 +8,7 @@ import SearchInput from '../search-input';
 import { UserNav } from './user-nav';
 import { ThemeSelector } from '../theme-selector';
 import { ModeToggle } from './ThemeToggle/theme-toggle';
+import { LayoutWidthToggle } from './layout-width-toggle';
 import { Button } from '@/components/ui/button';
 import { PlusIcon, BellIcon, HelpCircleIcon, SearchIcon, AppWindowIcon } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -241,6 +242,7 @@ export default function Header() {
             </Popover>
 
             <UserNav />
+            <LayoutWidthToggle />
             <ModeToggle />
           </>
         )}

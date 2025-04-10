@@ -4,6 +4,8 @@ import AppSidebar from '@/components/layout/app-sidebar';
 import Footer from '@/components/layout/footer';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { NavigationContextProvider } from '@/providers/navigation-context-provider';
+import { LayoutContextProvider } from '@/providers/layout-context-provider';
+import LayoutContainer from '@/components/layout/layout-container';
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import type { PropsWithChildren } from 'react';
@@ -23,18 +25,20 @@ export default async function DashboardLayout({
     <KBar>
       <NavigationContextProvider>
         <SidebarProvider defaultOpen={true}>
-          <AppSidebar />
-          <SidebarInset className='flex h-screen flex-col'>
-            <Header />
+          <LayoutContextProvider>
+            <AppSidebar />
+            <SidebarInset className='flex h-screen flex-col'>
+              <Header />
 
-            {/* Main content container */}
-            <main className='flex-1 overflow-auto' data-app-view="default">
-              <div className='dashboard-content container mx-auto max-w-7xl p-4 md:p-6'>
-                {children}
-              </div>
-            </main>
+              {/* Main content container */}
+              <main className='flex-1 overflow-auto' data-app-view="default">
+                <LayoutContainer>
+                  {children}
+                </LayoutContainer>
+              </main>
 
-          </SidebarInset>
+            </SidebarInset>
+          </LayoutContextProvider>
         </SidebarProvider>
       </NavigationContextProvider>
     </KBar>
