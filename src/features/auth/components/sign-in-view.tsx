@@ -10,6 +10,8 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useState } from 'react';
+import { AuthService } from '@/services/auth';
+import { toast } from 'sonner';
 
 export const metadata: Metadata = {
   title: 'Authentication',
@@ -18,16 +20,47 @@ export const metadata: Metadata = {
 
 export default function SignInViewPage({ stars }: { stars: number }) {
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    // Here you would typically handle authentication
-    console.log('Sign in with:', email, password);
+    setIsLoading(true);
+    setError(null);
 
-    // For now just redirect to dashboard
-    router.push('/dashboard/overview');
+    try {
+      console.log('Submitting login form...');
+      const result = await AuthService.login(username, password, false);
+
+      if (result.success) {
+        toast.success('Signed in successfully!');
+        router.push('/dashboard/overview');
+      } else {
+        const errorMessage = result.errors?.[0] || 'Login failed. Please try again.';
+        console.error('Login failed with error:', errorMessage);
+        setError(errorMessage);
+        toast.error(errorMessage);
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      let errorMessage = 'An error occurred during login. Please try again.';
+      
+      // Try to extract more specific error message if available
+      if (err instanceof Error) {
+        if (err.message.includes('HTTP error! status: 400')) {
+          errorMessage = 'Invalid username or password. Please check your credentials and try again.';
+        } else if (err.message.includes('Failed to fetch')) {
+          errorMessage = 'Connection error. Please check your internet connection and try again.';
+        }
+      }
+      
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -91,20 +124,27 @@ export default function SignInViewPage({ stars }: { stars: number }) {
             <div className='space-y-2 text-center'>
               <h1 className='text-2xl font-semibold tracking-tight'>Login</h1>
               <p className='text-muted-foreground text-sm'>
-                Enter your email below to login to your account
+                Enter your credentials to login to your account
               </p>
             </div>
 
+            {error && (
+              <div className='mt-4 rounded-md bg-red-50 p-3 text-sm text-red-500'>
+                {error}
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className='mt-4 space-y-4'>
               <div className='space-y-2'>
-                <Label htmlFor='email'>Email</Label>
+                <Label htmlFor='username'>Username or Email</Label>
                 <Input
-                  id='email'
-                  type='email'
-                  placeholder='example@example.com'
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  id='username'
+                  type='text'
+                  placeholder='Enter your username or email'
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   required
+                  disabled={isLoading}
                 />
               </div>
               <div className='space-y-2'>
@@ -115,10 +155,19 @@ export default function SignInViewPage({ stars }: { stars: number }) {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  disabled={isLoading}
                 />
               </div>
-              <Button type='submit' className='w-full'>
-                Sign In
+              <div className="flex justify-end">
+                <Link 
+                  href="/auth/forgot-password" 
+                  className="text-sm text-muted-foreground hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+              <Button type='submit' className='w-full' disabled={isLoading}>
+                {isLoading ? 'Signing In...' : 'Sign In'}
               </Button>
             </form>
 

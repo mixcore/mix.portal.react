@@ -9,20 +9,40 @@ import { IconStar } from '@tabler/icons-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useState } from 'react';
+import { AuthService } from '@/services/auth';
+import { toast } from 'sonner';
 
 export default function SignUpViewPage({ stars }: { stars: number }) {
   const router = useRouter();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    // Here you would typically handle registration
-    console.log('Sign up with:', name, email, password);
+    setIsLoading(true);
+    setError(null);
 
-    // For now just redirect to dashboard
-    router.push('/dashboard/overview');
+    try {
+      // We'll need to implement this in the AuthService
+      const result = await AuthService.register(name, email, password);
+
+      if (result.success) {
+        toast.success('Account created successfully!');
+        router.push('/auth/sign-in');
+      } else {
+        setError(result.errors?.[0] || 'Registration failed. Please try again.');
+        toast.error(result.errors?.[0] || 'Registration failed. Please try again.');
+      }
+    } catch (err) {
+      console.error('Registration error:', err);
+      setError('An error occurred during registration. Please try again.');
+      toast.error('An error occurred during registration. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -92,6 +112,12 @@ export default function SignUpViewPage({ stars }: { stars: number }) {
               </p>
             </div>
 
+            {error && (
+              <div className='mt-4 rounded-md bg-red-50 p-3 text-sm text-red-500'>
+                {error}
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className='mt-4 space-y-4'>
               <div className='space-y-2'>
                 <Label htmlFor='name'>Name</Label>
@@ -102,6 +128,7 @@ export default function SignUpViewPage({ stars }: { stars: number }) {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
+                  disabled={isLoading}
                 />
               </div>
               <div className='space-y-2'>
@@ -113,6 +140,7 @@ export default function SignUpViewPage({ stars }: { stars: number }) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  disabled={isLoading}
                 />
               </div>
               <div className='space-y-2'>
@@ -123,10 +151,11 @@ export default function SignUpViewPage({ stars }: { stars: number }) {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  disabled={isLoading}
                 />
               </div>
-              <Button type='submit' className='w-full'>
-                Create Account
+              <Button type='submit' className='w-full' disabled={isLoading}>
+                {isLoading ? 'Creating Account...' : 'Create Account'}
               </Button>
             </form>
 

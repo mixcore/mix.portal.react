@@ -10,12 +10,13 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 import GithubSignInButton from './github-auth-button';
+import { AuthService } from '@/services/auth';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Enter a valid email address' })
@@ -24,6 +25,7 @@ const formSchema = z.object({
 type UserFormValue = z.infer<typeof formSchema>;
 
 export default function UserAuthForm() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl');
   const [loading, startTransition] = useTransition();
@@ -36,9 +38,25 @@ export default function UserAuthForm() {
   });
 
   const onSubmit = async (data: UserFormValue) => {
-    startTransition(() => {
-      console.log('continue with email clicked');
-      toast.success('Signed In Successfully!');
+    startTransition(async () => {
+      try {
+        // We're treating this as an email login request that will send a magic link
+        // In a real implementation, you might want to handle this differently
+        // For now, we'll just show a success toast and redirect
+
+        toast.success('Magic link sent! Please check your email to sign in.');
+        
+        // In a real implementation, you would call an API to send a magic link
+        // const result = await AuthService.sendMagicLink(data.email);
+        // if (result.success) {
+        //   toast.success('Magic link sent! Please check your email to sign in.');
+        // } else {
+        //   toast.error(result.errors?.[0] || 'Failed to send magic link. Please try again.');
+        // }
+      } catch (error) {
+        console.error('Error sending magic link:', error);
+        toast.error('An error occurred. Please try again.');
+      }
     });
   };
 
@@ -73,7 +91,7 @@ export default function UserAuthForm() {
             className='mt-2 ml-auto w-full'
             type='submit'
           >
-            Continue With Email
+            {loading ? 'Sending...' : 'Continue With Email'}
           </Button>
         </form>
       </Form>

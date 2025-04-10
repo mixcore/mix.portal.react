@@ -8,10 +8,11 @@ import axios, {
 } from 'axios';
 
 const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'https://mixcore.net',
   headers: {
     'Content-Type': 'application/json'
-  }
+  },
+  withCredentials: true // Enable sending cookies in cross-origin requests
 });
 
 // Add a request interceptor
@@ -21,6 +22,10 @@ apiClient.interceptors.request.use(
     const token = localStorage.getItem('token');
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    // Add CORS headers
+    if (config.headers) {
+      config.headers['Access-Control-Allow-Origin'] = '*';
     }
     return config;
   },
@@ -49,7 +54,7 @@ apiClient.interceptors.response.use(
         // Try to refresh the token
         const refreshToken = localStorage.getItem('refreshToken');
         if (refreshToken) {
-          const response = await axios.post('/api/v2/rest/auth/refresh', {
+          const response = await axios.post('/api/v2/rest/auth/user/renew-token', {
             refreshToken
           });
 

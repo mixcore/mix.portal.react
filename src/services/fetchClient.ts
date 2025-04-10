@@ -1,6 +1,20 @@
 'use client';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://mixcore.net';
+
+// Helper function to decide whether to use proxy or direct API call
+const getApiEndpoint = (path: string): string => {
+  // Use our local proxy in development or when direct API calls are failing
+  const useProxy = true;
+  
+  if (useProxy) {
+    // Remove the common prefix since our proxy already includes it
+    const endpoint = path.replace('/api/v2/rest/auth/', '');
+    return `/api/auth/${endpoint}`;
+  }
+  
+  return path;
+};
 
 // Log the API URL for debugging
 if (typeof window !== 'undefined') {
@@ -82,8 +96,13 @@ class FetchClient {
           throw new Error('No refresh token available');
         }
 
+        const refreshEndpoint = getApiEndpoint('/api/v2/rest/auth/user/renew-token');
+        const refreshUrl = refreshEndpoint.startsWith('http') 
+          ? refreshEndpoint 
+          : `${window.location.origin}${refreshEndpoint}`;
+
         const refreshResponse = await fetch(
-          `${API_URL}/rest/security/refresh-token`,
+          refreshUrl,
           {
             method: 'POST',
             headers: {
@@ -170,9 +189,16 @@ class FetchClient {
         }, 30000);
       });
 
+      // Add CORS mode and credentials to options
+      const enhancedOptions: RequestInit = {
+        ...options,
+        mode: 'cors',
+        credentials: 'include',
+      };
+
       // Race the fetch against the timeout
       const response = (await Promise.race([
-        fetch(url, options),
+        fetch(url, enhancedOptions),
         timeoutPromise
       ])) as Response;
 
@@ -233,9 +259,13 @@ class FetchClient {
   }
 
   async get<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    // For proxy endpoints, use the full URL including origin
+    // Otherwise, append to API_URL
     const url = endpoint.startsWith('http')
       ? endpoint
-      : `${API_URL}${endpoint}`;
+      : endpoint.startsWith('/api/')
+        ? `${window.location.origin}${endpoint}` // Use full origin for our proxy endpoints
+        : `${API_URL}${endpoint}`;
 
     return this.fetchWithInterceptor(url, {
       method: 'GET',
@@ -249,9 +279,13 @@ class FetchClient {
     data?: any,
     options: RequestInit = {}
   ): Promise<T> {
+    // For proxy endpoints, use the full URL including origin
+    // Otherwise, append to API_URL
     const url = endpoint.startsWith('http')
       ? endpoint
-      : `${API_URL}${endpoint}`;
+      : endpoint.startsWith('/api/')
+        ? `${window.location.origin}${endpoint}` // Use full origin for our proxy endpoints
+        : `${API_URL}${endpoint}`;
 
     return this.fetchWithInterceptor(url, {
       method: 'POST',
@@ -266,9 +300,13 @@ class FetchClient {
     data?: any,
     options: RequestInit = {}
   ): Promise<T> {
+    // For proxy endpoints, use the full URL including origin
+    // Otherwise, append to API_URL
     const url = endpoint.startsWith('http')
       ? endpoint
-      : `${API_URL}${endpoint}`;
+      : endpoint.startsWith('/api/')
+        ? `${window.location.origin}${endpoint}` // Use full origin for our proxy endpoints
+        : `${API_URL}${endpoint}`;
 
     return this.fetchWithInterceptor(url, {
       method: 'PUT',
@@ -279,9 +317,13 @@ class FetchClient {
   }
 
   async delete<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    // For proxy endpoints, use the full URL including origin
+    // Otherwise, append to API_URL
     const url = endpoint.startsWith('http')
       ? endpoint
-      : `${API_URL}${endpoint}`;
+      : endpoint.startsWith('/api/')
+        ? `${window.location.origin}${endpoint}` // Use full origin for our proxy endpoints
+        : `${API_URL}${endpoint}`;
 
     return this.fetchWithInterceptor(url, {
       method: 'DELETE',

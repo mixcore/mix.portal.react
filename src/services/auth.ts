@@ -24,6 +24,20 @@ export interface AuthResult<T> {
   errors?: string[];
 }
 
+// Helper function to decide whether to use proxy or direct API call
+const getApiEndpoint = (path: string): string => {
+  // Use our local proxy in development or when direct API calls are failing
+  const useProxy = true;
+  
+  if (useProxy) {
+    // Remove the common prefix since our proxy already includes it
+    const endpoint = path.replace('/api/v2/rest/auth/', '');
+    return `/api/auth/${endpoint}`;
+  }
+  
+  return path;
+};
+
 export const AuthService = {
   // Login user
   login: async (
@@ -32,6 +46,9 @@ export const AuthService = {
     rememberMe: boolean = false
   ): Promise<AuthResult<LoginResponse>> => {
     try {
+      console.log('Starting login process with username:', username);
+      
+      // Format data according to Mixcore API requirements
       const data = {
         UserName: username,
         Password: password,
@@ -40,18 +57,24 @@ export const AuthService = {
         ReturnUrl: ''
       };
 
+      const endpoint = getApiEndpoint('/api/v2/rest/auth/user/login');
+      console.log('Using login endpoint:', endpoint);
+      
+      console.log('Sending login request...');
       const response = await fetchClient.post<{
         success: boolean;
         data: LoginResponse;
         errors?: string[];
-      }>('/rest/auth/user/login', {
-        message: data
-      });
+      }>(endpoint, data); // Our proxy endpoint will handle wrapping in message object
+
+      console.log('Login response received:', response);
 
       if (response && response.success) {
         const { accessToken, refreshToken, userId, roles, permissions } =
           response.data;
 
+        console.log('Login successful, storing tokens');
+        
         // Store tokens in localStorage
         localStorage.setItem('authToken', accessToken);
         localStorage.setItem('refreshToken', refreshToken);
@@ -65,6 +88,7 @@ export const AuthService = {
         };
       }
 
+      console.log('Login failed:', response.errors);
       return {
         success: false,
         errors: response.errors || ['Login failed']
@@ -78,18 +102,60 @@ export const AuthService = {
     }
   },
 
+  // Register user
+  register: async (
+    name: string,
+    email: string,
+    password: string
+  ): Promise<AuthResult<any>> => {
+    try {
+      const data = {
+        DisplayName: name,
+        UserName: email,
+        Email: email,
+        Password: password,
+      };
+
+      const endpoint = getApiEndpoint('/api/v2/rest/auth/user/register');
+      
+      const response = await fetchClient.post<{
+        success: boolean;
+        data: any;
+        errors?: string[];
+      }>(endpoint, data);
+
+      if (response && response.success) {
+        return {
+          success: true,
+          data: response.data
+        };
+      }
+
+      return {
+        success: false,
+        errors: response.errors || ['Registration failed']
+      };
+    } catch (error) {
+      console.error('Registration error:', error);
+      return {
+        success: false,
+        errors: ['An error occurred during registration']
+      };
+    }
+  },
+
   // External login
   externalLogin: async (
     loginData: ExternalLoginData
   ): Promise<AuthResult<LoginResponse>> => {
     try {
+      const endpoint = getApiEndpoint('/api/v2/rest/auth/user/external-login');
+      
       const response = await fetchClient.post<{
         success: boolean;
         data: LoginResponse;
         errors?: string[];
-      }>('/rest/auth/user/external-login', {
-        message: loginData
-      });
+      }>(endpoint, loginData);
 
       if (response && response.success) {
         const { accessToken, refreshToken, userId, roles, permissions } =
@@ -124,10 +190,12 @@ export const AuthService = {
   // Get external login providers
   getExternalLoginProviders: async (): Promise<string[]> => {
     try {
+      const endpoint = getApiEndpoint('/api/v2/rest/auth/user/get-external-login-providers');
+      
       const response = await fetchClient.get<{
         success: boolean;
         data: string[];
-      }>('/rest/auth/user/get-external-login-providers');
+      }>(endpoint);
       return response.data || [];
     } catch (error) {
       console.error('Error getting external login providers:', error);
@@ -155,11 +223,13 @@ export const AuthService = {
   // Get current user
   getCurrentUser: async (): Promise<User | null> => {
     try {
+      const endpoint = getApiEndpoint('/api/v2/rest/auth/user/current');
+      
       const response = await fetchClient.get<{
         success: boolean;
         data: User;
         errors?: string[];
-      }>('/rest/auth/user/current');
+      }>(endpoint);
 
       if (response && response.success) {
         return response.data;
@@ -199,11 +269,13 @@ export const AuthService = {
         };
       }
 
+      const endpoint = getApiEndpoint('/api/v2/rest/auth/user/renew-token');
+      
       const response = await fetchClient.post<{
         success: boolean;
         data: LoginResponse;
         errors?: string[];
-      }>('/rest/auth/user/renew-token', {
+      }>(endpoint, {
         refreshToken,
         accessToken
       });
@@ -239,6 +311,78 @@ export const AuthService = {
       return {
         success: false,
         errors: ['An error occurred during token refresh']
+      };
+    }
+  },
+
+  // Forgot password
+  forgotPassword: async (email: string): Promise<AuthResult<any>> => {
+    try {
+      const endpoint = getApiEndpoint('/api/v2/rest/auth/user/forgot-password');
+      
+      const response = await fetchClient.post<{
+        success: boolean;
+        data: any;
+        errors?: string[];
+      }>(endpoint, {
+        Email: email
+      });
+
+      if (response && response.success) {
+        return {
+          success: true,
+          data: response.data
+        };
+      }
+
+      return {
+        success: false,
+        errors: response.errors || ['Password reset request failed']
+      };
+    } catch (error) {
+      console.error('Forgot password error:', error);
+      return {
+        success: false,
+        errors: ['An error occurred while requesting password reset']
+      };
+    }
+  },
+
+  // Reset password
+  resetPassword: async (
+    token: string,
+    email: string,
+    newPassword: string
+  ): Promise<AuthResult<any>> => {
+    try {
+      const endpoint = getApiEndpoint('/api/v2/rest/auth/user/reset-password');
+      
+      const response = await fetchClient.post<{
+        success: boolean;
+        data: any;
+        errors?: string[];
+      }>(endpoint, {
+        Token: token,
+        Email: email,
+        Password: newPassword
+      });
+
+      if (response && response.success) {
+        return {
+          success: true,
+          data: response.data
+        };
+      }
+
+      return {
+        success: false,
+        errors: response.errors || ['Password reset failed']
+      };
+    } catch (error) {
+      console.error('Reset password error:', error);
+      return {
+        success: false,
+        errors: ['An error occurred while resetting password']
       };
     }
   }
