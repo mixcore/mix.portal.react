@@ -1,5 +1,15 @@
 'use client';
 
+// Required for static export with dynamic routes
+export function generateStaticParams() {
+  // This is a placeholder - in production you'd want to specify actual IDs
+  return [
+    { data: 'demo-1' },
+    { data: 'demo-2' }
+  ];
+}
+
+
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import {

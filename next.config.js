@@ -47,7 +47,7 @@ const nextConfig = {
   },
   transpilePackages: ['geist'],
   // Add these settings to help with build issues
-  webpack: (config, { isServer }) => {
+  webpack: (config, { isServer, dev }) => {
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
@@ -55,6 +55,12 @@ const nextConfig = {
         path: false
       };
     }
+    
+    // Disable source maps in production to reduce memory usage
+    if (!dev) {
+      config.devtool = false;
+    }
+    
     return config;
   },
   // Enable React strict mode for development
