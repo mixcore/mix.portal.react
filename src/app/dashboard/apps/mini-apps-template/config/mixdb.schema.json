@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Mixcore Mini App Schema",
+  "description": "Database schema definitions for Mixcore Mini App Template",
+  "type": "object",
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "appId": {
+          "type": "string",
+          "const": "template"
+        },
+        "version": {
+          "type": "string",
+          "const": "1.0.0"
+        },
+        "displayName": {
+          "type": "string",
+          "const": "Mini App Template"
+        },
+        "description": {
+          "type": "string",
+          "const": "Template for creating mini-apps in Mixcore"
+        },
+        "category": {
+          "type": "string",
+          "const": "productivity"
+        },
+        "icon": {
+          "type": "string",
+          "const": "layout"
+        },
+        "requiredPermissions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["template.view", "template.create", "template.edit", "template.delete"]
+          }
+        }
+      },
+      "required": ["appId", "version", "displayName", "category", "icon"]
+    },
+    "collections": [
+      {
+        "name": "template_items",
+        "displayName": "Template Items",
+        "description": "Sample items for the template app",
+        "fields": [
+          {
+            "name": "id",
+            "displayName": "ID",
+            "dataType": "string",
+            "isRequired": true,
+            "isIndex": true,
+            "isUnique": true,
+            "description": "Unique identifier for the item"
+          },
+          {
+            "name": "title",
+            "displayName": "Title",
+            "dataType": "string",
+            "isRequired": true,
+            "description": "Item title"
+          },
+          {
+            "name": "description",
+            "displayName": "Description",
+            "dataType": "text",
+            "isRequired": false,
+            "description": "Item description"
+          },
+          {
+            "name": "status",
+            "displayName": "Status",
+            "dataType": "string",
+            "isRequired": true,
+            "defaultValue": "Draft",
+            "options": {
+              "enum": ["Draft", "Active", "Archived", "Completed"]
+            },
+            "description": "Current item status"
+          },
+          {
+            "name": "createdAt",
+            "displayName": "Created At",
+            "dataType": "datetime",
+            "isRequired": true,
+            "defaultValue": "NOW()",
+            "description": "Item creation date and time"
+          },
+          {
+            "name": "updatedAt",
+            "displayName": "Updated At",
+            "dataType": "datetime",
+            "isRequired": true,
+            "defaultValue": "NOW()",
+            "description": "Item last update date and time"
+          },
+          {
+            "name": "createdBy",
+            "displayName": "Created By",
+            "dataType": "string",
+            "isRequired": false,
+            "description": "User who created the item"
+          },
+          {
+            "name": "tags",
+            "displayName": "Tags",
+            "dataType": "array",
+            "items": {
+              "type": "string"
+            },
+            "isRequired": false,
+            "description": "Tags associated with the item"
+          },
+          {
+            "name": "priority",
+            "displayName": "Priority",
+            "dataType": "number",
+            "isRequired": false,
+            "defaultValue": 0,
+            "description": "Item priority"
+          }
+        ],
+        "indexes": [
+          {
+            "name": "title_idx",
+            "fields": ["title"],
+            "type": "fulltext"
+          },
+          {
+            "name": "status_idx",
+            "fields": ["status"],
+            "type": "index"
+          },
+          {
+            "name": "created_at_idx",
+            "fields": ["createdAt"],
+            "type": "index"
+          }
+        ],
+        "permissions": [
+          {
+            "role": "Administrator",
+            "permissions": ["create", "read", "update", "delete"]
+          },
+          {
+            "role": "Editor",
+            "permissions": ["create", "read", "update"]
+          },
+          {
+            "role": "Member",
+            "permissions": ["read"]
+          }
+        ]
+      }
+    ]
+  }
+} 

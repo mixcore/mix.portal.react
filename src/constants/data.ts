@@ -331,7 +331,7 @@ export const contextNavItems: NavItem[] = [
   // Moved second-level items to first level (Website context)
   {
     title: 'Pages',
-    url: '/dashboard/pages',
+    url: '/dashboard/apps/website',
     icon: 'page',
     shortcut: ['p', 'g'],
     contextId: 'website',
@@ -340,7 +340,7 @@ export const contextNavItems: NavItem[] = [
     items: [
       {
         title: 'Recent Pages',
-        url: '/dashboard/pages/recent',
+        url: '/dashboard/apps/website?view=recent',
         contextId: 'website',
         appId: 'website',
         items: [
@@ -472,7 +472,7 @@ export const contextNavItems: NavItem[] = [
   },
   {
     title: 'eCommerce',
-    url: '/dashboard/ecommerce',
+    url: '/dashboard/apps/ecommerce',
     icon: 'product',
     shortcut: ['e', 'c'],
     contextId: 'website',
@@ -481,7 +481,7 @@ export const contextNavItems: NavItem[] = [
     items: [
       {
         title: 'Products',
-        url: '/dashboard/ecommerce/products',
+        url: '/dashboard/apps/ecommerce?view=products',
         contextId: 'website',
         appId: 'ecommerce',
         items: [
@@ -613,7 +613,7 @@ export const contextNavItems: NavItem[] = [
   },
   {
     title: 'Blog',
-    url: '/dashboard/posts',
+    url: '/dashboard/apps/blog',
     icon: 'post',
     shortcut: ['b', 'l'],
     contextId: 'website',
@@ -622,7 +622,7 @@ export const contextNavItems: NavItem[] = [
     items: [
       {
         title: 'All Posts',
-        url: '/dashboard/posts/all',
+        url: '/dashboard/apps/blog?view=posts',
         contextId: 'website',
         appId: 'blog',
         items: [
@@ -730,7 +730,7 @@ export const contextNavItems: NavItem[] = [
   // Moved second-level items to first level (Sales context)
   {
     title: 'CRM',
-    url: '/dashboard/crm',
+    url: '/dashboard/apps/crm',
     icon: 'user',
     shortcut: ['c', 'r'],
     contextId: 'sales',
@@ -739,7 +739,7 @@ export const contextNavItems: NavItem[] = [
     items: [
       {
         title: 'Leads',
-        url: '/dashboard/crm/leads',
+        url: '/dashboard/apps/crm?view=leads',
         contextId: 'sales',
         appId: 'crm',
         items: [
@@ -845,7 +845,7 @@ export const contextNavItems: NavItem[] = [
   },
   {
     title: 'Sales',
-    url: '/dashboard/sales/orders',
+    url: '/dashboard/apps/sales',
     icon: 'billing',
     shortcut: ['s', 'o'],
     contextId: 'sales',
@@ -854,7 +854,7 @@ export const contextNavItems: NavItem[] = [
     items: [
       {
         title: 'Orders',
-        url: '/dashboard/sales/orders',
+        url: '/dashboard/apps/sales?view=orders',
         contextId: 'sales',
         appId: 'sales',
         items: [
@@ -988,7 +988,7 @@ export const contextNavItems: NavItem[] = [
   // Moved second-level items to first level (Finance context)
   {
     title: 'Accounting',
-    url: '/dashboard/accounting',
+    url: '/dashboard/apps/accounting',
     icon: 'chart',
     shortcut: ['a', 'c'],
     contextId: 'finance',
@@ -997,7 +997,7 @@ export const contextNavItems: NavItem[] = [
     items: [
       {
         title: 'Journal Entries',
-        url: '/dashboard/accounting/journals',
+        url: '/dashboard/apps/accounting?view=journals',
         contextId: 'finance',
         appId: 'accounting',
         items: [
@@ -1077,7 +1077,7 @@ export const contextNavItems: NavItem[] = [
   },
   {
     title: 'Invoicing',
-    url: '/dashboard/invoicing',
+    url: '/dashboard/apps/invoicing',
     icon: 'billing',
     shortcut: ['i', 'n'],
     contextId: 'finance',
@@ -1086,7 +1086,7 @@ export const contextNavItems: NavItem[] = [
     items: [
       {
         title: 'Customer Invoices',
-        url: '/dashboard/invoicing/customer',
+        url: '/dashboard/apps/invoicing?view=customer',
         contextId: 'finance',
         appId: 'invoicing',
         items: [
@@ -1168,7 +1168,7 @@ export const contextNavItems: NavItem[] = [
   // Moved second-level items to first level (HR context)
   {
     title: 'Employees',
-    url: '/dashboard/employees',
+    url: '/dashboard/apps/employees',
     icon: 'user',
     shortcut: ['e', 'm'],
     contextId: 'hr',
@@ -1177,7 +1177,7 @@ export const contextNavItems: NavItem[] = [
     items: [
       {
         title: 'Directory',
-        url: '/dashboard/employees/directory',
+        url: '/dashboard/apps/employees?view=directory',
         contextId: 'hr',
         appId: 'employees',
         items: [
@@ -1257,7 +1257,7 @@ export const contextNavItems: NavItem[] = [
   },
   {
     title: 'Recruitment',
-    url: '/dashboard/recruitment',
+    url: '/dashboard/apps/recruitment',
     icon: 'userCircle',
     shortcut: ['r', 'c'],
     contextId: 'hr',
@@ -1266,7 +1266,7 @@ export const contextNavItems: NavItem[] = [
     items: [
       {
         title: 'Job Postings',
-        url: '/dashboard/recruitment/jobs',
+        url: '/dashboard/apps/recruitment?view=jobs',
         contextId: 'hr',
         appId: 'recruitment',
         items: [
@@ -1346,7 +1346,7 @@ export const contextNavItems: NavItem[] = [
   },
   {
     title: 'Time Off',
-    url: '/dashboard/timeoff',
+    url: '/dashboard/apps/timeoff',
     icon: 'userPen',
     shortcut: ['t', 'o'],
     contextId: 'hr',
@@ -1355,7 +1355,7 @@ export const contextNavItems: NavItem[] = [
     items: [
       {
         title: 'Requests',
-        url: '/dashboard/timeoff/requests',
+        url: '/dashboard/apps/timeoff?view=requests',
         contextId: 'hr',
         appId: 'timeoff',
         items: [
@@ -1435,7 +1435,7 @@ export const contextNavItems: NavItem[] = [
   },
   {
     title: 'Appraisals',
-    url: '/dashboard/appraisals',
+    url: '/dashboard/apps/appraisals',
     icon: 'chart',
     shortcut: ['a', 'p'],
     contextId: 'hr',
@@ -1444,7 +1444,7 @@ export const contextNavItems: NavItem[] = [
     items: [
       {
         title: 'Review Cycles',
-        url: '/dashboard/appraisals/cycles',
+        url: '/dashboard/apps/appraisals?view=cycles',
         contextId: 'hr',
         appId: 'appraisals',
         items: [
@@ -1524,7 +1524,7 @@ export const contextNavItems: NavItem[] = [
   },
   {
     title: 'Marketing Automation',
-    url: '/dashboard/marketing/automation',
+    url: '/dashboard/apps/marketing',
     icon: 'refresh',
     shortcut: ['m', 'a'],
     contextId: 'marketing',
@@ -1533,7 +1533,7 @@ export const contextNavItems: NavItem[] = [
     items: [
       {
         title: 'Campaigns',
-        url: '/dashboard/marketing/automation/campaigns',
+        url: '/dashboard/apps/marketing?view=campaigns',
         contextId: 'marketing',
         appId: 'marketing',
         items: [
@@ -1613,7 +1613,7 @@ export const contextNavItems: NavItem[] = [
   },
   {
     title: 'Discuss',
-    url: '/dashboard/discuss',
+    url: '/dashboard/apps/discuss',
     icon: 'help',
     shortcut: ['d', 'i'],
     contextId: 'productivity',
@@ -1622,7 +1622,7 @@ export const contextNavItems: NavItem[] = [
     items: [
       {
         title: 'Channels',
-        url: '/dashboard/discuss/channels',
+        url: '/dashboard/apps/discuss?view=channels',
         contextId: 'productivity',
         appId: 'discuss',
         items: [
@@ -1702,7 +1702,7 @@ export const contextNavItems: NavItem[] = [
   },
   {
     title: 'Studio',
-    url: '/dashboard/studio',
+    url: '/dashboard/apps/studio',
     icon: 'settings',
     shortcut: ['s', 't'],
     contextId: 'customization',
@@ -1711,7 +1711,7 @@ export const contextNavItems: NavItem[] = [
     items: [
       {
         title: 'App Builder',
-        url: '/dashboard/studio/app-builder',
+        url: '/dashboard/apps/studio?view=app-builder',
         contextId: 'customization',
         appId: 'studio',
         items: [
