@@ -1,0 +1,13 @@
+0 verbose cli /Users/smilefounder/.nvm/versions/node/v23.5.0/bin/node /Users/smilefounder/.nvm/versions/node/v23.5.0/bin/npm
+1 info using npm@11.2.0
+2 info using node@v23.5.0
+3 silly config load:file:/Users/smilefounder/.nvm/versions/node/v23.5.0/lib/node_modules/npm/npmrc
+4 silly config load:file:/Users/smilefounder/Desktop/mixcore/mix.portal.react/.npmrc
+5 error config prefix cannot be changed from project config: /Users/smilefounder/Desktop/mixcore/mix.portal.react/.npmrc.
+6 silly config load:file:/Users/smilefounder/.npmrc
+7 silly config load:file:/Users/smilefounder/Desktop/mixcore/mix.portal.react/C:\Users\smile\AppData\Roaming\npm/etc/npmrc
+8 verbose title npm run dev:https
+9 verbose argv "run" "dev:https"
+10 verbose logfile logs-max:10 dir:/Users/smilefounder/Desktop/mixcore/mix.portal.react/C:\Users\smile\AppData\Local\npm-cache/_logs/2025-04-14T17_32_02_257Z-
+11 verbose logfile /Users/smilefounder/Desktop/mixcore/mix.portal.react/C:\Users\smile\AppData\Local\npm-cache/_logs/2025-04-14T17_32_02_257Z-debug-0.log
+12 silly logfile done cleaning log files

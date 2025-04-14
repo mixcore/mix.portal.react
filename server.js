@@ -1,17 +1,39 @@
-const { createServer } = require('http');
+const { createServer: createHttpServer } = require('http');
+const { createServer: createHttpsServer } = require('https');
 const { parse } = require('url');
 const next = require('next');
+const fs = require('fs');
+const path = require('path');
 
 const dev = process.env.NODE_ENV !== 'production';
 const hostname = 'localhost';
 const port = 3000;
+const useHttps = true; // Set to true to use HTTPS
 
 // Initialize Next.js
 const app = next({ dev, hostname, port });
 const handle = app.getRequestHandler();
 
+// HTTPS certificates
+const httpsOptions = {
+  key: fs.readFileSync(path.join(__dirname, 'certificates', 'localhost-key.pem')),
+  cert: fs.readFileSync(path.join(__dirname, 'certificates', 'localhost.pem')),
+};
+
 app.prepare().then(() => {
-  createServer(async (req, res) => {
+  let server;
+  
+  if (useHttps) {
+    server = createHttpsServer(httpsOptions, async (req, res) => {
+      handleRequest(req, res);
+    });
+  } else {
+    server = createHttpServer(async (req, res) => {
+      handleRequest(req, res);
+    });
+  }
+  
+  async function handleRequest(req, res) {
     try {
       // Parse the URL
       const parsedUrl = parse(req.url, true);
@@ -33,8 +55,11 @@ app.prepare().then(() => {
       res.statusCode = 500;
       res.end('Internal Server Error');
     }
-  }).listen(port, (err) => {
+  }
+  
+  server.listen(port, (err) => {
     if (err) throw err;
-    console.log(`> Ready on http://${hostname}:${port}`);
+    const protocol = useHttps ? 'https' : 'http';
+    console.log(`> Ready on ${protocol}://${hostname}:${port}`);
   });
 }); 

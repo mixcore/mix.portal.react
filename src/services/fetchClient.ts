@@ -1,25 +1,30 @@
 'use client';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://mixcore.net';
+// Get API URL from environment variable with fallback and ensure consistent format
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://mixcore.net').replace(/\/$/, '');
+
+// Log the environment variable explicitly
+if (typeof window !== 'undefined') {
+  console.log('Client-side NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
+  console.log('Client-side API_URL being used:', API_URL);
+  console.log('Client-side window.location.origin:', window.location.origin);
+}
 
 // Helper function to decide whether to use proxy or direct API call
 const getApiEndpoint = (path: string): string => {
   // Use our local proxy in development or when direct API calls are failing
-  const useProxy = true;
+  const useProxy = false;
   
   if (useProxy) {
     // Remove the common prefix since our proxy already includes it
     const endpoint = path.replace('/api/v2/rest/auth/', '');
-    return `/api/auth/${endpoint}`;
+    const proxyUrl = `/api/auth/${endpoint}`;
+    console.log(`Using proxy URL: ${proxyUrl} for path: ${path}`);
+    return proxyUrl;
   }
   
   return path;
 };
-
-// Log the API URL for debugging
-if (typeof window !== 'undefined') {
-  console.log('API URL:', API_URL);
-}
 
 class FetchClient {
   private refreshAttempted: boolean = false;
@@ -263,9 +268,13 @@ class FetchClient {
     // Otherwise, append to API_URL
     const url = endpoint.startsWith('http')
       ? endpoint
-      : endpoint.startsWith('/api/')
+      : endpoint.startsWith('/api/auth/')
         ? `${window.location.origin}${endpoint}` // Use full origin for our proxy endpoints
-        : `${API_URL}${endpoint}`;
+        : endpoint.startsWith('/api/')
+          ? `${API_URL}${endpoint}` // Direct API call to Mixcore
+          : `${API_URL}${endpoint}`; // Fallback
+    
+    console.log('Constructed URL for GET:', url, 'from endpoint:', endpoint);
 
     return this.fetchWithInterceptor(url, {
       method: 'GET',
@@ -281,11 +290,22 @@ class FetchClient {
   ): Promise<T> {
     // For proxy endpoints, use the full URL including origin
     // Otherwise, append to API_URL
-    const url = endpoint.startsWith('http')
-      ? endpoint
-      : endpoint.startsWith('/api/')
-        ? `${window.location.origin}${endpoint}` // Use full origin for our proxy endpoints
-        : `${API_URL}${endpoint}`;
+    let url;
+    
+    if (endpoint.startsWith('http')) {
+      url = endpoint;
+    } else if (endpoint.startsWith('/api/auth/')) {
+      url = `${window.location.origin}${endpoint}`; // Use full origin for our proxy endpoints
+    } else if (endpoint.startsWith('/api/')) {
+      url = `${API_URL}${endpoint}`; // Direct API call to Mixcore
+    } else {
+      url = `${API_URL}${endpoint}`; // Fallback
+    }
+    
+    console.log('POST Request Details:');
+    console.log('- Original endpoint:', endpoint);
+    console.log('- Constructed URL:', url);
+    console.log('- Request body:', JSON.stringify(data).substring(0, 500));
 
     return this.fetchWithInterceptor(url, {
       method: 'POST',
@@ -304,9 +324,13 @@ class FetchClient {
     // Otherwise, append to API_URL
     const url = endpoint.startsWith('http')
       ? endpoint
-      : endpoint.startsWith('/api/')
+      : endpoint.startsWith('/api/auth/')
         ? `${window.location.origin}${endpoint}` // Use full origin for our proxy endpoints
-        : `${API_URL}${endpoint}`;
+        : endpoint.startsWith('/api/')
+          ? `${API_URL}${endpoint}` // Direct API call to Mixcore
+          : `${API_URL}${endpoint}`; // Fallback
+    
+    console.log('Constructed URL for PUT:', url, 'from endpoint:', endpoint);
 
     return this.fetchWithInterceptor(url, {
       method: 'PUT',
@@ -321,9 +345,13 @@ class FetchClient {
     // Otherwise, append to API_URL
     const url = endpoint.startsWith('http')
       ? endpoint
-      : endpoint.startsWith('/api/')
+      : endpoint.startsWith('/api/auth/')
         ? `${window.location.origin}${endpoint}` // Use full origin for our proxy endpoints
-        : `${API_URL}${endpoint}`;
+        : endpoint.startsWith('/api/')
+          ? `${API_URL}${endpoint}` // Direct API call to Mixcore
+          : `${API_URL}${endpoint}`; // Fallback
+    
+    console.log('Constructed URL for DELETE:', url, 'from endpoint:', endpoint);
 
     return this.fetchWithInterceptor(url, {
       method: 'DELETE',

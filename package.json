@@ -3,12 +3,17 @@
   "version": "1.0.0",
   "private": true,
   "author": {
-    "name": "Kiran",
-    "url": "https://github.com/Kiranism"
+    "name": "Smilefounder",
+    "url": "https://github.com/Smilefounder"
   },
   "scripts": {
     "dev": "next dev",
     "custom-server": "node server.js",
+    "dev:https": "node server.js",
+    "generate-certs": "node generate-certificates.js",
+    "generate-certs:node": "node generate-self-signed-certs.js",
+    "dev:setup": "npm run generate-certs && npm run dev:https",
+    "dev:setup:node": "npm run generate-certs:node && npm run dev:https",
     "build": "next build",
     "build:optimized": "NODE_OPTIONS='--max_old_space_size=4096' next build",
     "start": "next start",
@@ -131,6 +136,7 @@
     "husky": "^9.1.7",
     "json-server": "1.0.0-alpha.19",
     "lint-staged": "^15.2.11",
+    "node-forge": "^1.3.1",
     "prettier": "3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "tw-animate-css": "^1.2.4"

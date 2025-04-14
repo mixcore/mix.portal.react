@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// Get API URL from environment variable and ensure it doesn't have trailing slash
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://mixcore.net').replace(/\/$/, '');
+
+// Log the API URL value in server-side code
+console.log('Server-side API_URL:', API_URL);
+
 // This is a server-side proxy to avoid CORS issues with the Mixcore API
 export async function GET(
   request: NextRequest,
@@ -8,7 +14,9 @@ export async function GET(
   const path = params.path.join('/');
   const searchParams = request.nextUrl.searchParams;
   const queryString = searchParams.toString();
-  const url = `https://mixcore.net/api/v2/rest/auth/${path}${queryString ? `?${queryString}` : ''}`;
+  const url = `${API_URL}/api/v2/rest/auth/${path}${queryString ? `?${queryString}` : ''}`;
+  
+  console.log(`GET API proxy request to: ${url}`);
 
   try {
     const headers: HeadersInit = {};
@@ -43,9 +51,9 @@ export async function POST(
   { params }: { params: { path: string[] } }
 ) {
   const path = params.path.join('/');
-  const url = `https://mixcore.net/api/v2/rest/auth/${path}`;
+  const url = `${API_URL}/api/v2/rest/auth/${path}`;
 
-  console.log(`Proxy POST request to: ${url}`);
+  console.log(`POST API proxy request to: ${url}`);
   
   try {
     let body;
@@ -151,7 +159,7 @@ export async function PUT(
   { params }: { params: { path: string[] } }
 ) {
   const path = params.path.join('/');
-  const url = `https://mixcore.net/api/v2/rest/auth/${path}`;
+  const url = `${API_URL}/api/v2/rest/auth/${path}`;
 
   try {
     const body = await request.json();
@@ -189,7 +197,7 @@ export async function DELETE(
   { params }: { params: { path: string[] } }
 ) {
   const path = params.path.join('/');
-  const url = `https://mixcore.net/api/v2/rest/auth/${path}`;
+  const url = `${API_URL}/api/v2/rest/auth/${path}`;
 
   try {
     const headers: HeadersInit = {};

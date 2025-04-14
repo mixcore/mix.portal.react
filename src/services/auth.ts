@@ -11,6 +11,24 @@ export interface LoginResponse {
   permissions: string[];
 }
 
+export interface LoginUnsecureResponse {
+  accessToken: string;
+  tokenType: string;
+  refreshToken: string;
+  expiresIn: number;
+  issued: string;
+  expires: string;
+  isActive: boolean;
+  emailConfirmed: boolean;
+  info: {
+    parentId: string;
+    parentType: string;
+    username: string;
+    email: string;
+    phoneNumber: string | null;
+  };
+}
+
 export interface ExternalLoginData {
   provider: string;
   username: string;
@@ -38,6 +56,27 @@ const getApiEndpoint = (path: string): string => {
   return path;
 };
 
+// Parse JWT token and extract roles
+function parseJwt(token: string): any {
+  try {
+    // Split the token and get the payload part
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    // Decode the Base64Url-encoded string
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    // Parse the JSON
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    console.error('Error parsing JWT token:', e);
+    return {};
+  }
+}
+
 export const AuthService = {
   // Login user
   login: async (
@@ -48,50 +87,59 @@ export const AuthService = {
     try {
       console.log('Starting login process with username:', username);
       
-      // Format data according to Mixcore API requirements
+      // Format data according to Mixcore API requirements for login-unsecure
       const data = {
-        UserName: username,
-        Password: password,
-        RememberMe: rememberMe,
-        Email: '',
-        ReturnUrl: ''
+        userName: username,
+        email: username,
+        phoneNumber: "",
+        password: password,
+        rememberMe: rememberMe,
+        returnUrl: ""
       };
 
-      const endpoint = getApiEndpoint('/api/v2/rest/auth/user/login');
-      console.log('Using login endpoint:', endpoint);
+      // Direct API call to login-unsecure endpoint
+      const directEndpoint = '/api/v2/rest/auth/user/login-unsecure';
+      console.log('Using direct login endpoint:', directEndpoint);
       
       console.log('Sending login request...');
-      const response = await fetchClient.post<{
-        success: boolean;
-        data: LoginResponse;
-        errors?: string[];
-      }>(endpoint, data); // Our proxy endpoint will handle wrapping in message object
+      const response = await fetchClient.post<LoginUnsecureResponse>(directEndpoint, data);
 
       console.log('Login response received:', response);
 
-      if (response && response.success) {
-        const { accessToken, refreshToken, userId, roles, permissions } =
-          response.data;
+      // Handle direct API response format from login-unsecure 
+      if (response && response.accessToken) {
+        // Extract roles from JWT token
+        const decodedToken = parseJwt(response.accessToken);
+        const roles = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || [];
+        
+        // Map the response to our expected format
+        const loginData: LoginResponse = {
+          accessToken: response.accessToken,
+          refreshToken: response.refreshToken,
+          userId: response.info.parentId,
+          roles: Array.isArray(roles) ? roles : [roles], // Handle both array and string
+          permissions: [] // Need to extract permissions if needed
+        };
 
-        console.log('Login successful, storing tokens');
+        console.log('Login successful, storing tokens and roles:', loginData.roles);
         
         // Store tokens in localStorage
-        localStorage.setItem('authToken', accessToken);
-        localStorage.setItem('refreshToken', refreshToken);
-        localStorage.setItem('userId', userId);
-        localStorage.setItem('roles', JSON.stringify(roles));
-        localStorage.setItem('permissions', JSON.stringify(permissions));
+        localStorage.setItem('authToken', loginData.accessToken);
+        localStorage.setItem('refreshToken', loginData.refreshToken);
+        localStorage.setItem('userId', loginData.userId);
+        localStorage.setItem('roles', JSON.stringify(loginData.roles));
+        localStorage.setItem('permissions', JSON.stringify(loginData.permissions));
 
         return {
           success: true,
-          data: response.data
+          data: loginData
         };
       }
 
-      console.log('Login failed:', response.errors);
+      console.log('Login failed - invalid response format:', response);
       return {
         success: false,
-        errors: response.errors || ['Login failed']
+        errors: ['Login failed - invalid response format']
       };
     } catch (error) {
       console.error('Login error:', error);
