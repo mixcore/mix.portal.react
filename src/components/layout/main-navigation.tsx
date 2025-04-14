@@ -23,6 +23,7 @@ import {
 import { AuthService } from '@/services/auth';
 import { User } from '@/types';
 import { ThemeToggle } from '@/components/theme-toggle';
+import LanguageLink from '@/components/language-link';
 
 interface MainNavigationProps {
   className?: string;
@@ -89,19 +90,19 @@ export function MainNavigation({ className }: MainNavigationProps) {
     <nav className={`flex items-center justify-between p-4 ${className}`}>
       {/* Desktop Navigation */}
       <div className='flex items-center'>
-        <Link href='/admin/dashboard' className='mr-6 flex items-center'>
+        <LanguageLink href='/admin/dashboard' className='mr-6 flex items-center'>
           <Icons.logo className='mr-2 h-8 w-8' />
           <span className='hidden text-xl font-bold md:inline'>
             Mixcore CMS
           </span>
-        </Link>
+        </LanguageLink>
 
         <div className='hidden space-x-1 md:flex'>
           {navItems.map((item) => {
             const isActive =
               pathname === item.href || pathname?.startsWith(`${item.href}/`);
             return (
-              <Link
+              <LanguageLink
                 key={item.href}
                 href={item.href}
                 className={`flex items-center rounded-md px-3 py-2 text-sm font-medium ${
@@ -112,7 +113,7 @@ export function MainNavigation({ className }: MainNavigationProps) {
               >
                 {item.icon}
                 {item.label}
-              </Link>
+              </LanguageLink>
             );
           })}
         </div>
@@ -193,7 +194,7 @@ export function MainNavigation({ className }: MainNavigationProps) {
                       pathname === item.href ||
                       pathname?.startsWith(`${item.href}/`);
                     return (
-                      <Link
+                      <LanguageLink
                         key={item.href}
                         href={item.href}
                         className={`flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200 ${
@@ -205,7 +206,7 @@ export function MainNavigation({ className }: MainNavigationProps) {
                       >
                         {item.icon}
                         <span className='ml-2'>{item.label}</span>
-                      </Link>
+                      </LanguageLink>
                     );
                   })}
                 </nav>

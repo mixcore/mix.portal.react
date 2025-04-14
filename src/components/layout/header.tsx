@@ -21,6 +21,7 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useNavigationContext } from '@/providers/navigation-context-provider';
+import { LanguageSelector } from '@/components/language-selector';
 
 export default function Header() {
   const [searchOpen, setSearchOpen] = React.useState(false);
@@ -241,6 +242,7 @@ export default function Header() {
               </PopoverContent>
             </Popover>
 
+            <LanguageSelector />
             <UserNav />
             <LayoutWidthToggle />
             <ModeToggle />
