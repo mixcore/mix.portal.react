@@ -1,28 +1,54 @@
 'use client';
 
-import React from 'react';
-import { useSearchParams } from 'next/navigation';
-import AppLoader from '@/components/app/AppLoader';
+import React, { useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { PageLayout } from '@/components/layouts/PageLayout';
-import { PageHeader } from '@/components/PageHeader';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function AppsPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const appId = searchParams.get('app') || 'cms'; // Default to CMS app if not specified
   
-  // Map of app IDs to human-readable names
-  const appNames: Record<string, string> = {
-    cms: 'Content Management',
-    mixdb: 'MixDB',
-    projects: 'Projects',
-    workflow: 'Workflow Automation'
-  };
+  // Redirect to the new URL structure
+  useEffect(() => {
+    // Get the view parameter if it exists
+    const view = searchParams.get('view') || 'dashboard';
+    
+    // Build the new URL with the pattern /dashboard/apps/[appId]/[viewName]
+    let newUrl = `/dashboard/apps/${appId}/${view}`;
+    
+    // Copy any additional query parameters
+    const newParams = new URLSearchParams();
+    searchParams.forEach((value, key) => {
+      if (key !== 'app' && key !== 'view') {
+        newParams.append(key, value);
+      }
+    });
+    
+    // Add query string if there are additional parameters
+    const queryString = newParams.toString();
+    if (queryString) {
+      newUrl += `?${queryString}`;
+    }
+    
+    // Redirect to the new URL
+    router.replace(newUrl);
+  }, [appId, router, searchParams]);
   
+  // Show loading indicator while redirecting
   return (
     <PageLayout>
-      {/*<PageHeader title={`${appNames[appId] || appId} App`} />*/}
-      <main className="app-container">
-        <AppLoader appId={appId} />
+      <main className="app-container flex items-center justify-center">
+        <div className="space-y-4 w-full max-w-md">
+          <Skeleton className="h-8 w-64 mx-auto" />
+          <Skeleton className="h-32 w-full" />
+          <div className="grid grid-cols-3 gap-4">
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-24 w-full" />
+          </div>
+        </div>
       </main>
     </PageLayout>
   );

@@ -22,7 +22,7 @@ export default function WorkflowEditorWithIdPage({ params }: { params: { id: str
     <div className="h-full flex flex-col overflow-hidden">
       <div className="absolute top-0 left-0 z-20 m-4">
         <Link 
-          href="/dashboard/apps?app=workflow" 
+          href="/dashboard/apps/workflow/dashboard" 
           className="flex items-center gap-1 text-sm bg-background/90 backdrop-blur-sm hover:bg-background border rounded-md px-3 py-1.5 shadow-md hover:shadow-lg transition-all"
         >
           <ChevronLeft className="h-4 w-4" />

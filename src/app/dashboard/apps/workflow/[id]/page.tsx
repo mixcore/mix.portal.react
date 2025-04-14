@@ -88,10 +88,10 @@ export default function WorkflowDetailPage({ params }: { params: { id: string } 
             // Generate fake execution history
             generateExecutionHistory(id);
           } else {
-            router.push('/dashboard/apps?app=workflow');
+            router.push('/dashboard/apps/workflow/dashboard');
           }
         } else {
-          router.push('/dashboard/apps?app=workflow');
+          router.push('/dashboard/apps/workflow/dashboard');
         }
       } catch (err) {
         console.error('Error fetching workflow:', err);
@@ -184,7 +184,7 @@ export default function WorkflowDetailPage({ params }: { params: { id: string } 
         description: "Workflow has been permanently deleted",
       });
       
-      router.push('/dashboard/apps?app=workflow');
+      router.push('/dashboard/apps/workflow/dashboard');
     }
   };
   

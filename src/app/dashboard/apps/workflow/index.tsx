@@ -21,6 +21,8 @@ import { DashboardStatsCard } from './components/shared/DashboardStatsCard';
 
 export interface WorkflowAppProps {
   // Define app-specific props
+  standalone?: boolean;
+  params?: Record<string, any>;
 }
 
 interface Workflow {
@@ -34,7 +36,7 @@ interface Workflow {
 export function WorkflowApp(props: WorkflowAppProps) {
   const [isInitialized, setIsInitialized] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState(props.params?.view || 'dashboard');
   const router = useRouter();
   
   // State for workflows

@@ -16,10 +16,11 @@ const APPS = {
 
 export interface AppLoaderProps {
   appId: string;
+  params?: Record<string, any>;
 }
 
-export function AppLoader({ appId }: AppLoaderProps) {
-  const [AppComponent, setAppComponent] = useState<React.ComponentType | null>(null);
+export function AppLoader({ appId, params }: AppLoaderProps) {
+  const [AppComponent, setAppComponent] = useState<React.ComponentType<any> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
@@ -60,7 +61,7 @@ export function AppLoader({ appId }: AppLoaderProps) {
     return <ErrorDisplay message="App component not found" />;
   }
   
-  return <AppComponent />;
+  return <AppComponent params={params} />;
 }
 
 // Loading placeholder component

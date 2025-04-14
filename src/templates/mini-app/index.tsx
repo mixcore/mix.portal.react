@@ -17,8 +17,8 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 type ViewType = 'dashboard' | 'list' | 'detail' | 'settings';
 
 export interface MiniAppProps {
-  // Define app-specific props
   standalone?: boolean;
+  params?: Record<string, any>;
 }
 
 export function MiniApp(props: MiniAppProps) {
@@ -27,16 +27,16 @@ export function MiniApp(props: MiniAppProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   
-  // Get view from URL parameters
-  const viewParam = searchParams.get('view') as ViewType | null;
-  const itemIdParam = searchParams.get('id');
+  // Get view from URL parameters or from params prop
+  const viewParam = props.params?.view || searchParams.get('view') as ViewType | null;
+  const itemIdParam = props.params?.id || searchParams.get('id');
   
   // Get app config
   const appConfig = getAppConfig();
   
   // Set initial view based on URL parameter or config
   const getInitialView = (): ViewType => {
-    if (viewParam && ['dashboard', 'list', 'detail', 'settings'].includes(viewParam)) {
+    if (viewParam && ['dashboard', 'list', 'detail', 'settings'].includes(viewParam as string)) {
       return viewParam as ViewType;
     }
     return 'dashboard';
@@ -50,6 +50,9 @@ export function MiniApp(props: MiniAppProps) {
   
   // Update URL when view or item ID changes
   useEffect(() => {
+    // Skip URL updating if using the new URL structure (params prop provided)
+    if (props.params) return;
+    
     // Create new URLSearchParams object
     const params = new URLSearchParams(searchParams.toString());
     
@@ -66,7 +69,7 @@ export function MiniApp(props: MiniAppProps) {
     // Update the URL without triggering navigation
     const newUrl = `${pathname}?${params.toString()}`;
     window.history.replaceState({}, '', newUrl);
-  }, [activeView, selectedItemId, pathname, searchParams]);
+  }, [activeView, selectedItemId, pathname, searchParams, props.params]);
   
   // Sync with URL parameters when they change
   useEffect(() => {
@@ -174,17 +177,17 @@ export function MiniApp(props: MiniAppProps) {
     setIsInitialized(true);
   };
   
-  // Generate deep link for current view
+  // Generate deep link for current view with new URL structure
   const getDeepLink = (view: ViewType, itemId?: string): string => {
-    const baseUrl = pathname;
+    const baseUrl = `/dashboard/apps/${appConfig.appId}/${view}`;
     const params = new URLSearchParams();
     
-    params.set('view', view);
     if (itemId && view === 'detail') {
       params.set('id', itemId);
     }
     
-    return `${baseUrl}?${params.toString()}`;
+    const queryString = params.toString();
+    return queryString ? `${baseUrl}?${queryString}` : baseUrl;
   };
   
   // Show loading state while app is initializing
