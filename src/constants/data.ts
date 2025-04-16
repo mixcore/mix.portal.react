@@ -212,50 +212,50 @@ export const recentSalesData: SaleUser[] = [
 export const appContexts = [
   {
     id: 'website',
-    name: 'Website',
-    description: 'Website, eCommerce and online content',
+    name: 'Websites',
+    description: 'Website, eCommerce, Blog, Forum, Chat and eLearning',
     icon: 'fileText'
   },
   {
     id: 'sales',
     name: 'Sales',
-    description: 'CRM, Sales and Point of Sale',
+    description: 'CRM, Sales, Point of Sale, Subscriptions and Rental',
     icon: 'product'
   },
   {
     id: 'finance',
     name: 'Finance',
-    description: 'Accounting, Invoicing and Documents',
+    description: 'Accounting, Invoicing, Expenses, Spreadsheets, Documents and Sign',
     icon: 'billing'
   },
   {
     id: 'inventory',
-    name: 'Inventory & Manufacturing',
-    description: 'Manage stock, manufacturing and purchases',
+    name: 'Supply Chain',
+    description: 'Inventory, Manufacturing, PLM, Purchase, Maintenance and Quality',
     icon: 'folder'
   },
   {
     id: 'hr',
     name: 'Human Resources',
-    description: 'Employees, Recruitment and Time Off',
+    description: 'Employees, Recruitment, Time Off, Appraisals, Referrals and Fleet',
     icon: 'user'
   },
   {
     id: 'marketing',
     name: 'Marketing',
-    description: 'Marketing, Email campaigns and Events',
+    description: 'Social, Email, SMS, Events, Automation and Surveys',
     icon: 'file'
   },
   {
     id: 'services',
     name: 'Services',
-    description: 'Projects, Timesheet and Helpdesk',
+    description: 'Project, Timesheets, Field Service, Helpdesk, Planning and Appointments',
     icon: 'help'
   },
   {
     id: 'productivity',
     name: 'Productivity',
-    description: 'Discuss, Approvals and Knowledge',
+    description: 'Discuss, Approvals, IoT, VoIP, Knowledge, WhatsApp and Automation',
     icon: 'check'
   },
   {
@@ -328,141 +328,121 @@ export const contextNavItems: NavItem[] = [
     priority: 0
   },
   
-  // Moved second-level items to first level (Website context)
+  // Moved second-level items to first level (Websites context)
   {
-    title: 'Pages',
+    title: 'Website Builder',
     url: '/dashboard/apps/website',
-    icon: 'page',
-    shortcut: ['p', 'g'],
+    icon: 'fileText',
+    shortcut: ['w', 'b'],
     contextId: 'website',
     appId: 'website',
     priority: 10,
     items: [
       {
-        title: 'Recent Pages',
-        url: '/dashboard/apps/website?view=recent',
+        title: 'Pages',
+        url: '/dashboard/apps/website?view=pages',
         contextId: 'website',
         appId: 'website',
         items: [
           {
-            title: 'Published Today',
-            url: '/dashboard/pages/recent/today',
+            title: 'Published Pages',
+            url: '/dashboard/website/pages/published',
             contextId: 'website',
             appId: 'website'
           },
           {
-            title: 'This Week',
-            url: '/dashboard/pages/recent/week',
+            title: 'Draft Pages',
+            url: '/dashboard/website/pages/drafts',
             contextId: 'website',
             appId: 'website'
           },
           {
-            title: 'This Month',
-            url: '/dashboard/pages/recent/month',
+            title: 'Archived Pages',
+            url: '/dashboard/website/pages/archived',
             contextId: 'website',
             appId: 'website'
           }
         ]
       },
       {
-        title: 'Published',
-        url: '/dashboard/pages/published',
+        title: 'Design',
+        url: '/dashboard/website/design',
         contextId: 'website',
         appId: 'website',
         items: [
           {
-            title: 'Landing Pages',
-            url: '/dashboard/pages/published/landing',
+            title: 'Themes',
+            url: '/dashboard/website/design/themes',
             contextId: 'website',
             appId: 'website'
           },
           {
-            title: 'Content Pages',
-            url: '/dashboard/pages/published/content',
+            title: 'Colors',
+            url: '/dashboard/website/design/colors',
             contextId: 'website',
             appId: 'website'
           },
           {
-            title: 'System Pages',
-            url: '/dashboard/pages/published/system',
+            title: 'Typography',
+            url: '/dashboard/website/design/typography',
             contextId: 'website',
             appId: 'website'
           }
         ]
       },
       {
-        title: 'Drafts',
-        url: '/dashboard/pages/drafts',
+        title: 'Sections',
+        url: '/dashboard/website/sections',
         contextId: 'website',
         appId: 'website',
         items: [
           {
-            title: 'In Review',
-            url: '/dashboard/pages/drafts/review',
+            title: 'Headers',
+            url: '/dashboard/website/sections/headers',
             contextId: 'website',
             appId: 'website'
           },
           {
-            title: 'Needs Approval',
-            url: '/dashboard/pages/drafts/approval',
+            title: 'Footers',
+            url: '/dashboard/website/sections/footers',
             contextId: 'website',
             appId: 'website'
           },
           {
-            title: 'Work in Progress',
-            url: '/dashboard/pages/drafts/wip',
+            title: 'Content Blocks',
+            url: '/dashboard/website/sections/blocks',
             contextId: 'website',
             appId: 'website'
           }
         ]
       },
       {
-        title: 'Templates',
-        url: '/dashboard/pages/templates',
+        title: 'Navigation',
+        url: '/dashboard/website/nav',
         contextId: 'website',
         appId: 'website',
-        items: [
-          {
-            title: 'Blank Templates',
-            url: '/dashboard/pages/templates/blank',
-            contextId: 'website',
-            appId: 'website'
-          },
-          {
-            title: 'Section Templates',
-            url: '/dashboard/pages/templates/sections',
-            contextId: 'website',
-            appId: 'website'
-          },
-          {
-            title: 'Custom Templates',
-            url: '/dashboard/pages/templates/custom',
-            contextId: 'website',
-            appId: 'website'
-          }
-        ]
       },
       {
-        title: 'SEO Settings',
-        url: '/dashboard/pages/seo',
+        title: 'Settings',
+        url: '/dashboard/website/settings',
         contextId: 'website',
         appId: 'website',
         items: [
           {
-            title: 'Meta Descriptions',
-            url: '/dashboard/pages/seo/meta',
-            contextId: 'website',
-            appId: 'website'
-          },
-          {
-            title: 'Keywords',
-            url: '/dashboard/pages/seo/keywords',
+            title: 'SEO',
+            url: '/dashboard/website/settings/seo',
             contextId: 'website',
             appId: 'website'
           },
           {
             title: 'Analytics',
-            url: '/dashboard/pages/seo/analytics',
+            url: '/dashboard/website/settings/analytics',
+            contextId: 'website',
+            appId: 'website'
+          },
+          {
+            title: 'Domain',
+            url: '/dashboard/website/settings/domain',
             contextId: 'website',
             appId: 'website'
           }
@@ -498,8 +478,8 @@ export const contextNavItems: NavItem[] = [
             appId: 'ecommerce'
           },
           {
-            title: 'Subscriptions',
-            url: '/dashboard/ecommerce/products/subscriptions',
+            title: 'Product Categories',
+            url: '/dashboard/ecommerce/products/categories',
             contextId: 'website',
             appId: 'ecommerce'
           }
@@ -538,72 +518,58 @@ export const contextNavItems: NavItem[] = [
         appId: 'ecommerce',
         items: [
           {
-            title: 'New Customers',
-            url: '/dashboard/ecommerce/customers/new',
+            title: 'All Customers',
+            url: '/dashboard/ecommerce/customers/all',
             contextId: 'website',
             appId: 'ecommerce'
           },
           {
-            title: 'Repeat Customers',
-            url: '/dashboard/ecommerce/customers/repeat',
+            title: 'Segments',
+            url: '/dashboard/ecommerce/customers/segments',
             contextId: 'website',
             appId: 'ecommerce'
           },
           {
-            title: 'VIP Customers',
-            url: '/dashboard/ecommerce/customers/vip',
+            title: 'Reviews',
+            url: '/dashboard/ecommerce/customers/reviews',
             contextId: 'website',
             appId: 'ecommerce'
           }
         ]
       },
       {
-        title: 'Inventory',
-        url: '/dashboard/ecommerce/inventory',
+        title: 'Payments',
+        url: '/dashboard/ecommerce/payments',
         contextId: 'website',
         appId: 'ecommerce',
-        items: [
-          {
-            title: 'Stock Levels',
-            url: '/dashboard/ecommerce/inventory/stock',
-            contextId: 'website',
-            appId: 'ecommerce'
-          },
-          {
-            title: 'Replenishment',
-            url: '/dashboard/ecommerce/inventory/replenishment',
-            contextId: 'website',
-            appId: 'ecommerce'
-          },
-          {
-            title: 'Warehouses',
-            url: '/dashboard/ecommerce/inventory/warehouses',
-            contextId: 'website',
-            appId: 'ecommerce'
-          }
-        ]
       },
       {
-        title: 'Discounts',
-        url: '/dashboard/ecommerce/discounts',
+        title: 'Shipping',
+        url: '/dashboard/ecommerce/shipping',
+        contextId: 'website',
+        appId: 'ecommerce',
+      },
+      {
+        title: 'Promotions',
+        url: '/dashboard/ecommerce/promos',
         contextId: 'website',
         appId: 'ecommerce',
         items: [
+          {
+            title: 'Discounts',
+            url: '/dashboard/ecommerce/promos/discounts',
+            contextId: 'website',
+            appId: 'ecommerce'
+          },
           {
             title: 'Coupon Codes',
-            url: '/dashboard/ecommerce/discounts/coupons',
+            url: '/dashboard/ecommerce/promos/coupons',
             contextId: 'website',
             appId: 'ecommerce'
           },
           {
-            title: 'Special Offers',
-            url: '/dashboard/ecommerce/discounts/offers',
-            contextId: 'website',
-            appId: 'ecommerce'
-          },
-          {
-            title: 'Bulk Discounts',
-            url: '/dashboard/ecommerce/discounts/bulk',
+            title: 'Gift Cards',
+            url: '/dashboard/ecommerce/promos/gift-cards',
             contextId: 'website',
             appId: 'ecommerce'
           }
@@ -625,102 +591,211 @@ export const contextNavItems: NavItem[] = [
         url: '/dashboard/apps/blog?view=posts',
         contextId: 'website',
         appId: 'blog',
-        items: [
-          {
-            title: 'Featured Posts',
-            url: '/dashboard/posts/all/featured',
-            contextId: 'website',
-            appId: 'blog'
-          },
-          {
-            title: 'Popular Posts',
-            url: '/dashboard/posts/all/popular',
-            contextId: 'website',
-            appId: 'blog'
-          },
-          {
-            title: 'Archives',
-            url: '/dashboard/posts/all/archives',
-            contextId: 'website',
-            appId: 'blog'
-          }
-        ]
+      },
+      {
+        title: 'New Post',
+        url: '/dashboard/blog/new',
+        contextId: 'website',
+        appId: 'blog',
       },
       {
         title: 'Categories',
-        url: '/dashboard/posts/categories',
+        url: '/dashboard/blog/categories',
         contextId: 'website',
         appId: 'blog',
-        items: [
-          {
-            title: 'Category Management',
-            url: '/dashboard/posts/categories/manage',
-            contextId: 'website',
-            appId: 'blog'
-          },
-          {
-            title: 'Hierarchy Settings',
-            url: '/dashboard/posts/categories/hierarchy',
-            contextId: 'website',
-            appId: 'blog'
-          },
-          {
-            title: 'SEO for Categories',
-            url: '/dashboard/posts/categories/seo',
-            contextId: 'website',
-            appId: 'blog'
-          }
-        ]
       },
       {
         title: 'Tags',
-        url: '/dashboard/posts/tags',
+        url: '/dashboard/blog/tags',
+        contextId: 'website',
+        appId: 'blog',
+      },
+      {
+        title: 'Settings',
+        url: '/dashboard/blog/settings',
         contextId: 'website',
         appId: 'blog',
         items: [
           {
-            title: 'Popular Tags',
-            url: '/dashboard/posts/tags/popular',
+            title: 'General',
+            url: '/dashboard/blog/settings/general',
             contextId: 'website',
             appId: 'blog'
           },
           {
-            title: 'Tag Groups',
-            url: '/dashboard/posts/tags/groups',
+            title: 'Comments',
+            url: '/dashboard/blog/settings/comments',
             contextId: 'website',
             appId: 'blog'
           },
           {
-            title: 'Unused Tags',
-            url: '/dashboard/posts/tags/unused',
+            title: 'SEO',
+            url: '/dashboard/blog/settings/seo',
             contextId: 'website',
             appId: 'blog'
           }
         ]
+      }
+    ]
+  },
+  {
+    title: 'Forum',
+    url: '/dashboard/apps/forum',
+    icon: 'help',
+    shortcut: ['f', 'o'],
+    contextId: 'website',
+    appId: 'forum',
+    priority: 13,
+    items: [
+      {
+        title: 'All Forums',
+        url: '/dashboard/apps/forum?view=all',
+        contextId: 'website',
+        appId: 'forum',
       },
       {
-        title: 'Comments',
-        url: '/dashboard/posts/comments',
+        title: 'Categories',
+        url: '/dashboard/forum/categories',
         contextId: 'website',
-        appId: 'blog',
+        appId: 'forum',
+      },
+      {
+        title: 'Recent Discussions',
+        url: '/dashboard/forum/recent',
+        contextId: 'website',
+        appId: 'forum',
+      },
+      {
+        title: 'My Posts',
+        url: '/dashboard/forum/my-posts',
+        contextId: 'website',
+        appId: 'forum',
+      },
+      {
+        title: 'Settings',
+        url: '/dashboard/forum/settings',
+        contextId: 'website',
+        appId: 'forum',
         items: [
           {
-            title: 'Pending Approval',
-            url: '/dashboard/posts/comments/pending',
+            title: 'Permissions',
+            url: '/dashboard/forum/settings/permissions',
             contextId: 'website',
-            appId: 'blog'
+            appId: 'forum'
           },
           {
-            title: 'Reported Comments',
-            url: '/dashboard/posts/comments/reported',
+            title: 'Moderation',
+            url: '/dashboard/forum/settings/moderation',
             contextId: 'website',
-            appId: 'blog'
+            appId: 'forum'
           },
           {
-            title: 'Comment Settings',
-            url: '/dashboard/posts/comments/settings',
+            title: 'Notifications',
+            url: '/dashboard/forum/settings/notifications',
             contextId: 'website',
-            appId: 'blog'
+            appId: 'forum'
+          }
+        ]
+      }
+    ]
+  },
+  {
+    title: 'Live Chat',
+    url: '/dashboard/apps/livechat',
+    icon: 'help',
+    shortcut: ['l', 'c'],
+    contextId: 'website',
+    appId: 'livechat',
+    priority: 14,
+    items: [
+      {
+        title: 'Active Chats',
+        url: '/dashboard/apps/livechat?view=active',
+        contextId: 'website',
+        appId: 'livechat',
+      },
+      {
+        title: 'Chat History',
+        url: '/dashboard/livechat/history',
+        contextId: 'website',
+        appId: 'livechat',
+      },
+      {
+        title: 'Operators',
+        url: '/dashboard/livechat/operators',
+        contextId: 'website',
+        appId: 'livechat',
+      },
+      {
+        title: 'Configuration',
+        url: '/dashboard/livechat/config',
+        contextId: 'website',
+        appId: 'livechat',
+      },
+      {
+        title: 'Canned Responses',
+        url: '/dashboard/livechat/canned',
+        contextId: 'website',
+        appId: 'livechat',
+      }
+    ]
+  },
+  {
+    title: 'eLearning',
+    url: '/dashboard/apps/elearning',
+    icon: 'file',
+    shortcut: ['e', 'l'],
+    contextId: 'website',
+    appId: 'elearning',
+    priority: 15,
+    items: [
+      {
+        title: 'All Courses',
+        url: '/dashboard/apps/elearning?view=courses',
+        contextId: 'website',
+        appId: 'elearning',
+      },
+      {
+        title: 'My Courses',
+        url: '/dashboard/elearning/my-courses',
+        contextId: 'website',
+        appId: 'elearning',
+      },
+      {
+        title: 'Create Course',
+        url: '/dashboard/elearning/create',
+        contextId: 'website',
+        appId: 'elearning',
+      },
+      {
+        title: 'Modules',
+        url: '/dashboard/elearning/modules',
+        contextId: 'website',
+        appId: 'elearning',
+      },
+      {
+        title: 'Quizzes',
+        url: '/dashboard/elearning/quizzes',
+        contextId: 'website',
+        appId: 'elearning',
+        items: [
+          {
+            title: 'All Quizzes',
+            url: '/dashboard/elearning/quizzes/all',
+            contextId: 'website',
+            appId: 'elearning'
+          },
+          {
+            title: 'Question Bank',
+            url: '/dashboard/elearning/quizzes/questions',
+            contextId: 'website',
+            appId: 'elearning'
+          },
+          {
+            title: 'Results',
+            url: '/dashboard/elearning/quizzes/results',
+            contextId: 'website',
+            appId: 'elearning'
           }
         ]
       }
@@ -738,8 +813,14 @@ export const contextNavItems: NavItem[] = [
     priority: 20,
     items: [
       {
+        title: 'Dashboard',
+        url: '/dashboard/apps/crm?view=dashboard',
+        contextId: 'sales',
+        appId: 'crm',
+      },
+      {
         title: 'Leads',
-        url: '/dashboard/apps/crm?view=leads',
+        url: '/dashboard/crm/leads',
         contextId: 'sales',
         appId: 'crm',
         items: [
@@ -790,52 +871,78 @@ export const contextNavItems: NavItem[] = [
         ]
       },
       {
-        title: 'Contacts',
-        url: '/dashboard/crm/contacts',
+        title: 'Customers',
+        url: '/dashboard/crm/customers',
         contextId: 'sales',
         appId: 'crm',
         items: [
           {
-            title: 'Individual Contacts',
-            url: '/dashboard/crm/contacts/individual',
+            title: 'All Customers',
+            url: '/dashboard/crm/customers/all',
             contextId: 'sales',
             appId: 'crm'
           },
           {
-            title: 'Contact Groups',
-            url: '/dashboard/crm/contacts/groups',
+            title: 'Segments',
+            url: '/dashboard/crm/customers/segments',
             contextId: 'sales',
             appId: 'crm'
           },
           {
-            title: 'Contact Enrichment',
-            url: '/dashboard/crm/contacts/enrichment',
+            title: 'Lifetime Value',
+            url: '/dashboard/crm/customers/ltv',
             contextId: 'sales',
             appId: 'crm'
           }
         ]
       },
       {
-        title: 'Companies',
-        url: '/dashboard/crm/companies',
+        title: 'Activities',
+        url: '/dashboard/crm/activities',
         contextId: 'sales',
         appId: 'crm',
         items: [
           {
-            title: 'Company Profiles',
-            url: '/dashboard/crm/companies/profiles',
+            title: 'Calendar',
+            url: '/dashboard/crm/activities/calendar',
             contextId: 'sales',
             appId: 'crm'
           },
           {
-            title: 'Industry Segments',
-            url: '/dashboard/crm/companies/segments',
+            title: 'Calls',
+            url: '/dashboard/crm/activities/calls',
             contextId: 'sales',
             appId: 'crm'
           },
           {
-            title: 'Account Hierarchy',
-            url: '/dashboard/crm/companies/hierarchy',
+            title: 'Meetings',
+            url: '/dashboard/crm/activities/meetings',
+            contextId: 'sales',
+            appId: 'crm'
+          }
+        ]
+      },
+      {
+        title: 'Reports',
+        url: '/dashboard/crm/reports',
+        contextId: 'sales',
+        appId: 'crm',
+        items: [
+          {
+            title: 'Sales Pipeline',
+            url: '/dashboard/crm/reports/pipeline',
+            contextId: 'sales',
+            appId: 'crm'
+          },
+          {
+            title: 'Conversion Rates',
+            url: '/dashboard/crm/reports/conversion',
+            contextId: 'sales',
+            appId: 'crm'
+          },
+          {
+            title: 'Activity Analysis',
+            url: '/dashboard/crm/reports/activity',
             contextId: 'sales',
             appId: 'crm'
           }
@@ -853,8 +960,34 @@ export const contextNavItems: NavItem[] = [
     priority: 21,
     items: [
       {
+        title: 'Quotations',
+        url: '/dashboard/apps/sales?view=quotes',
+        contextId: 'sales',
+        appId: 'sales',
+        items: [
+          {
+            title: 'Draft Quotes',
+            url: '/dashboard/sales/quotations/draft',
+            contextId: 'sales',
+            appId: 'sales'
+          },
+          {
+            title: 'Sent Quotes',
+            url: '/dashboard/sales/quotations/sent',
+            contextId: 'sales',
+            appId: 'sales'
+          },
+          {
+            title: 'Quote Templates',
+            url: '/dashboard/sales/quotations/templates',
+            contextId: 'sales',
+            appId: 'sales'
+          }
+        ]
+      },
+      {
         title: 'Orders',
-        url: '/dashboard/apps/sales?view=orders',
+        url: '/dashboard/sales/orders',
         contextId: 'sales',
         appId: 'sales',
         items: [
@@ -879,26 +1012,26 @@ export const contextNavItems: NavItem[] = [
         ]
       },
       {
-        title: 'Quotations',
-        url: '/dashboard/sales/quotations',
+        title: 'Deliveries',
+        url: '/dashboard/sales/deliveries',
         contextId: 'sales',
         appId: 'sales',
         items: [
           {
-            title: 'Draft Quotes',
-            url: '/dashboard/sales/quotations/draft',
+            title: 'Pending',
+            url: '/dashboard/sales/deliveries/pending',
             contextId: 'sales',
             appId: 'sales'
           },
           {
-            title: 'Sent Quotes',
-            url: '/dashboard/sales/quotations/sent',
+            title: 'Shipped',
+            url: '/dashboard/sales/deliveries/shipped',
             contextId: 'sales',
             appId: 'sales'
           },
           {
-            title: 'Quote Templates',
-            url: '/dashboard/sales/quotations/templates',
+            title: 'Delivered',
+            url: '/dashboard/sales/deliveries/delivered',
             contextId: 'sales',
             appId: 'sales'
           }
@@ -931,56 +1064,314 @@ export const contextNavItems: NavItem[] = [
         ]
       },
       {
-        title: 'Performance',
-        url: '/dashboard/sales/performance',
+        title: 'Products',
+        url: '/dashboard/sales/products',
         contextId: 'sales',
         appId: 'sales',
         items: [
           {
-            title: 'Team Analytics',
-            url: '/dashboard/sales/performance/team',
+            title: 'All Products',
+            url: '/dashboard/sales/products/all',
             contextId: 'sales',
             appId: 'sales'
           },
           {
-            title: 'Individual Performance',
-            url: '/dashboard/sales/performance/individual',
+            title: 'Categories',
+            url: '/dashboard/sales/products/categories',
             contextId: 'sales',
             appId: 'sales'
           },
           {
-            title: 'KPI Tracking',
-            url: '/dashboard/sales/performance/kpi',
+            title: 'Pricing',
+            url: '/dashboard/sales/products/pricing',
             contextId: 'sales',
             appId: 'sales'
+          }
+        ]
+      }
+    ]
+  },
+  {
+    title: 'POS Shop',
+    url: '/dashboard/apps/pos-shop',
+    icon: 'product',
+    shortcut: ['p', 's'],
+    contextId: 'sales',
+    appId: 'pos-shop',
+    priority: 22,
+    items: [
+      {
+        title: 'Point of Sale',
+        url: '/dashboard/apps/pos-shop?view=pos',
+        contextId: 'sales',
+        appId: 'pos-shop',
+      },
+      {
+        title: 'Products',
+        url: '/dashboard/pos-shop/products',
+        contextId: 'sales',
+        appId: 'pos-shop',
+        items: [
+          {
+            title: 'All Products',
+            url: '/dashboard/pos-shop/products/all',
+            contextId: 'sales',
+            appId: 'pos-shop'
+          },
+          {
+            title: 'Categories',
+            url: '/dashboard/pos-shop/products/categories',
+            contextId: 'sales',
+            appId: 'pos-shop'
+          },
+          {
+            title: 'Inventory',
+            url: '/dashboard/pos-shop/products/inventory',
+            contextId: 'sales',
+            appId: 'pos-shop'
           }
         ]
       },
       {
-        title: 'Sales Teams',
-        url: '/dashboard/sales/teams',
+        title: 'Orders',
+        url: '/dashboard/pos-shop/orders',
         contextId: 'sales',
-        appId: 'sales',
+        appId: 'pos-shop',
+      },
+      {
+        title: 'Configuration',
+        url: '/dashboard/pos-shop/config',
+        contextId: 'sales',
+        appId: 'pos-shop',
+      },
+      {
+        title: 'Reports',
+        url: '/dashboard/pos-shop/reports',
+        contextId: 'sales',
+        appId: 'pos-shop',
         items: [
           {
-            title: 'Team Structure',
-            url: '/dashboard/sales/teams/structure',
+            title: 'Sales Reports',
+            url: '/dashboard/pos-shop/reports/sales',
             contextId: 'sales',
-            appId: 'sales'
+            appId: 'pos-shop'
           },
           {
-            title: 'Territory Management',
-            url: '/dashboard/sales/teams/territory',
+            title: 'Product Reports',
+            url: '/dashboard/pos-shop/reports/products',
             contextId: 'sales',
-            appId: 'sales'
+            appId: 'pos-shop'
           },
           {
-            title: 'Quota Management',
-            url: '/dashboard/sales/teams/quota',
+            title: 'Cashier Reports',
+            url: '/dashboard/pos-shop/reports/cashiers',
             contextId: 'sales',
-            appId: 'sales'
+            appId: 'pos-shop'
           }
         ]
+      }
+    ]
+  },
+  {
+    title: 'POS Restaurant',
+    url: '/dashboard/apps/pos-resto',
+    icon: 'product',
+    shortcut: ['p', 'r'],
+    contextId: 'sales',
+    appId: 'pos-resto',
+    priority: 23,
+    items: [
+      {
+        title: 'Tables',
+        url: '/dashboard/apps/pos-resto?view=tables',
+        contextId: 'sales',
+        appId: 'pos-resto',
+      },
+      {
+        title: 'Order',
+        url: '/dashboard/pos-resto/order',
+        contextId: 'sales',
+        appId: 'pos-resto',
+      },
+      {
+        title: 'Kitchen',
+        url: '/dashboard/pos-resto/kitchen',
+        contextId: 'sales',
+        appId: 'pos-resto',
+      },
+      {
+        title: 'Menu',
+        url: '/dashboard/pos-resto/menu',
+        contextId: 'sales',
+        appId: 'pos-resto',
+        items: [
+          {
+            title: 'Items',
+            url: '/dashboard/pos-resto/menu/items',
+            contextId: 'sales',
+            appId: 'pos-resto'
+          },
+          {
+            title: 'Categories',
+            url: '/dashboard/pos-resto/menu/categories',
+            contextId: 'sales',
+            appId: 'pos-resto'
+          },
+          {
+            title: 'Modifiers',
+            url: '/dashboard/pos-resto/menu/modifiers',
+            contextId: 'sales',
+            appId: 'pos-resto'
+          }
+        ]
+      },
+      {
+        title: 'Billing',
+        url: '/dashboard/pos-resto/billing',
+        contextId: 'sales',
+        appId: 'pos-resto',
+      }
+    ]
+  },
+  {
+    title: 'Subscriptions',
+    url: '/dashboard/apps/subscriptions',
+    icon: 'refresh',
+    shortcut: ['s', 'u'],
+    contextId: 'sales',
+    appId: 'subscriptions',
+    priority: 24,
+    items: [
+      {
+        title: 'Active',
+        url: '/dashboard/apps/subscriptions?view=active',
+        contextId: 'sales',
+        appId: 'subscriptions',
+      },
+      {
+        title: 'Drafts',
+        url: '/dashboard/subscriptions/drafts',
+        contextId: 'sales',
+        appId: 'subscriptions',
+      },
+      {
+        title: 'Expired',
+        url: '/dashboard/subscriptions/expired',
+        contextId: 'sales',
+        appId: 'subscriptions',
+      },
+      {
+        title: 'Products',
+        url: '/dashboard/subscriptions/products',
+        contextId: 'sales',
+        appId: 'subscriptions',
+        items: [
+          {
+            title: 'All Products',
+            url: '/dashboard/subscriptions/products/all',
+            contextId: 'sales',
+            appId: 'subscriptions'
+          },
+          {
+            title: 'Plans',
+            url: '/dashboard/subscriptions/products/plans',
+            contextId: 'sales',
+            appId: 'subscriptions'
+          },
+          {
+            title: 'Add-ons',
+            url: '/dashboard/subscriptions/products/addons',
+            contextId: 'sales',
+            appId: 'subscriptions'
+          }
+        ]
+      },
+      {
+        title: 'Reports',
+        url: '/dashboard/subscriptions/reports',
+        contextId: 'sales',
+        appId: 'subscriptions',
+        items: [
+          {
+            title: 'Revenue',
+            url: '/dashboard/subscriptions/reports/revenue',
+            contextId: 'sales',
+            appId: 'subscriptions'
+          },
+          {
+            title: 'Churn',
+            url: '/dashboard/subscriptions/reports/churn',
+            contextId: 'sales',
+            appId: 'subscriptions'
+          },
+          {
+            title: 'Growth',
+            url: '/dashboard/subscriptions/reports/growth',
+            contextId: 'sales',
+            appId: 'subscriptions'
+          }
+        ]
+      }
+    ]
+  },
+  {
+    title: 'Rental',
+    url: '/dashboard/apps/rental',
+    icon: 'dashboard',
+    shortcut: ['r', 'e'],
+    contextId: 'sales',
+    appId: 'rental',
+    priority: 25,
+    items: [
+      {
+        title: 'Products',
+        url: '/dashboard/apps/rental?view=products',
+        contextId: 'sales',
+        appId: 'rental',
+        items: [
+          {
+            title: 'All Products',
+            url: '/dashboard/rental/products/all',
+            contextId: 'sales',
+            appId: 'rental'
+          },
+          {
+            title: 'Available',
+            url: '/dashboard/rental/products/available',
+            contextId: 'sales',
+            appId: 'rental'
+          },
+          {
+            title: 'Rented',
+            url: '/dashboard/rental/products/rented',
+            contextId: 'sales',
+            appId: 'rental'
+          }
+        ]
+      },
+      {
+        title: 'Quotes',
+        url: '/dashboard/rental/quotes',
+        contextId: 'sales',
+        appId: 'rental',
+      },
+      {
+        title: 'Orders',
+        url: '/dashboard/rental/orders',
+        contextId: 'sales',
+        appId: 'rental',
+      },
+      {
+        title: 'Returns',
+        url: '/dashboard/rental/returns',
+        contextId: 'sales',
+        appId: 'rental',
+      },
+      {
+        title: 'Calendar',
+        url: '/dashboard/rental/calendar',
+        contextId: 'sales',
+        appId: 'rental',
       }
     ]
   },
@@ -996,8 +1387,40 @@ export const contextNavItems: NavItem[] = [
     priority: 30,
     items: [
       {
+        title: 'Dashboard',
+        url: '/dashboard/apps/accounting?view=dashboard',
+        contextId: 'finance',
+        appId: 'accounting',
+      },
+      {
+        title: 'Chart of Accounts',
+        url: '/dashboard/accounting/accounts',
+        contextId: 'finance',
+        appId: 'accounting',
+        items: [
+          {
+            title: 'Asset Accounts',
+            url: '/dashboard/accounting/accounts/assets',
+            contextId: 'finance',
+            appId: 'accounting'
+          },
+          {
+            title: 'Liability Accounts',
+            url: '/dashboard/accounting/accounts/liabilities',
+            contextId: 'finance',
+            appId: 'accounting'
+          },
+          {
+            title: 'Equity Accounts',
+            url: '/dashboard/accounting/accounts/equity',
+            contextId: 'finance',
+            appId: 'accounting'
+          }
+        ]
+      },
+      {
         title: 'Journal Entries',
-        url: '/dashboard/apps/accounting?view=journals',
+        url: '/dashboard/accounting/journals',
         contextId: 'finance',
         appId: 'accounting',
         items: [
@@ -1022,26 +1445,26 @@ export const contextNavItems: NavItem[] = [
         ]
       },
       {
-        title: 'Chart of Accounts',
-        url: '/dashboard/accounting/accounts',
+        title: 'Bank & Cash',
+        url: '/dashboard/accounting/bank',
         contextId: 'finance',
         appId: 'accounting',
         items: [
           {
-            title: 'Asset Accounts',
-            url: '/dashboard/accounting/accounts/assets',
+            title: 'Accounts',
+            url: '/dashboard/accounting/bank/accounts',
             contextId: 'finance',
             appId: 'accounting'
           },
           {
-            title: 'Liability Accounts',
-            url: '/dashboard/accounting/accounts/liabilities',
+            title: 'Transactions',
+            url: '/dashboard/accounting/bank/transactions',
             contextId: 'finance',
             appId: 'accounting'
           },
           {
-            title: 'Equity Accounts',
-            url: '/dashboard/accounting/accounts/equity',
+            title: 'Reconciliation',
+            url: '/dashboard/accounting/bank/reconciliation',
             contextId: 'finance',
             appId: 'accounting'
           }
@@ -1085,59 +1508,25 @@ export const contextNavItems: NavItem[] = [
     priority: 31,
     items: [
       {
-        title: 'Customer Invoices',
-        url: '/dashboard/apps/invoicing?view=customer',
+        title: 'Drafts',
+        url: '/dashboard/apps/invoicing?view=drafts',
         contextId: 'finance',
         appId: 'invoicing',
-        items: [
-          {
-            title: 'Draft Invoices',
-            url: '/dashboard/invoicing/customer/draft',
-            contextId: 'finance',
-            appId: 'invoicing'
-          },
-          {
-            title: 'Sent Invoices',
-            url: '/dashboard/invoicing/customer/sent',
-            contextId: 'finance',
-            appId: 'invoicing'
-          },
-          {
-            title: 'Paid Invoices',
-            url: '/dashboard/invoicing/customer/paid',
-            contextId: 'finance',
-            appId: 'invoicing'
-          }
-        ]
       },
       {
-        title: 'Vendor Bills',
-        url: '/dashboard/invoicing/vendor',
+        title: 'Sent',
+        url: '/dashboard/invoicing/sent',
         contextId: 'finance',
         appId: 'invoicing',
-        items: [
-          {
-            title: 'Pending Bills',
-            url: '/dashboard/invoicing/vendor/pending',
-            contextId: 'finance',
-            appId: 'invoicing'
-          },
-          {
-            title: 'Approved Bills',
-            url: '/dashboard/invoicing/vendor/approved',
-            contextId: 'finance',
-            appId: 'invoicing'
-          },
-          {
-            title: 'Paid Bills',
-            url: '/dashboard/invoicing/vendor/paid',
-            contextId: 'finance',
-            appId: 'invoicing'
-          }
-        ]
       },
       {
-        title: 'Recurring Invoices',
+        title: 'Paid',
+        url: '/dashboard/invoicing/paid',
+        contextId: 'finance',
+        appId: 'invoicing',
+      },
+      {
+        title: 'Recurring',
         url: '/dashboard/invoicing/recurring',
         contextId: 'finance',
         appId: 'invoicing',
@@ -1161,6 +1550,216 @@ export const contextNavItems: NavItem[] = [
             appId: 'invoicing'
           }
         ]
+      },
+      {
+        title: 'Products',
+        url: '/dashboard/invoicing/products',
+        contextId: 'finance',
+        appId: 'invoicing',
+        items: [
+          {
+            title: 'All Products',
+            url: '/dashboard/invoicing/products/all',
+            contextId: 'finance',
+            appId: 'invoicing'
+          },
+          {
+            title: 'Categories',
+            url: '/dashboard/invoicing/products/categories',
+            contextId: 'finance',
+            appId: 'invoicing'
+          },
+          {
+            title: 'Pricing',
+            url: '/dashboard/invoicing/products/pricing',
+            contextId: 'finance',
+            appId: 'invoicing'
+          }
+        ]
+      }
+    ]
+  },
+  {
+    title: 'Expenses',
+    url: '/dashboard/apps/expenses',
+    icon: 'billing',
+    shortcut: ['e', 'x'],
+    contextId: 'finance',
+    appId: 'expenses',
+    priority: 32,
+    items: [
+      {
+        title: 'Reports',
+        url: '/dashboard/apps/expenses?view=reports',
+        contextId: 'finance',
+        appId: 'expenses',
+      },
+      {
+        title: 'All Expenses',
+        url: '/dashboard/expenses/all',
+        contextId: 'finance',
+        appId: 'expenses',
+      },
+      {
+        title: 'Categories',
+        url: '/dashboard/expenses/categories',
+        contextId: 'finance',
+        appId: 'expenses',
+      },
+      {
+        title: 'Payment Methods',
+        url: '/dashboard/expenses/methods',
+        contextId: 'finance',
+        appId: 'expenses',
+      },
+      {
+        title: 'Reimbursements',
+        url: '/dashboard/expenses/reimburse',
+        contextId: 'finance',
+        appId: 'expenses',
+        items: [
+          {
+            title: 'Pending',
+            url: '/dashboard/expenses/reimburse/pending',
+            contextId: 'finance',
+            appId: 'expenses'
+          },
+          {
+            title: 'Approved',
+            url: '/dashboard/expenses/reimburse/approved',
+            contextId: 'finance',
+            appId: 'expenses'
+          },
+          {
+            title: 'Paid',
+            url: '/dashboard/expenses/reimburse/paid',
+            contextId: 'finance',
+            appId: 'expenses'
+          }
+        ]
+      }
+    ]
+  },
+  {
+    title: 'Spreadsheet',
+    url: '/dashboard/apps/spreadsheet',
+    icon: 'table',
+    shortcut: ['s', 'p'],
+    contextId: 'finance',
+    appId: 'spreadsheet',
+    priority: 33,
+    items: [
+      {
+        title: 'Data',
+        url: '/dashboard/apps/spreadsheet?view=data',
+        contextId: 'finance',
+        appId: 'spreadsheet',
+      },
+      {
+        title: 'Reports',
+        url: '/dashboard/spreadsheet/reports',
+        contextId: 'finance',
+        appId: 'spreadsheet',
+      },
+      {
+        title: 'Pivot Tables',
+        url: '/dashboard/spreadsheet/pivot',
+        contextId: 'finance',
+        appId: 'spreadsheet',
+      },
+      {
+        title: 'Charts',
+        url: '/dashboard/spreadsheet/charts',
+        contextId: 'finance',
+        appId: 'spreadsheet',
+      },
+      {
+        title: 'Formulas',
+        url: '/dashboard/spreadsheet/formulas',
+        contextId: 'finance',
+        appId: 'spreadsheet',
+      }
+    ]
+  },
+  {
+    title: 'Documents',
+    url: '/dashboard/apps/documents',
+    icon: 'file',
+    shortcut: ['d', 'o'],
+    contextId: 'finance',
+    appId: 'documents',
+    priority: 34,
+    items: [
+      {
+        title: 'All Documents',
+        url: '/dashboard/apps/documents?view=all',
+        contextId: 'finance',
+        appId: 'documents',
+      },
+      {
+        title: 'By Category',
+        url: '/dashboard/documents/categories',
+        contextId: 'finance',
+        appId: 'documents',
+      },
+      {
+        title: 'Upload',
+        url: '/dashboard/documents/upload',
+        contextId: 'finance',
+        appId: 'documents',
+      },
+      {
+        title: 'Shared',
+        url: '/dashboard/documents/shared',
+        contextId: 'finance',
+        appId: 'documents',
+      },
+      {
+        title: 'Templates',
+        url: '/dashboard/documents/templates',
+        contextId: 'finance',
+        appId: 'documents',
+      }
+    ]
+  },
+  {
+    title: 'Sign',
+    url: '/dashboard/apps/sign',
+    icon: 'file',
+    shortcut: ['s', 'i'],
+    contextId: 'finance',
+    appId: 'sign',
+    priority: 35,
+    items: [
+      {
+        title: 'Send for Signature',
+        url: '/dashboard/apps/sign?view=send',
+        contextId: 'finance',
+        appId: 'sign',
+      },
+      {
+        title: 'My Documents',
+        url: '/dashboard/sign/my-docs',
+        contextId: 'finance',
+        appId: 'sign',
+      },
+      {
+        title: 'Templates',
+        url: '/dashboard/sign/templates',
+        contextId: 'finance',
+        appId: 'sign',
+      },
+      {
+        title: 'Settings',
+        url: '/dashboard/sign/settings',
+        contextId: 'finance',
+        appId: 'sign',
+      },
+      {
+        title: 'Audit Trail',
+        url: '/dashboard/sign/audit',
+        contextId: 'finance',
+        appId: 'sign',
       }
     ]
   },
@@ -1651,26 +2250,18 @@ export const contextNavItems: NavItem[] = [
         url: '/dashboard/discuss/direct',
         contextId: 'productivity',
         appId: 'discuss',
-        items: [
-          {
-            title: 'Recent Messages',
-            url: '/dashboard/discuss/direct/recent',
-            contextId: 'productivity',
-            appId: 'discuss'
-          },
-          {
-            title: 'Starred Conversations',
-            url: '/dashboard/discuss/direct/starred',
-            contextId: 'productivity',
-            appId: 'discuss'
-          },
-          {
-            title: 'Message Requests',
-            url: '/dashboard/discuss/direct/requests',
-            contextId: 'productivity',
-            appId: 'discuss'
-          }
-        ]
+      },
+      {
+        title: 'Mentions',
+        url: '/dashboard/discuss/mentions',
+        contextId: 'productivity',
+        appId: 'discuss',
+      },
+      {
+        title: 'Files',
+        url: '/dashboard/discuss/files',
+        contextId: 'productivity',
+        appId: 'discuss',
       },
       {
         title: 'Settings',
@@ -1697,6 +2288,292 @@ export const contextNavItems: NavItem[] = [
             appId: 'discuss'
           }
         ]
+      }
+    ]
+  },
+  {
+    title: 'Approvals',
+    url: '/dashboard/apps/approvals',
+    icon: 'check',
+    shortcut: ['a', 'a'],
+    contextId: 'productivity',
+    appId: 'approvals',
+    priority: 81,
+    items: [
+      {
+        title: 'Requests',
+        url: '/dashboard/apps/approvals?view=requests',
+        contextId: 'productivity',
+        appId: 'approvals',
+      },
+      {
+        title: 'My Requests',
+        url: '/dashboard/approvals/my-req',
+        contextId: 'productivity',
+        appId: 'approvals',
+      },
+      {
+        title: 'Configuration',
+        url: '/dashboard/approvals/config',
+        contextId: 'productivity',
+        appId: 'approvals',
+      },
+      {
+        title: 'History',
+        url: '/dashboard/approvals/history',
+        contextId: 'productivity',
+        appId: 'approvals',
+      },
+      {
+        title: 'Settings',
+        url: '/dashboard/approvals/settings',
+        contextId: 'productivity',
+        appId: 'approvals',
+      }
+    ]
+  },
+  {
+    title: 'IoT',
+    url: '/dashboard/apps/iot',
+    icon: 'settings',
+    shortcut: ['i', 'o'],
+    contextId: 'productivity',
+    appId: 'iot',
+    priority: 82,
+    items: [
+      {
+        title: 'Devices',
+        url: '/dashboard/apps/iot?view=devices',
+        contextId: 'productivity',
+        appId: 'iot',
+        items: [
+          {
+            title: 'All Devices',
+            url: '/dashboard/iot/devices/all',
+            contextId: 'productivity',
+            appId: 'iot'
+          },
+          {
+            title: 'Groups',
+            url: '/dashboard/iot/devices/groups',
+            contextId: 'productivity',
+            appId: 'iot'
+          },
+          {
+            title: 'Status',
+            url: '/dashboard/iot/devices/status',
+            contextId: 'productivity',
+            appId: 'iot'
+          }
+        ]
+      },
+      {
+        title: 'Data',
+        url: '/dashboard/iot/data',
+        contextId: 'productivity',
+        appId: 'iot',
+      },
+      {
+        title: 'Rules',
+        url: '/dashboard/iot/rules',
+        contextId: 'productivity',
+        appId: 'iot',
+      },
+      {
+        title: 'Dashboards',
+        url: '/dashboard/iot/dashboards',
+        contextId: 'productivity',
+        appId: 'iot',
+      },
+      {
+        title: 'Settings',
+        url: '/dashboard/iot/settings',
+        contextId: 'productivity',
+        appId: 'iot',
+      }
+    ]
+  },
+  {
+    title: 'VoIP',
+    url: '/dashboard/apps/voip',
+    icon: 'help',
+    shortcut: ['v', 'o'],
+    contextId: 'productivity',
+    appId: 'voip',
+    priority: 83,
+    items: [
+      {
+        title: 'Calls',
+        url: '/dashboard/apps/voip?view=calls',
+        contextId: 'productivity',
+        appId: 'voip',
+      },
+      {
+        title: 'History',
+        url: '/dashboard/voip/history',
+        contextId: 'productivity',
+        appId: 'voip',
+      },
+      {
+        title: 'Contacts',
+        url: '/dashboard/voip/contacts',
+        contextId: 'productivity',
+        appId: 'voip',
+      },
+      {
+        title: 'Configuration',
+        url: '/dashboard/voip/config',
+        contextId: 'productivity',
+        appId: 'voip',
+      },
+      {
+        title: 'Voicemail',
+        url: '/dashboard/voip/voicemail',
+        contextId: 'productivity',
+        appId: 'voip',
+      }
+    ]
+  },
+  {
+    title: 'Knowledge',
+    url: '/dashboard/apps/knowledge',
+    icon: 'book',
+    shortcut: ['k', 'b'],
+    contextId: 'productivity',
+    appId: 'knowledge',
+    priority: 84,
+    items: [
+      {
+        title: 'Articles',
+        url: '/dashboard/apps/knowledge?view=articles',
+        contextId: 'productivity',
+        appId: 'knowledge',
+      },
+      {
+        title: 'Categories',
+        url: '/dashboard/knowledge/cats',
+        contextId: 'productivity',
+        appId: 'knowledge',
+      },
+      {
+        title: 'Contribute',
+        url: '/dashboard/knowledge/contribute',
+        contextId: 'productivity',
+        appId: 'knowledge',
+      },
+      {
+        title: 'Feedback',
+        url: '/dashboard/knowledge/feedback',
+        contextId: 'productivity',
+        appId: 'knowledge',
+      },
+      {
+        title: 'Settings',
+        url: '/dashboard/knowledge/settings',
+        contextId: 'productivity',
+        appId: 'knowledge',
+      }
+    ]
+  },
+  {
+    title: 'WhatsApp',
+    url: '/dashboard/apps/whatsapp',
+    icon: 'help',
+    shortcut: ['w', 'a'],
+    contextId: 'productivity',
+    appId: 'whatsapp',
+    priority: 85,
+    items: [
+      {
+        title: 'Chats',
+        url: '/dashboard/apps/whatsapp?view=chats',
+        contextId: 'productivity',
+        appId: 'whatsapp',
+      },
+      {
+        title: 'Contacts',
+        url: '/dashboard/whatsapp/contacts',
+        contextId: 'productivity',
+        appId: 'whatsapp',
+      },
+      {
+        title: 'Broadcast',
+        url: '/dashboard/whatsapp/broadcast',
+        contextId: 'productivity',
+        appId: 'whatsapp',
+      },
+      {
+        title: 'Templates',
+        url: '/dashboard/whatsapp/templates',
+        contextId: 'productivity',
+        appId: 'whatsapp',
+      },
+      {
+        title: 'Settings',
+        url: '/dashboard/whatsapp/settings',
+        contextId: 'productivity',
+        appId: 'whatsapp',
+      }
+    ]
+  },
+  {
+    title: 'Automation',
+    url: '/dashboard/apps/automation',
+    icon: 'refresh',
+    shortcut: ['a', 'u'],
+    contextId: 'productivity',
+    appId: 'automation',
+    priority: 86,
+    items: [
+      {
+        title: 'Workflows',
+        url: '/dashboard/apps/automation?view=workflows',
+        contextId: 'productivity',
+        appId: 'automation',
+        items: [
+          {
+            title: 'Active Workflows',
+            url: '/dashboard/automation/workflows/active',
+            contextId: 'productivity',
+            appId: 'automation'
+          },
+          {
+            title: 'Drafts',
+            url: '/dashboard/automation/workflows/drafts',
+            contextId: 'productivity',
+            appId: 'automation'
+          },
+          {
+            title: 'Templates',
+            url: '/dashboard/automation/workflows/templates',
+            contextId: 'productivity',
+            appId: 'automation'
+          }
+        ]
+      },
+      {
+        title: 'Nodes',
+        url: '/dashboard/automation/nodes',
+        contextId: 'productivity',
+        appId: 'automation',
+      },
+      {
+        title: 'Triggers',
+        url: '/dashboard/automation/triggers',
+        contextId: 'productivity',
+        appId: 'automation',
+      },
+      {
+        title: 'Executions',
+        url: '/dashboard/automation/executions',
+        contextId: 'productivity',
+        appId: 'automation',
+      },
+      {
+        title: 'Credentials',
+        url: '/dashboard/automation/credentials',
+        contextId: 'productivity',
+        appId: 'automation',
       }
     ]
   },
@@ -1786,6 +2663,898 @@ export const contextNavItems: NavItem[] = [
             appId: 'studio'
           }
         ]
+      }
+    ]
+  },
+  {
+    title: 'Inventory',
+    url: '/dashboard/apps/inventory',
+    icon: 'folder',
+    shortcut: ['i', 'v'],
+    contextId: 'inventory',
+    appId: 'inventory',
+    priority: 40,
+    items: [
+      {
+        title: 'Products',
+        url: '/dashboard/apps/inventory?view=products',
+        contextId: 'inventory',
+        appId: 'inventory',
+        items: [
+          {
+            title: 'All Products',
+            url: '/dashboard/inventory/products/all',
+            contextId: 'inventory',
+            appId: 'inventory'
+          },
+          {
+            title: 'Categories',
+            url: '/dashboard/inventory/products/categories',
+            contextId: 'inventory',
+            appId: 'inventory'
+          },
+          {
+            title: 'Variants',
+            url: '/dashboard/inventory/products/variants',
+            contextId: 'inventory',
+            appId: 'inventory'
+          }
+        ]
+      },
+      {
+        title: 'Stock',
+        url: '/dashboard/inventory/stock',
+        contextId: 'inventory',
+        appId: 'inventory',
+        items: [
+          {
+            title: 'Stock Levels',
+            url: '/dashboard/inventory/stock/levels',
+            contextId: 'inventory',
+            appId: 'inventory'
+          },
+          {
+            title: 'Locations',
+            url: '/dashboard/inventory/stock/locations',
+            contextId: 'inventory',
+            appId: 'inventory'
+          },
+          {
+            title: 'Reorder Points',
+            url: '/dashboard/inventory/stock/reorder',
+            contextId: 'inventory',
+            appId: 'inventory'
+          }
+        ]
+      },
+      {
+        title: 'Transfers',
+        url: '/dashboard/inventory/transfers',
+        contextId: 'inventory',
+        appId: 'inventory',
+      },
+      {
+        title: 'Adjustments',
+        url: '/dashboard/inventory/adjust',
+        contextId: 'inventory',
+        appId: 'inventory',
+      },
+      {
+        title: 'Reports',
+        url: '/dashboard/inventory/reports',
+        contextId: 'inventory',
+        appId: 'inventory',
+        items: [
+          {
+            title: 'Inventory Valuation',
+            url: '/dashboard/inventory/reports/valuation',
+            contextId: 'inventory',
+            appId: 'inventory'
+          },
+          {
+            title: 'Movement Analysis',
+            url: '/dashboard/inventory/reports/movement',
+            contextId: 'inventory',
+            appId: 'inventory'
+          },
+          {
+            title: 'Forecasting',
+            url: '/dashboard/inventory/reports/forecast',
+            contextId: 'inventory',
+            appId: 'inventory'
+          }
+        ]
+      }
+    ]
+  },
+  {
+    title: 'Manufacturing',
+    url: '/dashboard/apps/manufacturing',
+    icon: 'settings',
+    shortcut: ['m', 'f'],
+    contextId: 'inventory',
+    appId: 'manufacturing',
+    priority: 41,
+    items: [
+      {
+        title: 'Bills of Materials',
+        url: '/dashboard/apps/manufacturing?view=boms',
+        contextId: 'inventory',
+        appId: 'manufacturing',
+        items: [
+          {
+            title: 'All BOMs',
+            url: '/dashboard/manufacturing/boms/all',
+            contextId: 'inventory',
+            appId: 'manufacturing'
+          },
+          {
+            title: 'Components',
+            url: '/dashboard/manufacturing/boms/components',
+            contextId: 'inventory',
+            appId: 'manufacturing'
+          },
+          {
+            title: 'Versions',
+            url: '/dashboard/manufacturing/boms/versions',
+            contextId: 'inventory',
+            appId: 'manufacturing'
+          }
+        ]
+      },
+      {
+        title: 'Work Orders',
+        url: '/dashboard/manufacturing/orders',
+        contextId: 'inventory',
+        appId: 'manufacturing',
+        items: [
+          {
+            title: 'Pending',
+            url: '/dashboard/manufacturing/orders/pending',
+            contextId: 'inventory',
+            appId: 'manufacturing'
+          },
+          {
+            title: 'In Progress',
+            url: '/dashboard/manufacturing/orders/progress',
+            contextId: 'inventory',
+            appId: 'manufacturing'
+          },
+          {
+            title: 'Completed',
+            url: '/dashboard/manufacturing/orders/completed',
+            contextId: 'inventory',
+            appId: 'manufacturing'
+          }
+        ]
+      },
+      {
+        title: 'Work Centers',
+        url: '/dashboard/manufacturing/centers',
+        contextId: 'inventory',
+        appId: 'manufacturing',
+      },
+      {
+        title: 'Production Planning',
+        url: '/dashboard/manufacturing/planning',
+        contextId: 'inventory',
+        appId: 'manufacturing',
+      },
+      {
+        title: 'Reports',
+        url: '/dashboard/manufacturing/reports',
+        contextId: 'inventory',
+        appId: 'manufacturing',
+        items: [
+          {
+            title: 'Efficiency',
+            url: '/dashboard/manufacturing/reports/efficiency',
+            contextId: 'inventory',
+            appId: 'manufacturing'
+          },
+          {
+            title: 'Cost Analysis',
+            url: '/dashboard/manufacturing/reports/cost',
+            contextId: 'inventory',
+            appId: 'manufacturing'
+          },
+          {
+            title: 'Production Schedule',
+            url: '/dashboard/manufacturing/reports/schedule',
+            contextId: 'inventory',
+            appId: 'manufacturing'
+          }
+        ]
+      }
+    ]
+  },
+  {
+    title: 'PLM',
+    url: '/dashboard/apps/plm',
+    icon: 'settings',
+    shortcut: ['p', 'l'],
+    contextId: 'inventory',
+    appId: 'plm',
+    priority: 42,
+    items: [
+      {
+        title: 'Products',
+        url: '/dashboard/apps/plm?view=products',
+        contextId: 'inventory',
+        appId: 'plm',
+      },
+      {
+        title: 'Engineering',
+        url: '/dashboard/plm/engineer',
+        contextId: 'inventory',
+        appId: 'plm',
+      },
+      {
+        title: 'Change Management',
+        url: '/dashboard/plm/changes',
+        contextId: 'inventory',
+        appId: 'plm',
+        items: [
+          {
+            title: 'Change Requests',
+            url: '/dashboard/plm/changes/requests',
+            contextId: 'inventory',
+            appId: 'plm'
+          },
+          {
+            title: 'Change Orders',
+            url: '/dashboard/plm/changes/orders',
+            contextId: 'inventory',
+            appId: 'plm'
+          },
+          {
+            title: 'Implementation',
+            url: '/dashboard/plm/changes/implementation',
+            contextId: 'inventory',
+            appId: 'plm'
+          }
+        ]
+      },
+      {
+        title: 'Documentation',
+        url: '/dashboard/plm/docs',
+        contextId: 'inventory',
+        appId: 'plm',
+      },
+      {
+        title: 'Quality',
+        url: '/dashboard/plm/quality',
+        contextId: 'inventory',
+        appId: 'plm',
+      }
+    ]
+  },
+  {
+    title: 'Purchase',
+    url: '/dashboard/apps/purchase',
+    icon: 'product',
+    shortcut: ['p', 'u'],
+    contextId: 'inventory',
+    appId: 'purchase',
+    priority: 43,
+    items: [
+      {
+        title: 'Requests',
+        url: '/dashboard/apps/purchase?view=requests',
+        contextId: 'inventory',
+        appId: 'purchase',
+      },
+      {
+        title: 'Orders',
+        url: '/dashboard/purchase/orders',
+        contextId: 'inventory',
+        appId: 'purchase',
+        items: [
+          {
+            title: 'Request for Quotation',
+            url: '/dashboard/purchase/orders/rfq',
+            contextId: 'inventory',
+            appId: 'purchase'
+          },
+          {
+            title: 'Purchase Orders',
+            url: '/dashboard/purchase/orders/po',
+            contextId: 'inventory',
+            appId: 'purchase'
+          },
+          {
+            title: 'Blanket Orders',
+            url: '/dashboard/purchase/orders/blanket',
+            contextId: 'inventory',
+            appId: 'purchase'
+          }
+        ]
+      },
+      {
+        title: 'Receipts',
+        url: '/dashboard/purchase/receipts',
+        contextId: 'inventory',
+        appId: 'purchase',
+      },
+      {
+        title: 'Vendors',
+        url: '/dashboard/purchase/vendors',
+        contextId: 'inventory',
+        appId: 'purchase',
+        items: [
+          {
+            title: 'All Vendors',
+            url: '/dashboard/purchase/vendors/all',
+            contextId: 'inventory',
+            appId: 'purchase'
+          },
+          {
+            title: 'Vendor Performance',
+            url: '/dashboard/purchase/vendors/performance',
+            contextId: 'inventory',
+            appId: 'purchase'
+          },
+          {
+            title: 'Agreements',
+            url: '/dashboard/purchase/vendors/agreements',
+            contextId: 'inventory',
+            appId: 'purchase'
+          }
+        ]
+      },
+      {
+        title: 'Reports',
+        url: '/dashboard/purchase/reports',
+        contextId: 'inventory',
+        appId: 'purchase',
+      }
+    ]
+  },
+  {
+    title: 'Maintenance',
+    url: '/dashboard/apps/maintenance',
+    icon: 'settings',
+    shortcut: ['m', 'n'],
+    contextId: 'inventory',
+    appId: 'maintenance',
+    priority: 44,
+    items: [
+      {
+        title: 'Equipment',
+        url: '/dashboard/apps/maintenance?view=equipment',
+        contextId: 'inventory',
+        appId: 'maintenance',
+      },
+      {
+        title: 'Requests',
+        url: '/dashboard/maintenance/requests',
+        contextId: 'inventory',
+        appId: 'maintenance',
+      },
+      {
+        title: 'Planned Maintenance',
+        url: '/dashboard/maintenance/planned',
+        contextId: 'inventory',
+        appId: 'maintenance',
+      },
+      {
+        title: 'Work Orders',
+        url: '/dashboard/maintenance/orders',
+        contextId: 'inventory',
+        appId: 'maintenance',
+      },
+      {
+        title: 'Reports',
+        url: '/dashboard/maintenance/reports',
+        contextId: 'inventory',
+        appId: 'maintenance',
+        items: [
+          {
+            title: 'Equipment History',
+            url: '/dashboard/maintenance/reports/history',
+            contextId: 'inventory',
+            appId: 'maintenance'
+          },
+          {
+            title: 'Downtime Analysis',
+            url: '/dashboard/maintenance/reports/downtime',
+            contextId: 'inventory',
+            appId: 'maintenance'
+          },
+          {
+            title: 'Cost Reports',
+            url: '/dashboard/maintenance/reports/cost',
+            contextId: 'inventory',
+            appId: 'maintenance'
+          }
+        ]
+      }
+    ]
+  },
+  {
+    title: 'Quality',
+    url: '/dashboard/apps/quality',
+    icon: 'check',
+    shortcut: ['q', 'a'],
+    contextId: 'inventory',
+    appId: 'quality',
+    priority: 45,
+    items: [
+      {
+        title: 'Quality Checks',
+        url: '/dashboard/apps/quality?view=checks',
+        contextId: 'inventory',
+        appId: 'quality',
+      },
+      {
+        title: 'Inspections',
+        url: '/dashboard/quality/inspect',
+        contextId: 'inventory',
+        appId: 'quality',
+      },
+      {
+        title: 'Issues',
+        url: '/dashboard/quality/issues',
+        contextId: 'inventory',
+        appId: 'quality',
+      },
+      {
+        title: 'Corrective Actions',
+        url: '/dashboard/quality/actions',
+        contextId: 'inventory',
+        appId: 'quality',
+      },
+      {
+        title: 'Reports',
+        url: '/dashboard/quality/reports',
+        contextId: 'inventory',
+        appId: 'quality',
+      }
+    ]
+  },
+  {
+    title: 'Project',
+    url: '/dashboard/apps/project',
+    icon: 'folder',
+    shortcut: ['p', 'j'],
+    contextId: 'services',
+    appId: 'project',
+    priority: 70,
+    items: [
+      {
+        title: 'All Projects',
+        url: '/dashboard/apps/project?view=all',
+        contextId: 'services',
+        appId: 'project',
+      },
+      {
+        title: 'Tasks',
+        url: '/dashboard/project/tasks',
+        contextId: 'services',
+        appId: 'project',
+        items: [
+          {
+            title: 'My Tasks',
+            url: '/dashboard/project/tasks/my',
+            contextId: 'services',
+            appId: 'project'
+          },
+          {
+            title: 'All Tasks',
+            url: '/dashboard/project/tasks/all',
+            contextId: 'services',
+            appId: 'project'
+          },
+          {
+            title: 'Kanban View',
+            url: '/dashboard/project/tasks/kanban',
+            contextId: 'services',
+            appId: 'project'
+          }
+        ]
+      },
+      {
+        title: 'Planning',
+        url: '/dashboard/project/plan',
+        contextId: 'services',
+        appId: 'project',
+        items: [
+          {
+            title: 'Gantt Chart',
+            url: '/dashboard/project/plan/gantt',
+            contextId: 'services',
+            appId: 'project'
+          },
+          {
+            title: 'Milestones',
+            url: '/dashboard/project/plan/milestones',
+            contextId: 'services',
+            appId: 'project'
+          },
+          {
+            title: 'Timeline',
+            url: '/dashboard/project/plan/timeline',
+            contextId: 'services',
+            appId: 'project'
+          }
+        ]
+      },
+      {
+        title: 'Resources',
+        url: '/dashboard/project/resources',
+        contextId: 'services',
+        appId: 'project',
+      },
+      {
+        title: 'Reports',
+        url: '/dashboard/project/reports',
+        contextId: 'services',
+        appId: 'project',
+        items: [
+          {
+            title: 'Project Status',
+            url: '/dashboard/project/reports/status',
+            contextId: 'services',
+            appId: 'project'
+          },
+          {
+            title: 'Time Tracking',
+            url: '/dashboard/project/reports/time',
+            contextId: 'services',
+            appId: 'project'
+          },
+          {
+            title: 'Budget vs Actual',
+            url: '/dashboard/project/reports/budget',
+            contextId: 'services',
+            appId: 'project'
+          }
+        ]
+      }
+    ]
+  },
+  {
+    title: 'Timesheets',
+    url: '/dashboard/apps/timesheets',
+    icon: 'dashboard',
+    shortcut: ['t', 's'],
+    contextId: 'services',
+    appId: 'timesheets',
+    priority: 71,
+    items: [
+      {
+        title: 'My Timesheets',
+        url: '/dashboard/apps/timesheets?view=my',
+        contextId: 'services',
+        appId: 'timesheets',
+      },
+      {
+        title: 'All Timesheets',
+        url: '/dashboard/timesheets/all',
+        contextId: 'services',
+        appId: 'timesheets',
+      },
+      {
+        title: 'Validation',
+        url: '/dashboard/timesheets/validate',
+        contextId: 'services',
+        appId: 'timesheets',
+      },
+      {
+        title: 'Reports',
+        url: '/dashboard/timesheets/reports',
+        contextId: 'services',
+        appId: 'timesheets',
+        items: [
+          {
+            title: 'By Employee',
+            url: '/dashboard/timesheets/reports/employee',
+            contextId: 'services',
+            appId: 'timesheets'
+          },
+          {
+            title: 'By Project',
+            url: '/dashboard/timesheets/reports/project',
+            contextId: 'services',
+            appId: 'timesheets'
+          },
+          {
+            title: 'By Client',
+            url: '/dashboard/timesheets/reports/client',
+            contextId: 'services',
+            appId: 'timesheets'
+          }
+        ]
+      },
+      {
+        title: 'Configuration',
+        url: '/dashboard/timesheets/config',
+        contextId: 'services',
+        appId: 'timesheets',
+      }
+    ]
+  },
+  {
+    title: 'Field Service',
+    url: '/dashboard/apps/field-service',
+    icon: 'file',
+    shortcut: ['f', 's'],
+    contextId: 'services',
+    appId: 'field-service',
+    priority: 72,
+    items: [
+      {
+        title: 'Work Orders',
+        url: '/dashboard/apps/field-service?view=orders',
+        contextId: 'services',
+        appId: 'field-service',
+        items: [
+          {
+            title: 'New Orders',
+            url: '/dashboard/field-service/orders/new',
+            contextId: 'services',
+            appId: 'field-service'
+          },
+          {
+            title: 'Scheduled',
+            url: '/dashboard/field-service/orders/scheduled',
+            contextId: 'services',
+            appId: 'field-service'
+          },
+          {
+            title: 'Completed',
+            url: '/dashboard/field-service/orders/completed',
+            contextId: 'services',
+            appId: 'field-service'
+          }
+        ]
+      },
+      {
+        title: 'Technicians',
+        url: '/dashboard/field-service/techs',
+        contextId: 'services',
+        appId: 'field-service',
+      },
+      {
+        title: 'Planning',
+        url: '/dashboard/field-service/plan',
+        contextId: 'services',
+        appId: 'field-service',
+        items: [
+          {
+            title: 'Dispatch Board',
+            url: '/dashboard/field-service/plan/dispatch',
+            contextId: 'services',
+            appId: 'field-service'
+          },
+          {
+            title: 'Calendar View',
+            url: '/dashboard/field-service/plan/calendar',
+            contextId: 'services',
+            appId: 'field-service'
+          },
+          {
+            title: 'Map View',
+            url: '/dashboard/field-service/plan/map',
+            contextId: 'services',
+            appId: 'field-service'
+          }
+        ]
+      },
+      {
+        title: 'Products',
+        url: '/dashboard/field-service/products',
+        contextId: 'services',
+        appId: 'field-service',
+      },
+      {
+        title: 'Reports',
+        url: '/dashboard/field-service/reports',
+        contextId: 'services',
+        appId: 'field-service',
+      }
+    ]
+  },
+  {
+    title: 'Helpdesk',
+    url: '/dashboard/apps/helpdesk',
+    icon: 'help',
+    shortcut: ['h', 'd'],
+    contextId: 'services',
+    appId: 'helpdesk',
+    priority: 73,
+    items: [
+      {
+        title: 'Open Tickets',
+        url: '/dashboard/apps/helpdesk?view=open',
+        contextId: 'services',
+        appId: 'helpdesk',
+      },
+      {
+        title: 'All Tickets',
+        url: '/dashboard/helpdesk/all',
+        contextId: 'services',
+        appId: 'helpdesk',
+        items: [
+          {
+            title: 'By Priority',
+            url: '/dashboard/helpdesk/all/priority',
+            contextId: 'services',
+            appId: 'helpdesk'
+          },
+          {
+            title: 'By Status',
+            url: '/dashboard/helpdesk/all/status',
+            contextId: 'services',
+            appId: 'helpdesk'
+          },
+          {
+            title: 'By Category',
+            url: '/dashboard/helpdesk/all/category',
+            contextId: 'services',
+            appId: 'helpdesk'
+          }
+        ]
+      },
+      {
+        title: 'Teams',
+        url: '/dashboard/helpdesk/teams',
+        contextId: 'services',
+        appId: 'helpdesk',
+      },
+      {
+        title: 'Knowledge Base',
+        url: '/dashboard/helpdesk/knowledge',
+        contextId: 'services',
+        appId: 'helpdesk',
+        items: [
+          {
+            title: 'Articles',
+            url: '/dashboard/helpdesk/knowledge/articles',
+            contextId: 'services',
+            appId: 'helpdesk'
+          },
+          {
+            title: 'Categories',
+            url: '/dashboard/helpdesk/knowledge/categories',
+            contextId: 'services',
+            appId: 'helpdesk'
+          },
+          {
+            title: 'Search Analytics',
+            url: '/dashboard/helpdesk/knowledge/search',
+            contextId: 'services',
+            appId: 'helpdesk'
+          }
+        ]
+      },
+      {
+        title: 'Reports',
+        url: '/dashboard/helpdesk/reports',
+        contextId: 'services',
+        appId: 'helpdesk',
+      }
+    ]
+  },
+  {
+    title: 'Planning',
+    url: '/dashboard/apps/planning',
+    icon: 'dashboard',
+    shortcut: ['p', 'l'],
+    contextId: 'services',
+    appId: 'planning',
+    priority: 74,
+    items: [
+      {
+        title: 'Schedule',
+        url: '/dashboard/apps/planning?view=schedule',
+        contextId: 'services',
+        appId: 'planning',
+      },
+      {
+        title: 'Resources',
+        url: '/dashboard/planning/resources',
+        contextId: 'services',
+        appId: 'planning',
+        items: [
+          {
+            title: 'People',
+            url: '/dashboard/planning/resources/people',
+            contextId: 'services',
+            appId: 'planning'
+          },
+          {
+            title: 'Equipment',
+            url: '/dashboard/planning/resources/equipment',
+            contextId: 'services',
+            appId: 'planning'
+          },
+          {
+            title: 'Rooms',
+            url: '/dashboard/planning/resources/rooms',
+            contextId: 'services',
+            appId: 'planning'
+          }
+        ]
+      },
+      {
+        title: 'Shifts',
+        url: '/dashboard/planning/shifts',
+        contextId: 'services',
+        appId: 'planning',
+      },
+      {
+        title: 'Absences',
+        url: '/dashboard/planning/absences',
+        contextId: 'services',
+        appId: 'planning',
+      },
+      {
+        title: 'Reports',
+        url: '/dashboard/planning/reports',
+        contextId: 'services',
+        appId: 'planning',
+      }
+    ]
+  },
+  {
+    title: 'Appointments',
+    url: '/dashboard/apps/appointments',
+    icon: 'dashboard',
+    shortcut: ['a', 'p'],
+    contextId: 'services',
+    appId: 'appointments',
+    priority: 75,
+    items: [
+      {
+        title: 'Calendar',
+        url: '/dashboard/apps/appointments?view=calendar',
+        contextId: 'services',
+        appId: 'appointments',
+      },
+      {
+        title: 'Schedule',
+        url: '/dashboard/appointments/schedule',
+        contextId: 'services',
+        appId: 'appointments',
+      },
+      {
+        title: 'Reminders',
+        url: '/dashboard/appointments/reminders',
+        contextId: 'services',
+        appId: 'appointments',
+      },
+      {
+        title: 'Resources',
+        url: '/dashboard/appointments/resources',
+        contextId: 'services',
+        appId: 'appointments',
+        items: [
+          {
+            title: 'Staff',
+            url: '/dashboard/appointments/resources/staff',
+            contextId: 'services',
+            appId: 'appointments'
+          },
+          {
+            title: 'Rooms',
+            url: '/dashboard/appointments/resources/rooms',
+            contextId: 'services',
+            appId: 'appointments'
+          },
+          {
+            title: 'Equipment',
+            url: '/dashboard/appointments/resources/equipment',
+            contextId: 'services',
+            appId: 'appointments'
+          }
+        ]
+      },
+      {
+        title: 'Reports',
+        url: '/dashboard/appointments/reports',
+        contextId: 'services',
+        appId: 'appointments',
       }
     ]
   }
