@@ -1,8 +1,84 @@
-# Mixcore Documentation
+# Mixcore Migration Documentation
 
-This directory contains the official documentation for the Mixcore React migration project.
+Welcome to the Mixcore Migration Documentation. This repository contains the official documentation for the Mixcore CMS migration project from AngularJS to Next.js.
+
+## Quick Navigation
+
+- [Migration Guide](MIGRATION-GUIDE.md) - The main entry point with migration overview and status
+- [Implementation Plan](tracking/IMPLEMENTATION-PLAN.md) - Detailed phase-by-phase migration plan
+- [Progress Tracker](tracking/PROGRESS-TRACKER.md) - Component and feature status tracking
+
+## Migration Status
+
+- **Current Phase**: Phase 2 - Content Management
+- **Overall Progress**: ~45% Complete
+- **Current Focus**: App Contexts, Media Management, MixDB Form Builder
+
+### Recently Completed
+
+- ✅ App Contexts implementation
+- ✅ Projects mini-application with Gantt chart
+- ✅ Task management with Kanban and Calendar views
+- ✅ Authentication service with token management
+- ✅ MixDB Data Explorer and API documentation
+
+### In Progress
+
+- 🔄 Media Management implementation
+- 🔄 Post Categories and Tags
+- 🔄 MixDB Form Builder
+
+## App Contexts Architecture
+
+The App Contexts architecture in Mixcore allows for modular application functionality that can be enabled or disabled based on tenant needs. Each context represents a different functional area of the application:
+
+### Available Contexts
+
+| Context | Description | Status |
+|---------|-------------|--------|
+| Website | Website, eCommerce, Blog, Forum, Chat, eLearning | ✅ Complete |
+| Sales | CRM, Sales, Point of Sale, Subscriptions, Rental | ✅ Complete |
+| Finance | Accounting, Invoicing, Expenses, Spreadsheets, Documents | ✅ Complete |
+| Supply Chain | Inventory, Manufacturing, PLM, Purchase, Maintenance | ✅ Complete |
+| HR | Employees, Recruitment, Time Off, Appraisals, Referrals | ✅ Complete |
+| Marketing | Social, Email, SMS, Events, Automation, Surveys | ✅ Complete |
+| Services | Project, Timesheets, Field Service, Helpdesk, Planning | ✅ Complete |
+| Productivity | Discuss, Approvals, IoT, VoIP, Knowledge, WhatsApp | ✅ Complete |
+| Customization | Studio and app customization | ✅ Complete |
+
+### Implementation Details
+
+The App Contexts functionality is implemented through:
+
+1. **AppContextProvider** - A React context provider that manages the active application state
+2. **Settings UI** - Admin interface for enabling/disabling contexts globally
+3. **Tenant Configuration** - Per-tenant context settings
+4. **Context-Aware Navigation** - Navigation that adapts based on enabled contexts
+
+### Usage Example
+
+```tsx
+// Using the App Context in a component
+import { useAppContext } from '@/providers/AppContextProvider';
+
+function MyComponent() {
+  const { activeAppId, setActiveApp, isAppActive } = useAppContext();
+  
+  return (
+    <div>
+      {isAppActive('cms') && <CmsFeatures />}
+      {isAppActive('mixdb') && <MixDbFeatures />}
+      <button onClick={() => setActiveApp('projects')}>
+        Switch to Projects
+      </button>
+    </div>
+  );
+}
+```
 
 ## Documentation Structure
+
+We've organized the documentation into a clear, structured format to make it easier to navigate and find the information you need.
 
 ```
 docs/
@@ -85,26 +161,30 @@ When contributing to the documentation:
 
 ## Getting Started
 
-If you're new to the project, start with the [Migration Guide](./MIGRATION-GUIDE.md), which provides an overview of the migration process and current status.
+If you're new to the project or returning after a break, start with these documents:
+
+1. [Migration Guide](MIGRATION-GUIDE.md) - Overview of the migration project and current status
+2. [Implementation Plan](tracking/IMPLEMENTATION-PLAN.md) - Current phase and scheduled tasks
+3. [Progress Tracker](tracking/PROGRESS-TRACKER.md) - Detailed status of components and features
 
 ## Development Workflow
 
 When working on the migration, follow these steps:
 
-1. Check the [Progress Tracker](./tracking/PROGRESS-TRACKER.md) to understand what's been completed and what's next
-2. Consult the [Component Registry](./reference/COMPONENT-REGISTRY.md) to see what components are available for reuse
-3. Review the [API Guide](./guides/API-GUIDE.md) if implementing API integration
-4. Follow the [Coding Standards](./guides/CODING-STANDARDS.md) for implementation
-5. Use the [AngularJS-to-React Patterns](./guides/ANGULAR-TO-REACT-PATTERNS.md) for converting existing components
+1. Check the [Progress Tracker](tracking/PROGRESS-TRACKER.md) to understand what's been completed and what's next
+2. Consult the [Component Registry](reference/COMPONENT-REGISTRY.md) to see what components are available for reuse
+3. Review the [API Guide](guides/API-GUIDE.md) if implementing API integration
+4. Follow the [Coding Standards](guides/CODING-STANDARDS.md) for implementation
+5. Use the [AngularJS-to-React Patterns](guides/ANGULAR-TO-REACT-PATTERNS.md) for converting existing components
 6. Update the relevant tracking documents as you complete work
 
 ## Updating Documentation
 
 As the project evolves, it's important to keep this documentation up to date:
 
-1. Update the [Progress Tracker](./tracking/PROGRESS-TRACKER.md) when components or features are completed
-2. Add new components to the [Component Registry](./reference/COMPONENT-REGISTRY.md)
-3. Update the [Implementation Plan](./tracking/IMPLEMENTATION-PLAN.md) as phases are completed
+1. Update the [Progress Tracker](tracking/PROGRESS-TRACKER.md) when components or features are completed
+2. Add new components to the [Component Registry](reference/COMPONENT-REGISTRY.md)
+3. Update the [Implementation Plan](tracking/IMPLEMENTATION-PLAN.md) as phases are completed
 
 ## Additional Resources
 
