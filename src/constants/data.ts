@@ -317,6 +317,17 @@ export const personas = [
 
 // Extended navigation items with context, app and persona information
 export const contextNavItems: NavItem[] = [
+  // My Feeds - Available in all contexts for internal company social engagement
+  {
+    title: 'My Feeds',
+    url: '/dashboard/feeds',
+    icon: 'post',
+    isActive: false,
+    shortcut: ['m', 'f'],
+    items: [],
+    priority: -1 // Lower priority to appear above Dashboard
+  },
+  
   // Dashboard - Available in all contexts
   {
     title: 'Dashboard',
