@@ -128,51 +128,52 @@ export function TableDetail({ tableName, tableId, onBackClick }: TableDetailProp
   }, [tableId, activeDbContext.id]);
 
   useEffect(() => {
-    // In a real app, this would fetch data from an API endpoint with pagination
+    // Fetch records from API
     const fetchRecords = async () => {
       try {
         setIsLoadingRecords(true);
         
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 600));
+        // Prepare request body
+        const requestBody = {
+          pageSize: recordsPerPage,
+          pageIndex: currentPage - 1, // API uses 0-based indexing
+          status: "Published",
+          sortBy: "id",
+          direction: "Desc",
+          fromDate: null,
+          toDate: null,
+          keyword: searchQuery,
+          searchColumns: "",
+          compareOperator: "Like",
+          conjunction: "Or",
+          mixDatabaseName: table?.systemName || '',
+          mixDatabaseId: tableId.toString(),
+          filterType: "contain",
+          isGroup: false,
+          queries: []
+        };
         
-        let mockRecords: TableRecord[] = [];
+        // Make API request
+        const response = await fetch(`https://mixcore.net/api/v2/rest/mix-portal/mix-db/${table?.systemName}/filter`, {
+          method: 'POST',
+          headers: {
+            "accept": "application/json, text/plain, */*",
+            "content-type": "application/json",
+            "authorization": `Bearer ${localStorage.getItem('authToken') || ''}`,
+          },
+          body: JSON.stringify(requestBody)
+        });
         
-        // Generate different mock records based on table name only
-        if (tableName === 'analytics_events') {
-          mockRecords = [
-            { event_id: 'evt123', user_id: 'user456', event_type: 'page_view', timestamp: '2023-10-15T12:34:56Z', data: '{"page":"/home"}' },
-            { event_id: 'evt124', user_id: 'user789', event_type: 'click', timestamp: '2023-10-15T12:35:22Z', data: '{"element":"button-signup"}' },
-            { event_id: 'evt125', user_id: 'user456', event_type: 'form_submit', timestamp: '2023-10-15T12:36:10Z', data: '{"form":"contact"}' },
-            { event_id: 'evt126', user_id: 'user123', event_type: 'page_view', timestamp: '2023-10-15T12:38:42Z', data: '{"page":"/pricing"}' },
-            { event_id: 'evt127', user_id: 'user456', event_type: 'click', timestamp: '2023-10-15T12:39:15Z', data: '{"element":"pricing-basic"}' },
-          ];
-        } else if (tableName === 'legacy_customers') {
-          mockRecords = [
-            { customer_id: 'CUST001', name: 'Old Corp Inc.', email: 'contact@oldcorp.com', region: 'West', signup_date: '2020-03-15' },
-            { customer_id: 'CUST002', name: 'Legacy Systems LLC', email: 'info@legacysystems.com', region: 'East', signup_date: '2020-04-22' },
-            { customer_id: 'CUST003', name: 'Vintage Tech', email: 'support@vintagetech.com', region: 'North', signup_date: '2020-05-10' },
-            { customer_id: 'CUST004', name: 'Retro Solutions', email: 'hello@retrosolutions.com', region: 'South', signup_date: '2020-06-18' },
-            { customer_id: 'CUST005', name: 'Classic Data Inc.', email: 'info@classicdata.com', region: 'West', signup_date: '2020-07-05' },
-          ];
-        } else if (tableName === 'demo_customers') {
-          mockRecords = [
-            { id: 'uuid-1', name: 'John Doe', email: 'john@example.com', status: 'active', created_at: '2023-10-01T08:30:00Z' },
-            { id: 'uuid-2', name: 'Jane Smith', email: 'jane@example.com', status: 'active', created_at: '2023-10-02T09:15:00Z' },
-            { id: 'uuid-3', name: 'Bob Johnson', email: 'bob@example.com', status: 'inactive', created_at: '2023-10-03T10:45:00Z' },
-            { id: 'uuid-4', name: 'Alice Williams', email: 'alice@example.com', status: 'active', created_at: '2023-10-04T11:20:00Z' },
-            { id: 'uuid-5', name: 'Chris Miller', email: 'chris@example.com', status: 'pending', created_at: '2023-10-05T12:10:00Z' },
-          ];
-        } else {
-          // Default records
-          mockRecords = Array(5).fill(0).map((_, i) => ({
-            id: `id-${i + 1}`,
-            name: `Item ${i + 1}`,
-            created_at: new Date(Date.now() - i * 86400000).toISOString()
-          }));
+        if (!response.ok) {
+          throw new Error(`Failed to fetch records: ${response.status}`);
         }
-
-        setRecords(mockRecords);
+        
+        const data = await response.json();
+        
+        // Set records from API response
+        if (data && data.items) {
+          setRecords(data.items);
+        }
       } catch (error) {
         console.error('Error fetching records:', error);
       } finally {
@@ -183,7 +184,7 @@ export function TableDetail({ tableName, tableId, onBackClick }: TableDetailProp
     if (!isLoading && table) {
       fetchRecords();
     }
-  }, [tableName, currentPage, isLoading, table]);
+  }, [tableName, currentPage, isLoading, table, tableId, searchQuery, recordsPerPage]);
 
   const getDbTypeLabel = (type: string) => {
     switch (type) {
