@@ -1,80 +1,69 @@
-# MixDB Mini-App
+# MixDB - Modern Database Management
 
-MixDB is a powerful database management system for Mixcore that allows users to create, manage, and query database schemas and data.
+MixDB is a modern, intuitive database management micro-app for Mixcore. It allows you to manage multiple database connections, create and modify tables, execute SQL queries, and manage data with a UI inspired by tools like Supabase and Firebase.
 
 ## Features
 
-- Create and manage database tables and schemas
-- Define custom fields with various data types
-- Import/export data in multiple formats
-- Visual query builder for complex queries
-- Data grid for viewing and editing records
-- Role-based access control
+- **Multiple Database Support**: Connect to PostgreSQL, MySQL, SQLite, SQL Server, Oracle, and MongoDB databases
+- **Table Management**: Create, edit, delete, and clone database tables with an intuitive UI
+- **Data Operations**: Add, edit, filter, sort, and delete data records
+- **SQL Editor**: Execute custom SQL queries with syntax highlighting and result preview
+- **Import/Export**: Import data from various formats and export query results
+- **Modern UI**: Clean, responsive interface with dark mode support
 
 ## Getting Started
 
-### Prerequisites
+MixDB is available in the Mixcore dashboard under the "Apps" section. To start using MixDB:
 
-- Mixcore Portal with Next.js
-- Proper authentication setup
-
-### Usage
-
-1. Navigate to the MixDB app from the dashboard
-2. Create a new database table or select an existing one
-3. Define fields and relationships
-4. Start adding or importing data
+1. Navigate to Dashboard > Apps > MixDB
+2. Connect to your database or use the default Mixcore database
+3. Start managing your database tables and data
 
 ## Development
 
-### Directory Structure
+This micro-app is built using:
+
+- React and Next.js for the frontend framework
+- shadcn/ui for the UI components
+- Context API for state management
+- Dynamic imports for optimal loading
+
+### Project Structure
 
 ```
 mixdb/
-├── components/        # UI components
-├── config/            # Configuration files
-├── hooks/             # Custom React hooks
-├── layouts/           # Layout components
-├── lib/               # Utility functions
-├── app-globals.css    # App-specific styles
-├── app-loader.ts      # Initialization logic
-├── index.tsx          # Main entry point
-└── README.md          # Documentation
+├── app-globals.css         # App-specific global styles
+├── app-loader.ts           # Initialization logic
+├── components/             # UI components
+│   ├── DbContextSelector.tsx   # Database connection selector
+│   ├── TableDetail.tsx         # Table details and data view
+│   ├── TableList.tsx           # Database tables list
+│   └── QueryEditor.tsx         # SQL query editor
+├── contexts/               # React contexts
+│   └── DatabaseContext.tsx     # Database state management
+├── hooks/                  # Custom React hooks
+├── index.tsx               # Main app component
+├── layouts/                # Layout components
+│   └── AppShell.tsx            # App shell layout
+└── page.tsx                # Next.js page component
 ```
 
-### Key Components
+## Inspiration
 
-- `TableList`: Displays all available tables
-- `TableEditor`: UI for creating/editing table schema
-- `DataGrid`: Component for viewing and editing table data
-- `QueryBuilder`: Visual interface for building queries
+The UI and functionality of MixDB were inspired by modern database management tools like:
 
-### Adding New Features
+- Supabase
+- Firebase
+- Retool
+- Airtable
+- Notion databases
 
-1. Create new components in the `components/` directory
-2. Add necessary hooks and utilities
-3. Update the main UI in `index.tsx`
-4. Update documentation
+## Migrated from AngularJS
 
-## Configuration
+This app is a modern rewrite of the following AngularJS components:
 
-The app configuration is stored in `config/app.config.json` and includes:
+- mixdb-context
+- mix-database
+- mix-database-data
 
-- App metadata
-- Permissions
-- Integration settings
-- Default configuration
-
-## API Integration
-
-MixDB uses the Mixcore API for data operations. Key endpoints:
-
-- `GET /api/v2/mixdb/tables`: List all tables
-- `POST /api/v2/mixdb/tables`: Create a new table
-- `GET /api/v2/mixdb/tables/{id}/data`: Get table data
-- `POST /api/v2/mixdb/tables/{id}/data`: Add or update records
-
-## Related Documentation
-
-- [Mixcore API Guide](../../../docs/guides/API-GUIDE.md)
-- [Coding Standards](../../../docs/guides/CODING-STANDARDS.md) 
+The new implementation follows Mixcore migration best practices and adopts modern React patterns. 

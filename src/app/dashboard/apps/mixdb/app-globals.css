@@ -19,4 +19,80 @@
 .dark .mixdb-app-shell {
   --mixdb-primary: hsl(215, 100%, 60%);
   --mixdb-secondary: hsl(280, 90%, 60%);
+}
+
+/* MixDB App Global Styles */
+
+/* Custom scrollbar for MixDB components */
+.mixdb-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.mixdb-scrollbar::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+  border-radius: 4px;
+}
+
+.mixdb-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 4px;
+}
+
+.mixdb-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* SQL Editor customizations */
+.mixdb-sql-editor .cm-editor {
+  border-radius: 0.5rem;
+  border: 1px solid hsl(var(--border));
+  background-color: hsl(var(--background));
+}
+
+.mixdb-sql-editor .cm-focused {
+  outline: 2px solid hsl(var(--ring) / 0.3);
+  outline-offset: 2px;
+}
+
+/* Table data grid styles */
+.mixdb-data-grid .rdg {
+  border-radius: 0.5rem;
+  border: 1px solid hsl(var(--border));
+  overflow: hidden;
+}
+
+.mixdb-data-grid .rdg-header-row {
+  background-color: hsl(var(--muted) / 0.5);
+}
+
+.mixdb-data-grid .rdg-cell {
+  border-color: hsl(var(--border));
+}
+
+/* Database context indicator */
+.db-context-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: hsl(var(--primary) / 0.1);
+  color: hsl(var(--primary));
+}
+
+.db-context-indicator .status-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+}
+
+.db-context-indicator .status-dot.connected {
+  background-color: hsl(var(--success));
+}
+
+.db-context-indicator .status-dot.disconnected {
+  background-color: hsl(var(--destructive));
 } 

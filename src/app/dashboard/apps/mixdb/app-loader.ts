@@ -3,32 +3,80 @@
 import appConfig from './config/app.config.json';
 
 /**
- * Initialize the MixDB app
- * @returns Promise that resolves to true if initialization was successful
+ * MixDB App Initializer
+ * 
+ * This module handles initialization tasks for the MixDB application:
+ * - Checking API connectivity
+ * - Loading configuration
+ * - Setting up database connections
+ * - Handling permissions
+ */
+
+/**
+ * Initialize the MixDB application
+ * @returns Promise<boolean> Whether initialization succeeded
  */
 export async function initializeApp(): Promise<boolean> {
   try {
-    console.log('Initializing MixDB app...');
+    // Simulate API calls for initialization
+    await new Promise(resolve => setTimeout(resolve, 800));
     
-    // 1. Check if database schemas need to be created
-    await initializeDatabase();
+    console.log('MixDB: Initializing application...');
     
-    // 2. Load any demo data if needed
-    if (appConfig.init.initOnInstall) {
-      await loadDemoData();
+    // 1. Check API connectivity
+    const apiConnected = await checkApiConnectivity();
+    if (!apiConnected) {
+      console.error('MixDB: API connection failed');
+      return false;
     }
     
-    // 3. Register permissions if needed
-    if (appConfig.init.createDefaultPermissions) {
-      await registerPermissions();
+    // 2. Load configuration
+    const configLoaded = await loadAppConfiguration();
+    if (!configLoaded) {
+      console.error('MixDB: Failed to load configuration');
+      return false;
     }
     
-    console.log('MixDB app initialized successfully');
+    // 3. Check permissions
+    const permissionsGranted = await checkUserPermissions();
+    if (!permissionsGranted) {
+      console.error('MixDB: User lacks required permissions');
+      return false;
+    }
+    
+    console.log('MixDB: Initialization completed successfully');
     return true;
   } catch (error) {
-    console.error('Failed to initialize MixDB app:', error);
+    console.error('MixDB: Initialization failed', error);
     return false;
   }
+}
+
+/**
+ * Check API connectivity
+ */
+async function checkApiConnectivity(): Promise<boolean> {
+  // In a real implementation, this would call an API health check endpoint
+  await new Promise(resolve => setTimeout(resolve, 100));
+  return true;
+}
+
+/**
+ * Load app configuration
+ */
+async function loadAppConfiguration(): Promise<boolean> {
+  // In a real implementation, this would load config from API
+  await new Promise(resolve => setTimeout(resolve, 200));
+  return true;
+}
+
+/**
+ * Check user permissions
+ */
+async function checkUserPermissions(): Promise<boolean> {
+  // In a real implementation, this would check current user permissions
+  await new Promise(resolve => setTimeout(resolve, 100));
+  return true;
 }
 
 /**

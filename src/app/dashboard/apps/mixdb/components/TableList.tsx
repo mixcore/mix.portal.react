@@ -3,11 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, UploadCloud, Download, Search, Database, Settings, ExternalLink } from 'lucide-react';
+import { PlusCircle, UploadCloud, Download, Search, Database, Settings, ChevronRight, ExternalLink, Trash2, Copy, Edit } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useDatabase } from '../contexts/DatabaseContext';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface TableItem {
   id: string;
@@ -162,20 +165,29 @@ export function TableList({ onTableClick }: TableListProps) {
   };
 
   return (
-    <div className="table-list-container space-y-6">
-      <Card>
+    <div className="space-y-6">
+      {/* Database Context Info Card */}
+      <Card className="border-0 shadow-sm bg-gradient-to-r from-primary/5 to-primary/10">
         <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2">
-            <Database className="h-5 w-5 text-primary" />
-            {activeDbContext.name}
-          </CardTitle>
-          <CardDescription>
-            {getDbTypeLabel(activeDbContext.type)} database
-            {activeDbContext.isDefault && " (default)"}
-          </CardDescription>
+          <div className="flex justify-between items-center">
+            <div>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <Database className="h-5 w-5 text-primary" />
+                {activeDbContext.name}
+              </CardTitle>
+              <CardDescription className="text-sm">
+                {getDbTypeLabel(activeDbContext.type)} database
+                {activeDbContext.isDefault && " (default)"}
+              </CardDescription>
+            </div>
+            <Badge variant={activeDbContext.status === 'connected' ? 'outline' : 'destructive'} className="flex items-center gap-1">
+              <span className={`h-2 w-2 rounded-full ${activeDbContext.status === 'connected' ? 'bg-green-500' : 'bg-red-500'}`}></span>
+              {activeDbContext.status === 'connected' ? 'Connected' : 'Disconnected'}
+            </Badge>
+          </div>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2">
             <div>
               <div className="text-sm text-muted-foreground">Tables</div>
               <div className="text-2xl font-bold">{tables.length}</div>
@@ -185,175 +197,145 @@ export function TableList({ onTableClick }: TableListProps) {
               <div className="text-2xl font-bold">{totalRecords.toLocaleString()}</div>
             </div>
             <div>
-              <div className="text-sm text-muted-foreground">Status</div>
-              <div className="text-base font-medium mt-1 flex items-center">
-                <Badge variant={activeDbContext.status === 'connected' ? 'outline' : 'destructive'} className="flex items-center gap-1">
-                  <span className={`h-2 w-2 rounded-full ${activeDbContext.status === 'connected' ? 'bg-green-500' : 'bg-red-500'}`}></span>
-                  {activeDbContext.status === 'connected' ? 'Connected' : 'Disconnected'}
-                </Badge>
-              </div>
+              <div className="text-sm text-muted-foreground">Storage</div>
+              <div className="text-2xl font-bold">2.4 GB</div>
             </div>
           </div>
         </CardContent>
       </Card>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Database className="h-4 w-4 text-primary" />
-              Tables
-            </CardTitle>
-            <CardDescription>Database tables overview</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{tables.length}</div>
-            <div className="text-sm text-muted-foreground mt-1">
-              {systemTables} system, {customTables} custom
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
-                <path d="M3 3v18h18"></path>
-                <path d="M18.4 9a9 9 0 0 1-9.5 9.4"></path>
-                <path d="M8 10a14.3 14.3 0 0 1 5 8.5"></path>
-                <path d="M12 4a14.3 14.3 0 0 0 5 8.5"></path>
-                <path d="M21 3a9 9 0 0 1-9.5 9.4"></path>
-              </svg>
-              Records
-            </CardTitle>
-            <CardDescription>Total database records</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalRecords.toLocaleString()}</div>
-            <div className="text-sm text-muted-foreground mt-1">
-              Across all tables
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Settings className="h-4 w-4 text-primary" />
-              Storage
-            </CardTitle>
-            <CardDescription>Database storage usage</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">128 KB</div>
-            <div className="text-sm text-muted-foreground mt-1">
-              0.1% of quota
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-      
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-        <div className="flex items-center flex-1 max-w-md">
-          <div className="relative w-full">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Search tables..."
-              className="pl-9"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-        </div>
-        
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="gap-1">
-            <UploadCloud className="h-4 w-4" />
-            Import
-          </Button>
-          <Button variant="outline" size="sm" className="gap-1">
-            <Download className="h-4 w-4" />
-            Export
-          </Button>
-          <Button size="sm" className="gap-1">
-            <PlusCircle className="h-4 w-4" />
+      {/* Actions and Search Bar */}
+      <div className="flex flex-col sm:flex-row justify-between gap-4">
+        <div className="flex gap-2">
+          <Button className="bg-primary hover:bg-primary/90" size="sm">
+            <PlusCircle className="mr-2 h-4 w-4" />
             New Table
           </Button>
+          <Button variant="outline" size="sm">
+            <UploadCloud className="mr-2 h-4 w-4" />
+            Import
+          </Button>
+        </div>
+        <div className="relative">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Search tables..."
+            className="pl-8 w-full sm:w-[260px]"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
       </div>
       
-      <Card>
-        <CardHeader className="py-3 pb-0">
-          <CardTitle>Database Tables</CardTitle>
-          {activeDbContext.id !== 'default' && (
-            <CardDescription>
-              Tables in {activeDbContext.name} ({getDbTypeLabel(activeDbContext.type)})
-            </CardDescription>
-          )}
-        </CardHeader>
-        <CardContent>
+      {/* Tables List Card */}
+      <Card className="border">
+        <CardContent className="p-0">
           {isLoading ? (
-            <div className="py-8 text-center">
-              <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full mx-auto mb-2"></div>
-              <p>Loading tables...</p>
+            <div className="p-4 space-y-4">
+              <Skeleton className="h-16 w-full rounded-md" />
+              <Skeleton className="h-16 w-full rounded-md" />
+              <Skeleton className="h-16 w-full rounded-md" />
+            </div>
+          ) : filteredTables.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+              <Database className="h-12 w-12 text-muted-foreground mb-4 opacity-20" />
+              <h3 className="text-lg font-medium">No tables found</h3>
+              <p className="text-sm text-muted-foreground mt-1 mb-4">
+                {searchQuery ? `No tables matching "${searchQuery}"` : "This database doesn't have any tables yet"}
+              </p>
+              <Button>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Create a new table
+              </Button>
             </div>
           ) : (
-            <>
-              {filteredTables.length === 0 ? (
-                <div className="py-10 text-center">
-                  <p className="text-muted-foreground">No tables match your search</p>
-                </div>
-              ) : (
-                <div className="rounded-md border overflow-hidden">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Description</TableHead>
-                        <TableHead>Rows</TableHead>
-                        <TableHead>Created</TableHead>
-                        <TableHead>Type</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredTables.map((table) => (
-                        <TableRow 
-                          key={table.id}
-                          className="cursor-pointer hover:bg-muted"
-                          onClick={() => onTableClick(table.id)}
-                        >
-                          <TableCell className="font-medium">
-                            <div className="flex items-center">
-                              <Database className="h-4 w-4 mr-2 text-primary" />
-                              {table.displayName}
-                            </div>
-                          </TableCell>
-                          <TableCell>{table.description}</TableCell>
-                          <TableCell>{table.rowCount.toLocaleString()}</TableCell>
-                          <TableCell>{new Date(table.createdDate).toLocaleDateString()}</TableCell>
-                          <TableCell>
-                            {table.isSystem ? (
-                              <Badge variant="secondary">System</Badge>
-                            ) : (
-                              <Badge variant="outline">Custom</Badge>
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              )}
-            </>
+            <ScrollArea className="h-[480px]">
+              <Table>
+                <TableHeader className="bg-muted/40 sticky top-0">
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Records</TableHead>
+                    <TableHead className="hidden md:table-cell">Description</TableHead>
+                    <TableHead className="hidden lg:table-cell">Created</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredTables.map((table) => (
+                    <TableRow 
+                      key={table.id} 
+                      className="cursor-pointer hover:bg-muted/50"
+                      onClick={() => onTableClick(table.id)}
+                    >
+                      <TableCell className="font-medium">
+                        <div className="flex items-center">
+                          <div className="mr-2">
+                            <Database className="h-4 w-4 text-primary opacity-70" />
+                          </div>
+                          <div>
+                            <div className="font-medium text-sm">{table.displayName}</div>
+                            <div className="text-xs text-muted-foreground">{table.name}</div>
+                          </div>
+                          {table.isSystem && (
+                            <Badge variant="outline" className="ml-2 text-xs">System</Badge>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm font-medium">{table.rowCount.toLocaleString()}</div>
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        <div className="text-sm truncate max-w-xs">{table.description}</div>
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell">
+                        <div className="text-sm text-muted-foreground">
+                          {new Date(table.createdDate).toLocaleDateString()}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                            <Button variant="ghost" className="h-8 w-8 p-0" aria-label="Open menu">
+                              <Settings className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-[200px]">
+                            <DropdownMenuItem onClick={(e) => {
+                              e.stopPropagation();
+                              onTableClick(table.id);
+                            }}>
+                              <ExternalLink className="mr-2 h-4 w-4" />
+                              <span>View table</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+                              <Edit className="mr-2 h-4 w-4" />
+                              <span>Edit structure</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+                              <Download className="mr-2 h-4 w-4" />
+                              <span>Export data</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+                              <Copy className="mr-2 h-4 w-4" />
+                              <span>Duplicate</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={(e) => e.stopPropagation()} className="text-destructive focus:text-destructive">
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              <span>Delete table</span>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </ScrollArea>
           )}
         </CardContent>
-        <CardFooter className="py-3 text-xs text-muted-foreground border-t">
-          <div className="flex items-center gap-1">
-            <ExternalLink className="h-3 w-3" />
-            <span>Connected to {activeDbContext.name} ({getDbTypeLabel(activeDbContext.type)})</span>
-          </div>
-        </CardFooter>
       </Card>
     </div>
   );

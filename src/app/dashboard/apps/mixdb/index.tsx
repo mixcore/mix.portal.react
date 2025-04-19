@@ -8,6 +8,7 @@ import { QueryEditor } from './components/QueryEditor';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { initializeApp } from './app-loader';
 import { DatabaseProvider } from './contexts/DatabaseContext';
+import { Database, FileCode, Upload, Download, Settings, Grid3X3 } from 'lucide-react';
 import './app-globals.css';
 
 export interface MixDBAppProps {
@@ -86,8 +87,8 @@ export function MixDBApp(props: MixDBAppProps) {
       case 'detail':
         return selectedTableId ? (
           <TableDetail 
-            tableId={selectedTableId} 
-            onBack={handleBackToTables} 
+            tableName={selectedTableId} 
+            onBackClick={handleBackToTables} 
           />
         ) : (
           <div className="text-center py-10">
@@ -119,23 +120,46 @@ export function MixDBApp(props: MixDBAppProps) {
   return (
     <DatabaseProvider>
       <AppShell>
-        <div className="mb-6">
-          <Tabs 
-            defaultValue="tables" 
-            className="w-full"
-            value={activeView}
-            onValueChange={(value) => setActiveView(value as any)}
-          >
-            <TabsList className="mb-4">
-              <TabsTrigger value="tables">Tables</TabsTrigger>
-              <TabsTrigger value="query">SQL Editor</TabsTrigger>
-              <TabsTrigger value="import-export">Import/Export</TabsTrigger>
-              <TabsTrigger value="settings">Settings</TabsTrigger>
-            </TabsList>
-          </Tabs>
+        <div className="flex flex-col h-full">
+          <div className="border-b pb-2 mb-6">
+            <Tabs 
+              defaultValue="tables" 
+              className="w-full"
+              value={activeView}
+              onValueChange={(value) => setActiveView(value as any)}
+            >
+              <TabsList className="grid grid-cols-5 mb-4">
+                <TabsTrigger value="tables" className="flex items-center gap-2">
+                  <Database className="h-4 w-4" />
+                  <span className="hidden sm:inline">Tables</span>
+                </TabsTrigger>
+                <TabsTrigger value="query" className="flex items-center gap-2">
+                  <FileCode className="h-4 w-4" />
+                  <span className="hidden sm:inline">SQL Editor</span>
+                </TabsTrigger>
+                <TabsTrigger value="import-export" className="flex items-center gap-2">
+                  <div className="flex">
+                    <Upload className="h-4 w-4" />
+                    <Download className="h-4 w-4 -ml-1" />
+                  </div>
+                  <span className="hidden sm:inline">Import/Export</span>
+                </TabsTrigger>
+                <TabsTrigger value="storage" className="flex items-center gap-2">
+                  <Grid3X3 className="h-4 w-4" />
+                  <span className="hidden sm:inline">Storage</span>
+                </TabsTrigger>
+                <TabsTrigger value="settings" className="flex items-center gap-2">
+                  <Settings className="h-4 w-4" />
+                  <span className="hidden sm:inline">Settings</span>
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+          
+          <div className="flex-grow overflow-auto">
+            {renderContent()}
+          </div>
         </div>
-        
-        {renderContent()}
       </AppShell>
     </DatabaseProvider>
   );

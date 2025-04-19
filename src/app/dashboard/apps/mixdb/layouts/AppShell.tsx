@@ -1,39 +1,30 @@
 'use client';
 
 import React from 'react';
-import { DbContextSelector } from '../components/DbContextSelector';
+import { Card, CardContent } from '@/components/ui/card';
 import { useDatabase } from '../contexts/DatabaseContext';
-import { Loader2 } from 'lucide-react';
+import { DbContextSelector } from '../components/DbContextSelector';
 
 interface AppShellProps {
   children: React.ReactNode;
 }
 
 export function AppShell({ children }: AppShellProps) {
-  const { setActiveDbContext, isLoading } = useDatabase();
-
+  const { activeDbContext } = useDatabase();
+  
   return (
-    <div className="mixdb-app-shell w-full h-full flex flex-col">
-      <header className="mixdb-app-header border-b p-4">
+    <div className="flex flex-col h-full">
+      {/* Database selector header */}
+      <div className="bg-card border-b py-3 px-2 sm:px-6">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-semibold">MixDB</h1>
-            <DbContextSelector onContextChange={setActiveDbContext} />
-          </div>
-          <div className="flex items-center space-x-2">
-            {/* App-specific header elements */}
+          <div className="flex items-center">
+            <DbContextSelector />
           </div>
         </div>
-      </header>
-      <div className="mixdb-app-content flex-1 overflow-auto p-4 relative">
-        {isLoading && (
-          <div className="absolute inset-0 bg-background/80 flex items-center justify-center z-50">
-            <div className="flex flex-col items-center gap-2">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <p className="text-sm text-muted-foreground">Switching database context...</p>
-            </div>
-          </div>
-        )}
+      </div>
+      
+      {/* Main content area */}
+      <div className="flex-1 p-2 sm:p-6 overflow-auto">
         {children}
       </div>
     </div>

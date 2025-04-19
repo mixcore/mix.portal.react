@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useDatabase } from '../contexts/DatabaseContext';
 
 export interface DbContext {
   id: string;
@@ -24,11 +25,8 @@ export interface DbContext {
   status: 'connected' | 'disconnected' | 'error';
 }
 
-interface DbContextSelectorProps {
-  onContextChange: (contextId: string) => void;
-}
-
-export function DbContextSelector({ onContextChange }: DbContextSelectorProps) {
+export function DbContextSelector() {
+  const { activeDbContext, setActiveDbContext } = useDatabase();
   const [contexts, setContexts] = useState<DbContext[]>([
     { 
       id: 'default', 
@@ -57,7 +55,6 @@ export function DbContextSelector({ onContextChange }: DbContextSelectorProps) {
     }
   ]);
   
-  const [activeContextId, setActiveContextId] = useState<string>('default');
   const [isNewConnectionOpen, setIsNewConnectionOpen] = useState(false);
   const [newConnection, setNewConnection] = useState({
     name: '',
@@ -67,11 +64,8 @@ export function DbContextSelector({ onContextChange }: DbContextSelectorProps) {
     password: ''
   });
 
-  const activeContext = contexts.find(ctx => ctx.id === activeContextId) || contexts[0];
-
   const handleContextChange = (contextId: string) => {
-    setActiveContextId(contextId);
-    onContextChange(contextId);
+    setActiveDbContext(contextId);
   };
 
   const handleAddConnection = () => {
@@ -84,8 +78,7 @@ export function DbContextSelector({ onContextChange }: DbContextSelectorProps) {
     };
     
     setContexts([...contexts, newDbContext]);
-    setActiveContextId(newDbContext.id);
-    onContextChange(newDbContext.id);
+    setActiveDbContext(newDbContext.id);
     setIsNewConnectionOpen(false);
     
     // Reset form
@@ -116,8 +109,8 @@ export function DbContextSelector({ onContextChange }: DbContextSelectorProps) {
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="gap-2">
             <Database className="h-4 w-4" />
-            <span>{activeContext.name}</span>
-            {activeContext.isDefault && (
+            <span>{activeDbContext.name}</span>
+            {activeDbContext.isDefault && (
               <Badge variant="secondary" className="ml-1 text-xs px-1">Default</Badge>
             )}
             <ChevronDown className="h-4 w-4 opacity-70" />
@@ -136,7 +129,7 @@ export function DbContextSelector({ onContextChange }: DbContextSelectorProps) {
                 <Database className="h-4 w-4 text-muted-foreground" />
                 <span>{context.name}</span>
               </div>
-              {context.id === activeContextId && (
+              {context.id === activeDbContext.id && (
                 <Check className="h-4 w-4" />
               )}
             </DropdownMenuItem>
@@ -199,37 +192,13 @@ export function DbContextSelector({ onContextChange }: DbContextSelectorProps) {
                     placeholder="postgresql://user:password@localhost:5432/db"
                   />
                 </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="username" className="text-right">
-                    Username
-                  </Label>
-                  <Input
-                    id="username"
-                    value={newConnection.username}
-                    onChange={(e) => setNewConnection({...newConnection, username: e.target.value})}
-                    className="col-span-3"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="password" className="text-right">
-                    Password
-                  </Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={newConnection.password}
-                    onChange={(e) => setNewConnection({...newConnection, password: e.target.value})}
-                    className="col-span-3"
-                  />
-                </div>
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setIsNewConnectionOpen(false)}>Cancel</Button>
-                <Button 
-                  onClick={handleAddConnection}
-                  disabled={!newConnection.name || !newConnection.connectionString}
-                >
-                  Connect
+                <Button variant="outline" onClick={() => setIsNewConnectionOpen(false)} className="mr-2">
+                  Cancel
+                </Button>
+                <Button onClick={handleAddConnection} disabled={!newConnection.name || !newConnection.connectionString}>
+                  Add Connection
                 </Button>
               </DialogFooter>
             </DialogContent>
