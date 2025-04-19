@@ -400,7 +400,7 @@ export default function AppSidebar() {
                         
                         {tenant.primaryDomain && (
                           <div className="ml-8 text-xs text-muted-foreground mt-1 flex items-center">
-                            <Icons.globe className="h-3 w-3 mr-1" />
+                            <Icons.link className="h-3 w-3 mr-1" />
                             {tenant.primaryDomain}
                           </div>
                         )}
