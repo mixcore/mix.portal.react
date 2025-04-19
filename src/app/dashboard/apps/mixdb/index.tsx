@@ -10,16 +10,25 @@ import { initializeApp } from './app-loader';
 import { DatabaseProvider } from './contexts/DatabaseContext';
 import { Database, FileCode, Upload, Download, Settings, Grid3X3 } from 'lucide-react';
 import './app-globals.css';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { getViewUrl, getTableNameFromSlug as getDisplayNameFromSlug } from './utils/url-helpers';
+import { getTableNameFromSlug } from './config/route-mapping';
 
 export interface MixDBAppProps {
   // Define app-specific props
+  initialView?: string;
+  initialTableId?: string | null;
 }
 
 export function MixDBApp(props: MixDBAppProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [isInitialized, setIsInitialized] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [activeView, setActiveView] = useState<'tables' | 'detail' | 'query' | 'import-export' | 'settings'>('tables');
-  const [selectedTableId, setSelectedTableId] = useState<string | null>(null);
+  
+  // Get view and tableId from URL params or default to 'tables'
+  const activeView = searchParams.get('view') as 'tables' | 'detail' | 'query' | 'import-export' | 'settings' || props.initialView || 'tables';
+  const selectedTableId = searchParams.get('tableId') || props.initialTableId || null;
 
   // Initialize app if needed
   useEffect(() => {
@@ -72,14 +81,21 @@ export function MixDBApp(props: MixDBAppProps) {
     );
   }
 
+  // Helper function to update URL with new view and optional tableId
+  const navigateTo = (view: string, tableName?: string) => {
+    // Use the URL helper to generate a friendly URL
+    const url = getViewUrl(view, tableName);
+    
+    // Update the URL without reloading the page
+    router.push(url, { scroll: false });
+  };
+
   const handleTableClick = (tableId: string) => {
-    setSelectedTableId(tableId);
-    setActiveView('detail');
+    navigateTo('detail', tableId);
   };
 
   const handleBackToTables = () => {
-    setSelectedTableId(null);
-    setActiveView('tables');
+    navigateTo('tables');
   };
 
   const renderContent = () => {
@@ -87,7 +103,7 @@ export function MixDBApp(props: MixDBAppProps) {
       case 'detail':
         return selectedTableId ? (
           <TableDetail 
-            tableName={selectedTableId} 
+            tableName={getDisplayNameFromSlug(selectedTableId)} 
             onBackClick={handleBackToTables} 
           />
         ) : (
@@ -126,7 +142,7 @@ export function MixDBApp(props: MixDBAppProps) {
               defaultValue="tables" 
               className="w-full"
               value={activeView}
-              onValueChange={(value) => setActiveView(value as any)}
+              onValueChange={(value) => navigateTo(value)}
             >
               <TabsList className="grid grid-cols-5 mb-4">
                 <TabsTrigger value="tables" className="flex items-center gap-2">

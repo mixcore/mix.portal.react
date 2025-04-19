@@ -13,6 +13,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/components/ui/use-toast';
 import TableService, { MixTable } from '../services/tableService';
+import { slugify } from '../utils/url-helpers';
+import { addTableMapping, getSlugFromTable } from '../config/route-mapping';
 
 // Map API table to UI table item
 function mapApiTableToTableItem(apiTable: MixTable): TableItem {
@@ -66,12 +68,23 @@ export function TableList({ onTableClick }: TableListProps) {
         status: 'Published'
       });
       
-      if (response.isSuccessful) {
-        // Get tables from items array in the response
-        const tableData = response.items || [];
+      if (response.isSuccessful && response.data) {
+        // Get tables from items array in the paginated response
+        const tableData = response.data.items || [];
         
         // Map API tables to UI table items
         const tableItems = tableData.map(mapApiTableToTableItem);
+        
+        // Update the route mappings for URL-friendly paths
+        tableItems.forEach(table => {
+          const tableSlug = slugify(table.displayName || table.name);
+          addTableMapping({
+            slug: tableSlug,
+            name: table.name,
+            id: table.id,
+            dbContextId: activeDbContext.id.toString()
+          });
+        });
         
         // Set tables without fetching individual row counts
         setTables(tableItems);
@@ -95,6 +108,23 @@ export function TableList({ onTableClick }: TableListProps) {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Handle clicking on a table
+  const handleTableClick = (table: TableItem) => {
+    // Generate a slug from the table display name
+    const tableSlug = slugify(table.displayName || table.name);
+    
+    // Store the mapping between slug and actual table ID
+    addTableMapping({
+      slug: tableSlug,
+      name: table.name,
+      id: table.id,
+      dbContextId: activeDbContext.id.toString()
+    });
+    
+    // Call the onTableClick handler with the slug
+    onTableClick(tableSlug);
   };
 
   // Create a new table
@@ -311,7 +341,7 @@ export function TableList({ onTableClick }: TableListProps) {
                     <TableRow 
                       key={table.id} 
                       className="cursor-pointer hover:bg-muted/50"
-                      onClick={() => onTableClick(table.id)}
+                      onClick={() => onTableClick(slugify(table.displayName || table.name))}
                     >
                       <TableCell className="font-medium">
                         <div className="flex items-center">
@@ -348,7 +378,7 @@ export function TableList({ onTableClick }: TableListProps) {
                           <DropdownMenuContent align="end" className="w-[200px]">
                             <DropdownMenuItem onClick={(e) => {
                               e.stopPropagation();
-                              onTableClick(table.id);
+                              onTableClick(slugify(table.displayName || table.name));
                             }}>
                               <ExternalLink className="mr-2 h-4 w-4" />
                               <span>View table</span>

@@ -47,7 +47,8 @@ import {
   IconHome,
   IconSettings,
   IconPlus,
-  IconDashboard
+  IconDashboard,
+  IconDatabase
 } from '@tabler/icons-react';
 import { Icons } from '../icons';
 import { OrgSwitcher } from '../org-switcher';
@@ -609,7 +610,7 @@ export default function AppSidebar() {
           </SidebarMenu>
         </SidebarGroup>
 
-        {/* Settings section */}
+        {/* SETTINGS section */}
         <SidebarGroup className="mt-4">
           <SidebarGroupLabel>SETTINGS</SidebarGroupLabel>
           <SidebarMenu>
@@ -665,6 +666,20 @@ export default function AppSidebar() {
                 <Link href="/dashboard/settings/integrations">
                   <Icons.link className="h-4 w-4" />
                   <span>Integrations</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
+            {/* Databases */}
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                tooltip={isCollapsed ? "Databases" : undefined}
+                isActive={pathname === '/dashboard/apps/mixdb'}
+              >
+                <Link href="/dashboard/apps/mixdb">
+                  <Icons.database className="h-4 w-4" />
+                  <span>Databases</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

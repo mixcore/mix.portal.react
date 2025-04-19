@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import React from 'react';
+import { useSearchParams } from 'next/navigation';
 
 // Dynamic import the MixDBApp component in a client component
 const MixDBApp = dynamic(() => import('../index'), {
@@ -17,5 +18,10 @@ const MixDBApp = dynamic(() => import('../index'), {
 });
 
 export function MixDBClientWrapper() {
-  return <MixDBApp />;
+  // We'll use the same URL parameters in the wrapper for consistency
+  const searchParams = useSearchParams();
+  const initialView = searchParams.get('view') || 'tables';
+  const initialTableId = searchParams.get('tableId') || null;
+  
+  return <MixDBApp initialView={initialView} initialTableId={initialTableId} />;
 } 
