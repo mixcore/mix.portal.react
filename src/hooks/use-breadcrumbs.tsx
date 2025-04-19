@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
+import { supportedLanguages } from '@/utils/language-utils';
 
 type BreadcrumbItem = {
   title: string;
@@ -12,6 +13,16 @@ type BreadcrumbItem = {
 type MiniAppBreadcrumb = {
   label: string;
   href: string;
+};
+
+// Mapping of language codes to country names
+const languageToCountry: Record<string, string> = {
+  'en-us': 'United States',
+  'es-es': 'Spain',
+  'fr-fr': 'France',
+  'de-de': 'Germany',
+  'ja-jp': 'Japan',
+  'zh-cn': 'China'
 };
 
 // This allows to add custom title as well
@@ -71,8 +82,17 @@ export function useBreadcrumbs() {
     const segments = pathname.split('/').filter(Boolean);
     return segments.map((segment, index) => {
       const path = `/${segments.slice(0, index + 1).join('/')}`;
+      
+      // Check if this segment is a language code (first segment) and replace with country name
+      let title = segment.charAt(0).toUpperCase() + segment.slice(1);
+      
+      if (index === 0 && supportedLanguages.includes(segment.toLowerCase() as any)) {
+        const lowerCaseSegment = segment.toLowerCase();
+        title = languageToCountry[lowerCaseSegment] || title;
+      }
+      
       return {
-        title: segment.charAt(0).toUpperCase() + segment.slice(1),
+        title,
         link: path
       };
     });

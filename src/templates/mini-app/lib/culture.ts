@@ -73,6 +73,13 @@ export class CultureService {
         isActive: true
       },
       {
+        code: 'vi-VN',
+        displayName: 'Vietnamese',
+        nativeDisplayName: 'Việt Nam',
+        direction: 'ltr',
+        isActive: true
+      },
+      {
         code: 'fr-FR',
         displayName: 'French',
         nativeDisplayName: 'Français',

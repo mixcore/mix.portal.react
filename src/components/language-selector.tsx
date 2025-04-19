@@ -19,6 +19,7 @@ type LanguageDisplay = {
 // Language display information
 const languageDisplayInfo: Record<string, LanguageDisplay> = {
   'en-us': { code: 'en-us', name: 'English (US)', flag: '🇺🇸' },
+  'vi-vn': { code: 'vi-vn', name: 'Vietnamese', flag: '🇻🇳' },
   'es-es': { code: 'es-es', name: 'Español', flag: '🇪🇸' },
   'fr-fr': { code: 'fr-fr', name: 'Français', flag: '🇫🇷' },
   'de-de': { code: 'de-de', name: 'Deutsch', flag: '🇩🇪' },
