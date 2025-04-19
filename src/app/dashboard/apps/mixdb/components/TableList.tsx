@@ -12,17 +12,17 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/components/ui/use-toast';
-import TableService, { MixDbTable } from '../services/tableService';
+import TableService, { MixTable } from '../services/tableService';
 
 // Map API table to UI table item
-function mapApiTableToTableItem(apiTable: MixDbTable): TableItem {
+function mapApiTableToTableItem(apiTable: MixTable): TableItem {
   return {
     id: apiTable.id,
     name: apiTable.systemName || apiTable.name,
     displayName: apiTable.displayName,
     description: apiTable.description || '',
-    createdDate: apiTable.createdDateTime,
-    isSystem: apiTable.isSystem || false,
+    createdDate: apiTable.createdDateTime || new Date().toISOString(),
+    isSystem: apiTable.isSystem || apiTable.type === 'System',
     rowCount: apiTable.rowCount || 0
   };
 }
@@ -61,32 +61,20 @@ export function TableList({ onTableClick }: TableListProps) {
     try {
       // Call the API using the service
       const response = await TableService.getList({
-        mixDbContextId: activeDbContext.id,
+        mixDatabaseContextId: activeDbContext.id,
         pageSize: 100,
         status: 'Published'
       });
       
-      if (response.isSuccessful && response.data) {
+      if (response.isSuccessful) {
+        // Get tables from items array in the response
+        const tableData = response.items || [];
+        
         // Map API tables to UI table items
-        const tableItems = response.data.map(mapApiTableToTableItem);
+        const tableItems = tableData.map(mapApiTableToTableItem);
         
-        // Fetch row counts for each table
-        const tablesWithRowCounts = await Promise.all(
-          tableItems.map(async (table) => {
-            try {
-              const countResponse = await TableService.getRowCount(table.id);
-              if (countResponse.isSuccessful && countResponse.data !== undefined) {
-                return { ...table, rowCount: countResponse.data };
-              }
-              return table;
-            } catch (error) {
-              console.error(`Error fetching row count for table ${table.id}:`, error);
-              return table;
-            }
-          })
-        );
-        
-        setTables(tablesWithRowCounts);
+        // Set tables without fetching individual row counts
+        setTables(tableItems);
       } else {
         console.error('Failed to fetch tables:', response.errors);
         setError(response.errors?.join(', ') || 'An unknown error occurred');

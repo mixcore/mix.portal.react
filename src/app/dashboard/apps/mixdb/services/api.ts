@@ -19,14 +19,21 @@ export interface ApiResponse<T> {
 }
 
 export interface PaginationMetadata {
+  page: number;
   pageIndex: number;
   pageSize: number;
+  total: number;
   totalPage: number;
-  totalItems: number;
+  sortDirection?: string;
+  sortByColumns?: Array<{
+    fieldName: string;
+    direction: string;
+  }>;
 }
 
-export interface PaginatedResponse<T> extends ApiResponse<T[]> {
-  paging?: PaginationMetadata;
+export interface PaginatedResponse<T> extends ApiResponse<T> {
+  items?: T[];
+  pagingData?: PaginationMetadata;
 }
 
 // Base API methods
@@ -141,10 +148,23 @@ export default class ApiService {
         };
       }
       
-      const data = await response.json();
+      const rawData = await response.json();
+      
+      // Check if this is a paginated response with items and pagingData
+      if (rawData.items && rawData.pagingData) {
+        return {
+          isSuccessful: true,
+          data: rawData.data || rawData,
+          items: rawData.items,
+          pagingData: rawData.pagingData,
+          status: response.status,
+        } as unknown as ApiResponse<T>;
+      }
+      
+      // Otherwise, return the standard response
       return {
         isSuccessful: true,
-        data: data.data || data,
+        data: rawData.data || rawData,
         status: response.status,
       };
     } catch (error) {

@@ -81,7 +81,7 @@ export default class TableService {
   /**
    * Get all database tables with pagination and filtering
    */
-  static async getList(request: MixTableFilterRequest = {}): Promise<PaginatedResponse<MixTable>> {
+  static async getList(request: MixTableFilterRequest = {}): Promise<ApiResponse<PaginatedResponse<MixTable>>> {
     const defaultRequest: MixTableFilterRequest = {
       pageSize: 20,
       status: 'Published',
@@ -94,7 +94,7 @@ export default class TableService {
       ...request
     };
     
-    return ApiService.get<MixTable[]>(this.endpoint, defaultRequest) as Promise<PaginatedResponse<MixTable>>;
+    return ApiService.get<PaginatedResponse<MixTable>>(this.endpoint, defaultRequest);
   }
   
   /**
@@ -107,7 +107,7 @@ export default class TableService {
   /**
    * Get database tables by context ID with pagination and filtering
    */
-  static async getByContext(contextId: number, request: MixTableFilterRequest = {}): Promise<PaginatedResponse<MixTable>> {
+  static async getByContext(contextId: number, request: MixTableFilterRequest = {}): Promise<ApiResponse<PaginatedResponse<MixTable>>> {
     const defaultRequest: MixTableFilterRequest = {
       pageSize: 20,
       status: 'Published',
@@ -121,7 +121,7 @@ export default class TableService {
       ...request
     };
     
-    return ApiService.get<MixTable[]>(this.endpoint, defaultRequest) as Promise<PaginatedResponse<MixTable>>;
+    return ApiService.get<PaginatedResponse<MixTable>>(this.endpoint, defaultRequest);
   }
   
   /**
