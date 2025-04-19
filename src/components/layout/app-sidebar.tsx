@@ -69,6 +69,9 @@ import { cn } from '@/lib/utils';
 import { ContextSelector } from '@/components/layout/context-selector';
 import { useNavigationContext } from '@/providers/navigation-context-provider';
 import { TenantData } from '@/app/dashboard/apps/tenants/types/tenants';
+import { AuthService } from '@/services/auth';
+import { User } from '@/types';
+import { useEffect, useState } from 'react';
 
 export default function AppSidebar() {
   const pathname = usePathname();
@@ -86,12 +89,69 @@ export default function AppSidebar() {
   // Get active context
   const activeContext = availableContexts.find(c => c.id === activeContextId);
 
-  // Mock user data
-  const mockUser = {
-    fullName: 'Test User',
-    avatarUrl: '',
-    email: 'test@example.com'
-  };
+  // User state
+  const [user, setUser] = React.useState<User | null>(null);
+  const [isLoadingUser, setIsLoadingUser] = React.useState<boolean>(true);
+
+  // Load user data on component mount
+  React.useEffect(() => {
+    const loadUser = async () => {
+      try {
+        setIsLoadingUser(true);
+        
+        // Get API base URL from environment variables with fallback
+        const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+        
+        // Remove trailing slash if present to avoid double slash in the URL
+        const baseUrl = apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl;
+        
+        // Use the specific my-profile endpoint with environment variable for domain
+        const response = await fetch(`${baseUrl}/api/v2/rest/auth/user/my-profile`, {
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch user profile');
+        }
+        
+        const userData = await response.json();
+        
+        // Map the response to our User type
+        const userProfile: User = {
+          id: userData.id,
+          name: userData.userName,
+          email: userData.email,
+          username: userData.userName,
+          // Extract other fields as needed from the response
+          avatar: userData.avatarUrl || userData.avatar || '/mix-app/assets/img/user.png',
+        };
+        
+        // Store roles separately if needed for permission checks
+        const userRoles = userData.roles?.map((r: any) => r.roleId) || [];
+        
+        setUser(userProfile);
+      } catch (error) {
+        console.error('Error loading user data:', error);
+        // Fallback to existing method if our direct call fails
+        try {
+          const currentUser = await AuthService.getCurrentUser();
+          setUser(currentUser);
+        } catch (fallbackError) {
+          console.error('Fallback user fetch also failed:', fallbackError);
+        }
+      } finally {
+        setIsLoadingUser(false);
+      }
+    };
+
+    // Only run on the client side
+    if (typeof window !== 'undefined' && AuthService.isAuthenticated()) {
+      loadUser();
+    }
+  }, []);
 
   // Load tenants from API using our hook
   const { 
@@ -307,6 +367,30 @@ export default function AppSidebar() {
   const getTenantInitial = (tenant: TenantData) => {
     return tenant.displayName.charAt(0).toUpperCase();
   };
+
+  // Helper to get user display name
+  const getUserDisplayName = () => {
+    if (!user) return '';
+    
+    if (user.firstName && user.lastName) {
+      return `${user.firstName} ${user.lastName}`;
+    } else if (user.name) {
+      return user.name;
+    } else if (user.username) {
+      return user.username;
+    } else if (user.email) {
+      return user.email.split('@')[0];
+    }
+    
+    return 'User';
+  };
+
+  // User object for avatar component
+  const userForAvatar = user ? {
+    fullName: getUserDisplayName(),
+    avatarUrl: user.avatarUrl || user.avatar || '',
+    email: user.email || ''
+  } : null;
 
   return (
     <Sidebar collapsible='icon'>
@@ -819,7 +903,7 @@ export default function AppSidebar() {
               <UserAvatarProfile
                 className='h-7 w-7 rounded-md'
                 showInfo={!isCollapsed}
-                user={mockUser}
+                user={userForAvatar || { fullName: 'Loading...', avatarUrl: '', email: '' }}
               />
               {!isCollapsed && (
                 <IconUserCircle className='ml-auto h-4 w-4 text-muted-foreground' />

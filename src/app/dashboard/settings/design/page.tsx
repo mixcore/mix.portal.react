@@ -86,9 +86,15 @@ export default function DesignSettingsPage() {
   const { theme, setTheme } = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [activeColor, setActiveColor] = useState('default');
+  const [isMounted, setIsMounted] = useState(false);
   
   // Use our custom hook
   const { themeSettings, saveSettings, isInitialized } = useThemeSettings();
+
+  // Set mounted state
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Initialize form with values from our hook
   const form = useForm<z.infer<typeof formSchema>>({
@@ -97,21 +103,26 @@ export default function DesignSettingsPage() {
       primaryColor: 'default',
       borderRadius: '0.5',
       fontFamily: 'inter',
-      darkMode: theme === 'dark',
+      darkMode: false, // Start with a known value for SSR
       animationsEnabled: true
     }
   });
 
-  // Update form when theme settings are loaded
+  // Update form when theme settings are loaded - only on client side
   useEffect(() => {
-    if (isInitialized && themeSettings) {
-      form.reset(themeSettings);
+    if (isMounted && isInitialized && themeSettings) {
+      form.reset({
+        ...themeSettings,
+        darkMode: theme === 'dark' // Use the current theme value
+      });
       setActiveColor(themeSettings.primaryColor);
     }
-  }, [isInitialized, themeSettings, form]);
+  }, [isInitialized, themeSettings, form, theme, isMounted]);
 
   // Handle dark mode toggle
   const handleDarkModeChange = (checked: boolean) => {
+    if (!isMounted) return;
+    
     setTheme(checked ? 'dark' : 'light');
     form.setValue('darkMode', checked);
   };
@@ -146,6 +157,21 @@ export default function DesignSettingsPage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Conditionally render the Switch to avoid hydration issues
+  const renderSwitch = (field: any, onChange: (checked: boolean) => void) => {
+    if (!isMounted) {
+      return null; // Don't render until client-side
+    }
+    
+    return (
+      <Switch
+        id="dark-mode"
+        checked={field.value}
+        onCheckedChange={onChange}
+      />
+    );
   };
 
   return (
@@ -306,11 +332,15 @@ export default function DesignSettingsPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
-                            <Switch
-                              id="dark-mode"
-                              checked={field.value}
-                              onCheckedChange={handleDarkModeChange}
-                            />
+                            {isMounted ? (
+                              <Switch
+                                id="dark-mode"
+                                checked={field.value}
+                                onCheckedChange={handleDarkModeChange}
+                              />
+                            ) : (
+                              <div className="h-[1.15rem] w-8"></div> // Placeholder during SSR
+                            )}
                           </FormControl>
                         </FormItem>
                       )}
@@ -331,11 +361,15 @@ export default function DesignSettingsPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
-                            <Switch
-                              id="animations"
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            {isMounted ? (
+                              <Switch
+                                id="animations"
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            ) : (
+                              <div className="h-[1.15rem] w-8"></div> // Placeholder during SSR
+                            )}
                           </FormControl>
                         </FormItem>
                       )}
@@ -380,7 +414,11 @@ export default function DesignSettingsPage() {
                       <Button size="sm" variant="destructive">Destructive</Button>
                     </div>
                     <div className="flex gap-2 items-center">
-                      <Switch id="preview-switch" />
+                      {isMounted ? (
+                        <Switch id="preview-switch" />
+                      ) : (
+                        <div className="h-[1.15rem] w-8"></div> // Placeholder during SSR
+                      )}
                       <Label htmlFor="preview-switch">Switch Example</Label>
                     </div>
                     <div>

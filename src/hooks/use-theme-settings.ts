@@ -40,10 +40,12 @@ export function useThemeSettings() {
   const { theme, setTheme } = useTheme();
   const [themeSettings, setThemeSettings] = useState<ThemeSettings>(defaultSettings);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   // Apply theme color based on selection
   const applyThemeColor = (colorValue: string, isDarkMode: boolean) => {
-    if (typeof window === 'undefined') return; // Skip on server-side
+    // Only run on client side after component is mounted
+    if (!isMounted) return;
 
     const selectedColor = colorOptions.find(color => color.value === colorValue);
     if (!selectedColor) return;
@@ -73,12 +75,14 @@ export function useThemeSettings() {
 
   // Apply radius
   const applyRadius = (radius: string) => {
-    if (typeof window === 'undefined') return; // Skip on server-side
+    if (!isMounted) return;
     document.documentElement.style.setProperty('--radius', `${radius}rem`);
   };
 
   // Apply all theme settings
   const applySettings = (settings: ThemeSettings) => {
+    if (!isMounted) return;
+    
     // Apply dark mode
     if (settings.darkMode) {
       setTheme('dark');
@@ -89,14 +93,17 @@ export function useThemeSettings() {
     // Apply other settings
     applyThemeColor(settings.primaryColor, settings.darkMode);
     applyRadius(settings.borderRadius);
-    
-    // Apply font family (could be expanded)
-    // document.documentElement.style.setProperty('--font-family', settings.fontFamily);
   };
+
+  // Set isMounted to true once component is mounted
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Load saved settings on mount (client-side only)
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    // Avoid running during SSR or before component is mounted
+    if (!isMounted) return;
     
     try {
       const savedSettings = localStorage.getItem('themeSettings');
@@ -119,21 +126,23 @@ export function useThemeSettings() {
     } finally {
       setIsInitialized(true);
     }
-  }, []);
+  }, [isMounted]); // Only depend on isMounted, not theme
 
   // Update settings when theme changes externally
   useEffect(() => {
-    if (!isInitialized) return;
+    if (!isInitialized || !isMounted) return;
     
     setThemeSettings(prev => {
       const updated = { ...prev, darkMode: theme === 'dark' };
       applyThemeColor(updated.primaryColor, theme === 'dark');
       return updated;
     });
-  }, [theme, isInitialized]);
+  }, [theme, isInitialized, isMounted]);
 
   // Save settings function
   const saveSettings = (newSettings: ThemeSettings) => {
+    if (!isMounted) return;
+    
     // Store in localStorage
     localStorage.setItem('themeSettings', JSON.stringify(newSettings));
     
