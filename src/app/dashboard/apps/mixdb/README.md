@@ -10,6 +10,7 @@ MixDB is a modern, intuitive database management micro-app for Mixcore. It allow
 - **SQL Editor**: Execute custom SQL queries with syntax highlighting and result preview
 - **Import/Export**: Import data from various formats and export query results
 - **Modern UI**: Clean, responsive interface with dark mode support
+- **URL-Friendly Navigation**: Clean, readable URLs for sharing and bookmarking
 
 ## Getting Started
 
@@ -18,6 +19,18 @@ MixDB is available in the Mixcore dashboard under the "Apps" section. To start u
 1. Navigate to Dashboard > Apps > MixDB
 2. Connect to your database or use the default Mixcore database
 3. Start managing your database tables and data
+
+## URL Structure
+
+MixDB now supports URL-friendly paths for all views and tables:
+
+- `/dashboard/apps/mixdb?view=tables` - Main tables list
+- `/dashboard/apps/mixdb?view=detail&tableId=customer-orders` - View a specific table (using a URL-friendly slug)
+- `/dashboard/apps/mixdb?view=query` - SQL Editor
+- `/dashboard/apps/mixdb?view=import-export` - Import/Export tools
+- `/dashboard/apps/mixdb?view=settings` - MixDB Settings
+
+This makes it easy to bookmark specific tables or share links with your team.
 
 ## Development
 
@@ -39,13 +52,17 @@ mixdb/
 │   ├── TableDetail.tsx         # Table details and data view
 │   ├── TableList.tsx           # Database tables list
 │   └── QueryEditor.tsx         # SQL query editor
+├── config/                 # Configuration files
+│   └── route-mapping.ts        # URL slug to table mapping
 ├── contexts/               # React contexts
 │   └── DatabaseContext.tsx     # Database state management
 ├── hooks/                  # Custom React hooks
 ├── index.tsx               # Main app component
 ├── layouts/                # Layout components
 │   └── AppShell.tsx            # App shell layout
-└── page.tsx                # Next.js page component
+├── page.tsx                # Next.js page component
+└── utils/                  # Utility functions
+    └── url-helpers.ts          # URL generation helpers
 ```
 
 ## Inspiration

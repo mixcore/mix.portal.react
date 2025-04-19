@@ -29,6 +29,41 @@ export function MixDBApp(props: MixDBAppProps) {
   // Get view and tableId from URL params or default to 'tables'
   const activeView = searchParams.get('view') as 'tables' | 'detail' | 'query' | 'import-export' | 'settings' || props.initialView || 'tables';
   const selectedTableId = searchParams.get('tableId') || props.initialTableId || null;
+  
+  // Update page title based on current view and table
+  useEffect(() => {
+    updatePageTitle();
+  }, [activeView, selectedTableId]);
+  
+  // Function to update page title
+  const updatePageTitle = () => {
+    let title = 'MixDB';
+    
+    switch (activeView) {
+      case 'detail':
+        if (selectedTableId) {
+          // Get display name for title from the slug
+          const displayName = getDisplayNameFromSlug(selectedTableId);
+          title = `${displayName} | MixDB`;
+        }
+        break;
+      case 'query':
+        title = 'SQL Editor | MixDB';
+        break;
+      case 'import-export':
+        title = 'Import/Export | MixDB';
+        break;
+      case 'settings':
+        title = 'Settings | MixDB';
+        break;
+      default:
+        title = 'Tables | MixDB';
+        break;
+    }
+    
+    // Update document title
+    document.title = title;
+  };
 
   // Initialize app if needed
   useEffect(() => {
@@ -103,7 +138,7 @@ export function MixDBApp(props: MixDBAppProps) {
       case 'detail':
         return selectedTableId ? (
           <TableDetail 
-            tableName={getDisplayNameFromSlug(selectedTableId)} 
+            tableName={getTableNameFromSlug(selectedTableId)} 
             onBackClick={handleBackToTables} 
           />
         ) : (
