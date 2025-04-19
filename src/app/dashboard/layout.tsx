@@ -1,6 +1,7 @@
 import KBar from '@/components/kbar';
 import Header from '@/components/layout/header';
 import AppSidebar from '@/components/layout/app-sidebar';
+import AppRightSidebar from '@/components/layout/app-right-sidebar';
 import Footer from '@/components/layout/footer';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { NavigationContextProvider } from '@/providers/navigation-context-provider';
@@ -38,6 +39,7 @@ export default async function DashboardLayout({
               </main>
 
             </SidebarInset>
+            <AppRightSidebar />
           </LayoutContextProvider>
         </SidebarProvider>
       </NavigationContextProvider>
