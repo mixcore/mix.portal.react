@@ -37,6 +37,7 @@ import {
 import { UserAvatarProfile } from '@/components/user-avatar-profile';
 import { navItems } from '@/constants/data';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { useTenants } from '@/hooks/use-tenants';
 import {
   IconBell,
   IconChevronRight,
@@ -48,7 +49,8 @@ import {
   IconSettings,
   IconPlus,
   IconDashboard,
-  IconDatabase
+  IconDatabase,
+  IconGlobe
 } from '@tabler/icons-react';
 import { Icons } from '../icons';
 import { OrgSwitcher } from '../org-switcher';
@@ -66,6 +68,7 @@ import { cn } from '@/lib/utils';
 // import { RecentItems } from '@/components/recent-items';
 import { ContextSelector } from '@/components/layout/context-selector';
 import { useNavigationContext } from '@/providers/navigation-context-provider';
+import { TenantData } from '@/app/dashboard/apps/tenants/types/tenants';
 
 export default function AppSidebar() {
   const pathname = usePathname();
@@ -90,30 +93,25 @@ export default function AppSidebar() {
     email: 'test@example.com'
   };
 
-  // Mock tenants data
-  const tenants = [
-    { id: '1', name: 'Acme Inc', logo: '/acme-logo.png' },
-    { id: '2', name: 'Beta Corp', logo: '/beta-logo.png' },
-    { id: '3', name: 'Gamma Ltd', logo: '/gamma-logo.png' }
-  ];
+  // Load tenants from API using our hook
+  const { 
+    tenants, 
+    isLoading: isLoadingTenants, 
+    error: tenantsError,
+    activeTenant,
+    setActiveTenant,
+    refreshTenants
+  } = useTenants();
 
-  // Mock recent items
-  const recentItems = [
-    {
-      id: 1,
-      title: 'Blog post draft',
-      type: 'post',
-      url: '/dashboard/posts/1'
-    },
-    { id: 2, title: 'Home page', type: 'page', url: '/dashboard/pages/2' },
-    { id: 3, title: 'Product launch', type: 'post', url: '/dashboard/posts/3' }
-  ];
-
-  const activeTenant = tenants[0];
+  // Tenant dropdown menu state
   const [tenantMenuOpen, setTenantMenuOpen] = React.useState(false);
 
-  const handleSwitchTenant = (_tenantId: string) => {
-    // Tenant switching functionality would be implemented here
+  // Switch tenant handler
+  const handleSwitchTenant = (tenantId: string) => {
+    const tenant = tenants.find(t => t.id.toString() === tenantId);
+    if (tenant) {
+      setActiveTenant(tenant);
+    }
     setTenantMenuOpen(false);
   };
 
@@ -305,6 +303,11 @@ export default function AppSidebar() {
     );
   };
 
+  // Helper to get tenant initials for the icon
+  const getTenantInitial = (tenant: TenantData) => {
+    return tenant.displayName.charAt(0).toUpperCase();
+  };
+
   return (
     <Sidebar collapsible='icon'>
       <SidebarHeader className='pb-0'>
@@ -330,7 +333,13 @@ export default function AppSidebar() {
                   size='sm'
                   className='h-auto w-full justify-start p-1 font-medium'
                 >
-                  <span className='truncate'>{activeTenant.name}</span>
+                  {isLoadingTenants ? (
+                    <span className="truncate">Loading tenants...</span>
+                  ) : activeTenant ? (
+                    <span className="truncate">{activeTenant.displayName}</span>
+                  ) : (
+                    <span className="truncate">Select Tenant</span>
+                  )}
                   <IconChevronRight
                     className={`ml-auto h-4 w-4 transition-transform duration-200 ${tenantMenuOpen ? 'rotate-90' : ''}`}
                   />
@@ -339,25 +348,73 @@ export default function AppSidebar() {
               <DropdownMenuContent align='start' className='w-60 p-2'>
                 <DropdownMenuLabel>Switch tenant</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                {tenants.map((tenant) => (
-                  <DropdownMenuItem
-                    key={tenant.id}
-                    className='cursor-pointer py-2'
-                    onClick={() => handleSwitchTenant(tenant.id)}
-                  >
-                    <div className='flex w-full items-center gap-2'>
-                      <div className='bg-primary/10 text-primary flex h-6 w-6 items-center justify-center rounded-md'>
-                        {tenant.name.charAt(0)}
+                
+                {isLoadingTenants ? (
+                  <div className="py-2 px-1 text-sm text-muted-foreground">
+                    Loading tenants...
+                  </div>
+                ) : tenantsError ? (
+                  <div className="py-2 px-1 text-sm text-destructive">
+                    Error loading tenants: {tenantsError}
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="w-full mt-2"
+                      onClick={() => refreshTenants()}
+                    >
+                      Retry
+                    </Button>
+                  </div>
+                ) : tenants.length === 0 ? (
+                  <div className="py-2 px-1 text-sm text-muted-foreground">
+                    No tenants found
+                  </div>
+                ) : (
+                  tenants.map((tenant) => (
+                    <DropdownMenuItem
+                      key={tenant.id}
+                      className='cursor-pointer py-2'
+                      onClick={() => handleSwitchTenant(tenant.id.toString())}
+                    >
+                      <div className='flex w-full flex-col'>
+                        <div className='flex items-center gap-2'>
+                          <div className='bg-primary/10 text-primary flex h-6 w-6 items-center justify-center rounded-md'>
+                            {getTenantInitial(tenant)}
+                          </div>
+                          <span className='flex-1 truncate font-medium' title={tenant.displayName}>
+                            {tenant.displayName}
+                          </span>
+                          {activeTenant && tenant.id === activeTenant.id && (
+                            <Badge variant='outline' className='ml-auto'>
+                              Active
+                            </Badge>
+                          )}
+                          {tenant.status === 'Published' ? (
+                            <Badge className="bg-green-500 hover:bg-green-600 ml-auto" variant="default">Active</Badge>
+                          ) : tenant.status === 'Draft' ? (
+                            <Badge variant="secondary" className="ml-auto">Draft</Badge>
+                          ) : tenant.status === 'Deleted' ? (
+                            <Badge variant="destructive" className="ml-auto">Deleted</Badge>
+                          ) : null}
+                        </div>
+                        
+                        {tenant.primaryDomain && (
+                          <div className="ml-8 text-xs text-muted-foreground mt-1 flex items-center">
+                            <Icons.globe className="h-3 w-3 mr-1" />
+                            {tenant.primaryDomain}
+                          </div>
+                        )}
+                        
+                        {tenant.systemName && tenant.systemName !== tenant.displayName && (
+                          <div className="ml-8 text-xs text-muted-foreground mt-0.5">
+                            System: {tenant.systemName}
+                          </div>
+                        )}
                       </div>
-                      <span className='flex-1'>{tenant.name}</span>
-                      {tenant.id === activeTenant.id && (
-                        <Badge variant='outline' className='ml-auto'>
-                          Active
-                        </Badge>
-                      )}
-                    </div>
-                  </DropdownMenuItem>
-                ))}
+                    </DropdownMenuItem>
+                  ))
+                )}
+                
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className='cursor-pointer'
