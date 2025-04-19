@@ -139,6 +139,7 @@ export function MixDBApp(props: MixDBAppProps) {
         return selectedTableId ? (
           <TableDetail 
             tableName={getTableNameFromSlug(selectedTableId)} 
+            tableId={parseInt(selectedTableId, 10)}
             onBackClick={handleBackToTables} 
           />
         ) : (

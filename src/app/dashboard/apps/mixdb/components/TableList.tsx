@@ -19,7 +19,7 @@ import { addTableMapping, getSlugFromTable } from '../config/route-mapping';
 // Map API table to UI table item
 function mapApiTableToTableItem(apiTable: MixTable): TableItem {
   return {
-    id: apiTable.id,
+    id: typeof apiTable.id === 'string' ? parseInt(apiTable.id, 10) : apiTable.id,
     name: apiTable.systemName || apiTable.name,
     displayName: apiTable.displayName,
     description: apiTable.description || '',
@@ -30,7 +30,7 @@ function mapApiTableToTableItem(apiTable: MixTable): TableItem {
 }
 
 interface TableItem {
-  id: string;
+  id: number;
   name: string;
   displayName: string;
   description: string;
@@ -81,7 +81,7 @@ export function TableList({ onTableClick }: TableListProps) {
           addTableMapping({
             slug: tableSlug,
             name: table.name,
-            id: table.id,
+            id: table.id.toString(),
             dbContextId: activeDbContext.id.toString()
           });
         });
@@ -113,17 +113,17 @@ export function TableList({ onTableClick }: TableListProps) {
   // Handle clicking on a table
   const handleTableClick = (table: TableItem) => {
     // Generate a slug from the table display name
-    const tableSlug = slugify(table.displayName || table.name);
+    const tableSlug = table.id.toString();
     
     // Store the mapping between slug and actual table ID
     addTableMapping({
       slug: tableSlug,
       name: table.name,
-      id: table.id,
+      id: table.id.toString(),
       dbContextId: activeDbContext.id.toString()
     });
     
-    // Call the onTableClick handler with the slug
+    // Call the onTableClick handler with the table ID
     onTableClick(tableSlug);
   };
 
@@ -137,11 +137,11 @@ export function TableList({ onTableClick }: TableListProps) {
   };
 
   // Duplicate a table
-  const duplicateTable = async (id: string, e: React.MouseEvent) => {
+  const duplicateTable = async (id: number, e: React.MouseEvent) => {
     e.stopPropagation();
     
     try {
-      const response = await TableService.duplicate(id);
+      const response = await TableService.duplicate(id.toString());
       
       if (response.isSuccessful && response.data) {
         const newTable = mapApiTableToTableItem(response.data);
@@ -170,7 +170,7 @@ export function TableList({ onTableClick }: TableListProps) {
   };
 
   // Delete a table
-  const deleteTable = async (id: string, e: React.MouseEvent) => {
+  const deleteTable = async (id: number, e: React.MouseEvent) => {
     e.stopPropagation();
     
     if (!confirm('Are you sure you want to delete this table? This action cannot be undone.')) {
@@ -178,7 +178,7 @@ export function TableList({ onTableClick }: TableListProps) {
     }
     
     try {
-      const response = await TableService.delete(id);
+      const response = await TableService.delete(id.toString());
       
       if (response.isSuccessful) {
         setTables(tables.filter(table => table.id !== id));
@@ -341,7 +341,7 @@ export function TableList({ onTableClick }: TableListProps) {
                     <TableRow 
                       key={table.id} 
                       className="cursor-pointer hover:bg-muted/50"
-                      onClick={() => onTableClick(slugify(table.displayName || table.name))}
+                      onClick={() => handleTableClick(table)}
                     >
                       <TableCell className="font-medium">
                         <div className="flex items-center">
@@ -378,7 +378,7 @@ export function TableList({ onTableClick }: TableListProps) {
                           <DropdownMenuContent align="end" className="w-[200px]">
                             <DropdownMenuItem onClick={(e) => {
                               e.stopPropagation();
-                              onTableClick(slugify(table.displayName || table.name));
+                              handleTableClick(table);
                             }}>
                               <ExternalLink className="mr-2 h-4 w-4" />
                               <span>View table</span>
