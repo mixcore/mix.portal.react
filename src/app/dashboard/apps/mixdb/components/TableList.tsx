@@ -11,6 +11,21 @@ import { useDatabase } from '../contexts/DatabaseContext';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from '@/components/ui/use-toast';
+import TableService, { MixDbTable } from '../services/tableService';
+
+// Map API table to UI table item
+function mapApiTableToTableItem(apiTable: MixDbTable): TableItem {
+  return {
+    id: apiTable.id,
+    name: apiTable.systemName || apiTable.name,
+    displayName: apiTable.displayName,
+    description: apiTable.description || '',
+    createdDate: apiTable.createdDateTime,
+    isSystem: apiTable.isSystem || false,
+    rowCount: apiTable.rowCount || 0
+  };
+}
 
 interface TableItem {
   id: string;
@@ -30,118 +45,147 @@ export function TableList({ onTableClick }: TableListProps) {
   const { activeDbContext } = useDatabase();
   const [tables, setTables] = useState<TableItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Fetch tables when active db context changes
   useEffect(() => {
-    // In a real implementation, this would fetch data from an API for the specific context
-    const fetchTables = async () => {
-      setIsLoading(true);
-      try {
-        // Simulate API call with demo data
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // Different tables for different contexts
-        if (activeDbContext.id === 'analytics') {
-          setTables([
-            {
-              id: 'analytics_events',
-              name: 'analytics_events',
-              displayName: 'Events',
-              description: 'User event tracking data',
-              createdDate: '2023-07-15T00:00:00Z',
-              isSystem: false,
-              rowCount: 15782
-            },
-            {
-              id: 'analytics_users',
-              name: 'analytics_users',
-              displayName: 'Users',
-              description: 'User profile data for analytics',
-              createdDate: '2023-07-15T00:00:00Z',
-              isSystem: false,
-              rowCount: 5423
-            },
-            {
-              id: 'analytics_sessions',
-              name: 'analytics_sessions',
-              displayName: 'Sessions',
-              description: 'User session data',
-              createdDate: '2023-07-16T00:00:00Z',
-              isSystem: false,
-              rowCount: 28941
-            }
-          ]);
-        } else if (activeDbContext.id === 'legacy') {
-          setTables([
-            {
-              id: 'legacy_customers',
-              name: 'legacy_customers',
-              displayName: 'Legacy Customers',
-              description: 'Customer data from legacy system',
-              createdDate: '2022-01-05T00:00:00Z',
-              isSystem: false,
-              rowCount: 1205
-            },
-            {
-              id: 'legacy_orders',
-              name: 'legacy_orders',
-              displayName: 'Legacy Orders',
-              description: 'Order data from legacy system',
-              createdDate: '2022-01-05T00:00:00Z',
-              isSystem: false,
-              rowCount: 8456
-            }
-          ]);
-        } else {
-          // Default database
-          setTables([
-            {
-              id: 'demo_customers',
-              name: 'demo_customers',
-              displayName: 'Customers',
-              description: 'Sample customer data for demonstration',
-              createdDate: '2023-08-01T00:00:00Z',
-              isSystem: false,
-              rowCount: 25
-            },
-            {
-              id: 'demo_products',
-              name: 'demo_products',
-              displayName: 'Products',
-              description: 'Sample product data for demonstration',
-              createdDate: '2023-08-01T00:00:00Z',
-              isSystem: false,
-              rowCount: 18
-            },
-            {
-              id: 'mixdb_tables',
-              name: 'mixdb_tables',
-              displayName: 'Database Tables',
-              description: 'Stores the database tables created in MixDB',
-              createdDate: '2023-07-01T00:00:00Z',
-              isSystem: true,
-              rowCount: 3
-            },
-            {
-              id: 'mixdb_fields',
-              name: 'mixdb_fields',
-              displayName: 'Table Fields',
-              description: 'Stores the fields for each database table',
-              createdDate: '2023-07-01T00:00:00Z',
-              isSystem: true,
-              rowCount: 24
-            }
-          ]);
-        }
-      } catch (error) {
-        console.error('Error fetching tables:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchTables();
   }, [activeDbContext.id]);
+
+  // Fetch tables from API
+  const fetchTables = async () => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      // Call the API using the service
+      const response = await TableService.getList({
+        mixDbContextId: activeDbContext.id,
+        pageSize: 100,
+        status: 'Published'
+      });
+      
+      if (response.isSuccessful && response.data) {
+        // Map API tables to UI table items
+        const tableItems = response.data.map(mapApiTableToTableItem);
+        
+        // Fetch row counts for each table
+        const tablesWithRowCounts = await Promise.all(
+          tableItems.map(async (table) => {
+            try {
+              const countResponse = await TableService.getRowCount(table.id);
+              if (countResponse.isSuccessful && countResponse.data !== undefined) {
+                return { ...table, rowCount: countResponse.data };
+              }
+              return table;
+            } catch (error) {
+              console.error(`Error fetching row count for table ${table.id}:`, error);
+              return table;
+            }
+          })
+        );
+        
+        setTables(tablesWithRowCounts);
+      } else {
+        console.error('Failed to fetch tables:', response.errors);
+        setError(response.errors?.join(', ') || 'An unknown error occurred');
+        toast({
+          title: 'Error loading tables',
+          description: response.errors?.join(', ') || 'An unknown error occurred',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching tables:', error);
+      setError('Failed to fetch tables. Please try again later.');
+      toast({
+        title: 'Error loading tables',
+        description: 'Failed to fetch tables. Please try again later.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Create a new table
+  const createTable = async () => {
+    toast({
+      title: 'Creating new table',
+      description: 'This functionality will be implemented soon.',
+    });
+    // Implementation for table creation will go here
+  };
+
+  // Duplicate a table
+  const duplicateTable = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    try {
+      const response = await TableService.duplicate(id);
+      
+      if (response.isSuccessful && response.data) {
+        const newTable = mapApiTableToTableItem(response.data);
+        setTables([...tables, newTable]);
+        
+        toast({
+          title: 'Table duplicated',
+          description: `${newTable.displayName} has been created as a duplicate.`,
+        });
+      } else {
+        console.error('Failed to duplicate table:', response.errors);
+        toast({
+          title: 'Error duplicating table',
+          description: response.errors?.join(', ') || 'An unknown error occurred',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      console.error('Error duplicating table:', error);
+      toast({
+        title: 'Error duplicating table',
+        description: 'Failed to duplicate table. Please try again later.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  // Delete a table
+  const deleteTable = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (!confirm('Are you sure you want to delete this table? This action cannot be undone.')) {
+      return;
+    }
+    
+    try {
+      const response = await TableService.delete(id);
+      
+      if (response.isSuccessful) {
+        setTables(tables.filter(table => table.id !== id));
+        
+        toast({
+          title: 'Table deleted',
+          description: 'The table has been deleted successfully.',
+        });
+      } else {
+        console.error('Failed to delete table:', response.errors);
+        toast({
+          title: 'Error deleting table',
+          description: response.errors?.join(', ') || 'An unknown error occurred',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      console.error('Error deleting table:', error);
+      toast({
+        title: 'Error deleting table',
+        description: 'Failed to delete table. Please try again later.',
+        variant: 'destructive',
+      });
+    }
+  };
 
   const filteredTables = tables.filter(table => 
     table.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -198,7 +242,7 @@ export function TableList({ onTableClick }: TableListProps) {
             </div>
             <div>
               <div className="text-sm text-muted-foreground">Storage</div>
-              <div className="text-2xl font-bold">2.4 GB</div>
+              <div className="text-2xl font-bold">{(totalRecords * 0.001).toFixed(1)} MB</div>
             </div>
           </div>
         </CardContent>
@@ -207,13 +251,17 @@ export function TableList({ onTableClick }: TableListProps) {
       {/* Actions and Search Bar */}
       <div className="flex flex-col sm:flex-row justify-between gap-4">
         <div className="flex gap-2">
-          <Button className="bg-primary hover:bg-primary/90" size="sm">
+          <Button className="bg-primary hover:bg-primary/90" size="sm" onClick={createTable}>
             <PlusCircle className="mr-2 h-4 w-4" />
             New Table
           </Button>
           <Button variant="outline" size="sm">
             <UploadCloud className="mr-2 h-4 w-4" />
             Import
+          </Button>
+          <Button variant="outline" size="sm" onClick={fetchTables}>
+            <Database className="mr-2 h-4 w-4" />
+            Refresh
           </Button>
         </div>
         <div className="relative">
@@ -237,6 +285,15 @@ export function TableList({ onTableClick }: TableListProps) {
               <Skeleton className="h-16 w-full rounded-md" />
               <Skeleton className="h-16 w-full rounded-md" />
             </div>
+          ) : error ? (
+            <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+              <Database className="h-12 w-12 text-destructive mb-4 opacity-50" />
+              <h3 className="text-lg font-medium text-destructive">Error loading tables</h3>
+              <p className="text-sm text-muted-foreground mt-1 mb-4">{error}</p>
+              <Button onClick={fetchTables}>
+                Try Again
+              </Button>
+            </div>
           ) : filteredTables.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
               <Database className="h-12 w-12 text-muted-foreground mb-4 opacity-20" />
@@ -244,7 +301,7 @@ export function TableList({ onTableClick }: TableListProps) {
               <p className="text-sm text-muted-foreground mt-1 mb-4">
                 {searchQuery ? `No tables matching "${searchQuery}"` : "This database doesn't have any tables yet"}
               </p>
-              <Button>
+              <Button onClick={createTable}>
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Create a new table
               </Button>
@@ -317,12 +374,12 @@ export function TableList({ onTableClick }: TableListProps) {
                               <Download className="mr-2 h-4 w-4" />
                               <span>Export data</span>
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+                            <DropdownMenuItem onClick={(e) => duplicateTable(table.id, e)}>
                               <Copy className="mr-2 h-4 w-4" />
                               <span>Duplicate</span>
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={(e) => e.stopPropagation()} className="text-destructive focus:text-destructive">
+                            <DropdownMenuItem onClick={(e) => deleteTable(table.id, e)} className="text-destructive focus:text-destructive">
                               <Trash2 className="mr-2 h-4 w-4" />
                               <span>Delete table</span>
                             </DropdownMenuItem>
