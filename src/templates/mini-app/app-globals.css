@@ -20,6 +20,9 @@
   position: relative;
   background-color: var(--background);
   color: var(--foreground);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
 /* Fluid content container */
@@ -32,15 +35,37 @@
 .app-header {
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 100;
   background-color: hsl(var(--background));
   border-bottom: 1px solid hsl(var(--border));
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8px);
 }
 
 /* App sidebar styling */
 .app-sidebar {
   background-color: hsl(var(--background));
   border-right: 1px solid hsl(var(--border));
+  height: 100%;
+  position: sticky;
+  left: 0;
+  transition: width 0.3s ease-in-out;
+}
+
+.app-sidebar .sidebar-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem;
+  cursor: pointer;
+  color: hsl(var(--muted-foreground));
+  border-radius: 0.25rem;
+  transition: background-color 0.2s ease;
+}
+
+.app-sidebar .sidebar-toggle:hover {
+  background-color: hsl(var(--accent));
+  color: hsl(var(--accent-foreground));
 }
 
 /* Ensure consistent borders between sections */

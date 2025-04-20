@@ -6,28 +6,12 @@ import useContainerStatus from '../hooks/useContainerStatus';
 import { getAppConfig } from '../app-loader';
 import { useBreadcrumb } from '../hooks/useBreadcrumb';
 import { 
-  LayoutDashboard, 
-  ListTodo, 
-  Settings, 
-  File, 
-  Menu, 
-  Eye, 
-  Share, 
-  Maximize2, 
-  Minimize2, 
-  Plus, 
-  Search, 
-  ChevronDown
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Input } from '@/components/ui/input';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Separator } from '@/components/ui/separator';
-
-// Define view types for type safety
-type ViewType = 'dashboard' | 'list' | 'detail' | 'settings';
+  MobileHeader, 
+  MenubarHeader, 
+  Sidebar, 
+  MainContent,
+  ViewType
+} from './components';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -36,222 +20,6 @@ interface AppShellProps {
   selectedItemId?: string | null;
   selectedItemTitle?: string | null;
 }
-
-// Header component for mobile view
-const MobileHeader = ({ 
-  appConfig, 
-  activeView, 
-  isFluidLayout, 
-  handleViewChange, 
-  toggleContainerClass,
-  copyDeepLink,
-  shareTooltip
-}: { 
-  appConfig: any; 
-  activeView: ViewType;
-  isFluidLayout: boolean;
-  handleViewChange: (view: ViewType) => void;
-  toggleContainerClass: () => void;
-  copyDeepLink: () => void;
-  shareTooltip: string;
-}) => (
-  <div className="md:hidden flex items-center justify-between px-4 py-2 border-b">
-    <div className="flex items-center">
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button variant="ghost" size="icon" className="md:hidden">
-            <Menu className="h-5 w-5" />
-            <span className="sr-only">Toggle menu</span>
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="left" className="w-[240px] sm:w-[300px]">
-          <nav className="flex flex-col gap-4 mt-4">
-            <Button
-              variant={activeView === 'dashboard' ? 'default' : 'ghost'}
-              className="justify-start"
-              onClick={() => handleViewChange('dashboard')}
-            >
-              <LayoutDashboard className="mr-2 h-5 w-5" />
-              Dashboard
-            </Button>
-            <Button
-              variant={activeView === 'list' ? 'default' : 'ghost'}
-              className="justify-start"
-              onClick={() => handleViewChange('list')}
-            >
-              <ListTodo className="mr-2 h-5 w-5" />
-              Items
-            </Button>
-            <Button
-              variant={activeView === 'settings' ? 'default' : 'ghost'}
-              className="justify-start"
-              onClick={() => handleViewChange('settings')}
-            >
-              <Settings className="mr-2 h-5 w-5" />
-              Settings
-            </Button>
-          </nav>
-        </SheetContent>
-      </Sheet>
-      <span className="text-lg font-medium ml-2">{appConfig.displayName}</span>
-    </div>
-    <div className="flex items-center gap-1">
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" onClick={toggleContainerClass}>
-              {isFluidLayout ? <Minimize2 className="h-5 w-5" /> : <Maximize2 className="h-5 w-5" />}
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>{isFluidLayout ? 'Exit fullscreen' : 'Fullscreen'}</TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" onClick={copyDeepLink}>
-              <Share className="h-5 w-5" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>{shareTooltip || 'Copy link'}</TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    </div>
-  </div>
-);
-
-// Main toolbar component with tabs and actions
-const Toolbar = ({ 
-  activeView, 
-  handleViewChange, 
-  selectedItemId,
-  searchQuery,
-  setSearchQuery
-}: { 
-  activeView: ViewType;
-  handleViewChange: (view: ViewType) => void;
-  selectedItemId: string | null;
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
-}) => (
-  <div className="flex flex-col sm:flex-row items-center justify-between gap-2 px-4 py-2 border-b">
-    {/* Main view tabs */}
-    <Tabs value={activeView} onValueChange={(value) => handleViewChange(value as ViewType)} className="w-full">
-      <TabsList className="h-9 w-full md:w-auto grid grid-cols-3 md:grid-cols-4">
-        <TabsTrigger value="dashboard" className="flex items-center gap-1">
-          <LayoutDashboard className="h-4 w-4" />
-          <span className="hidden sm:inline-block">Dashboard</span>
-        </TabsTrigger>
-        <TabsTrigger value="list" className="flex items-center gap-1">
-          <ListTodo className="h-4 w-4" />
-          <span className="hidden sm:inline-block">Items</span>
-        </TabsTrigger>
-        <TabsTrigger value="detail" disabled={!selectedItemId} className="flex items-center gap-1">
-          <File className="h-4 w-4" />
-          <span className="hidden sm:inline-block">Detail</span>
-        </TabsTrigger>
-        <TabsTrigger value="settings" className="flex items-center gap-1">
-          <Settings className="h-4 w-4" />
-          <span className="hidden sm:inline-block">Settings</span>
-        </TabsTrigger>
-      </TabsList>
-    </Tabs>
-    
-    {/* Action buttons */}
-    <div className="flex items-center gap-2">
-      <div className="relative w-full md:w-auto">
-        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input
-          type="search" 
-          placeholder="Search..." 
-          className="w-full md:w-[180px] pl-8 h-9"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-      </div>
-      
-      <div className="flex items-center gap-1">
-        <Button variant="outline" size="sm" className="h-9 hidden md:flex gap-1">
-          <Eye className="h-4 w-4" />
-          <span>Preview</span>
-        </Button>
-        <Button variant="default" size="sm" className="h-9 gap-1">
-          <Plus className="h-4 w-4" />
-          <span className="hidden sm:inline-block">Create</span>
-        </Button>
-      </div>
-    </div>
-  </div>
-);
-
-// Sidebar component
-const Sidebar = ({ 
-  sidebarOpen, 
-  setSidebarOpen, 
-  activeView, 
-  handleViewChange 
-}: { 
-  sidebarOpen: boolean;
-  setSidebarOpen: (open: boolean) => void;
-  activeView: ViewType;
-  handleViewChange: (view: ViewType) => void;
-}) => (
-  <div className={`hidden md:block app-sidebar bg-background border-r transition-all duration-300 ${sidebarOpen ? 'w-[240px]' : 'w-[60px]'}`}>
-    <div className="p-3 border-b">
-      <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => setSidebarOpen(!sidebarOpen)}>
-        <Menu className="h-5 w-5 mr-2" />
-        {sidebarOpen && <span>Toggle sidebar</span>}
-      </Button>
-    </div>
-    <nav className="p-3 flex flex-col gap-1">
-      <Button
-        variant={activeView === 'dashboard' ? 'secondary' : 'ghost'}
-        size="sm"
-        className="justify-start"
-        onClick={() => handleViewChange('dashboard')}
-      >
-        <LayoutDashboard className="h-5 w-5 mr-2" />
-        {sidebarOpen && <span>Dashboard</span>}
-      </Button>
-      <Button
-        variant={activeView === 'list' ? 'secondary' : 'ghost'}
-        size="sm"
-        className="justify-start"
-        onClick={() => handleViewChange('list')}
-      >
-        <ListTodo className="h-5 w-5 mr-2" />
-        {sidebarOpen && <span>Items</span>}
-      </Button>
-      <Separator className="my-2" />
-      <Button
-        variant={activeView === 'settings' ? 'secondary' : 'ghost'}
-        size="sm"
-        className="justify-start"
-        onClick={() => handleViewChange('settings')}
-      >
-        <Settings className="h-5 w-5 mr-2" />
-        {sidebarOpen && <span>Settings</span>}
-      </Button>
-    </nav>
-  </div>
-);
-
-// Main content area component
-const MainContent = ({ 
-  children, 
-  isFluidLayout, 
-  appHeight 
-}: { 
-  children: React.ReactNode;
-  isFluidLayout: boolean;
-  appHeight: number;
-}) => (
-  <div className={`flex-1 ${isFluidLayout ? 'overflow-auto' : ''} border-l`}>
-    <div className="p-4 md:p-6" style={isFluidLayout ? { height: `${appHeight}px`, overflowY: 'auto' } : {}}>
-      {children}
-    </div>
-  </div>
-);
 
 export function AppShell({ 
   children, 
@@ -452,9 +220,9 @@ export function AppShell({
   };
   
   return (
-    <div className={`${appConfig.appId}-app-shell flex flex-col ${isFluidLayout ? 'h-full overflow-hidden' : ''}`}>
+    <div className={`${appConfig.appId}-app-shell flex flex-col ${isFluidLayout ? 'h-full' : 'min-h-screen'}`}>
       {/* App header section */}
-      <header className="app-header bg-background flex flex-col border-b">
+      <header className="app-header bg-background flex flex-col">
         {/* Mobile header */}
         <MobileHeader 
           appConfig={appConfig}
@@ -466,18 +234,24 @@ export function AppShell({
           shareTooltip={shareTooltip}
         />
         
-        {/* Main toolbar */}
-        <Toolbar 
-          activeView={activeView}
-          handleViewChange={handleViewChange}
-          selectedItemId={selectedItemId || null}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-        />
+        {/* Main menubar header for desktop */}
+        <div className="hidden md:block">
+          <MenubarHeader 
+            appConfig={appConfig}
+            activeView={activeView}
+            isFluidLayout={isFluidLayout}
+            handleViewChange={handleViewChange}
+            toggleContainerClass={toggleContainerClass}
+            copyDeepLink={copyDeepLink}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            selectedItemId={selectedItemId || null}
+          />
+        </div>
       </header>
       
       {/* Main content with sidebar */}
-      <div className={`flex flex-grow ${isFluidLayout ? 'overflow-hidden' : ''}`}>
+      <div className={`flex flex-grow ${isFluidLayout ? '' : 'overflow-auto'}`}>
         {/* Sidebar */}
         <Sidebar 
           sidebarOpen={sidebarOpen}

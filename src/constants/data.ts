@@ -2674,6 +2674,32 @@ export const contextNavItems: NavItem[] = [
             appId: 'studio'
           }
         ]
+      },
+      {
+        title: 'Mini App',
+        url: '/dashboard/apps/mini-app',
+        contextId: 'customization',
+        appId: 'mini-app',
+        items: [
+          {
+            title: 'Scripts',
+            url: '/dashboard/studio/code/scripts',
+            contextId: 'customization',
+            appId: 'studio'
+          },
+          {
+            title: 'API Integration',
+            url: '/dashboard/studio/code/api',
+            contextId: 'customization',
+            appId: 'studio'
+          },
+          {
+            title: 'Custom Widgets',
+            url: '/dashboard/studio/code/widgets',
+            contextId: 'customization',
+            appId: 'studio'
+          }
+        ]
       }
     ]
   },
