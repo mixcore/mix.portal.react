@@ -15,6 +15,7 @@ import DevicesList from './components/devices/list';
 import { Device } from './types/devices';
 import { DeviceProvider } from './context/DeviceContext';
 import { AutomationProvider } from './context/AutomationContext';
+import AnalyticsPage from './components/analytics/analytics-page';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 // App-level wrapper
@@ -133,22 +134,10 @@ function AppContent() {
           
           {/* Analytics */}
           <TabsContent value="analytics" className="space-y-4">
-            <Tabs value={analyticsTab} onValueChange={setAnalyticsTab}>
-              <TabsList>
-                <TabsTrigger value="data-explorer">Data Explorer</TabsTrigger>
-                <TabsTrigger value="sensor-monitoring">Sensor Monitoring</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="data-explorer" className="mt-4">
-                {/* Data explorer component will go here */}
-                <p>Data explorer component will be implemented using the new component structure</p>
-              </TabsContent>
-              
-              <TabsContent value="sensor-monitoring" className="mt-4">
-                {/* Sensor monitoring component will go here */}
-                <p>Sensor monitoring component will be implemented using the new component structure</p>
-              </TabsContent>
-            </Tabs>
+            <AnalyticsPage 
+              activeTab={analyticsTab} 
+              onTabChange={setAnalyticsTab} 
+            />
           </TabsContent>
           
           {/* Automation */}
