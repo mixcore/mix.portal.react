@@ -10,7 +10,8 @@ const APPS = {
   projects: () => import('@/app/dashboard/apps/projects'),
   workflow: () => import('@/app/dashboard/apps/workflow'),
   blogs: () => import('@/app/dashboard/apps/blogs'),
-  'mini-app': () => import('@/app/dashboard/apps/mini-app')
+  'mini-app': () => import('@/app/dashboard/apps/mini-app'),
+  website: () => import('@/app/dashboard/apps/website/components/index.js')
   // Additional apps can be registered here
 };
 

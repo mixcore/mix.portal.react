@@ -11,7 +11,8 @@ export default function AppPage({ params }: { params: { appId: string } }) {
     projects: 'Projects',
     workflow: 'Workflow Automation',
     blogs: 'Blogs',
-    'mini-app': 'Mini App'
+    'mini-app': 'Mini App',
+    website: 'Website Manager'
   };
   
   return (
@@ -29,6 +30,7 @@ export function generateStaticParams() {
     { appId: 'projects' },
     { appId: 'workflow' },
     { appId: 'blogs' },
-    { appId: 'mini-app' }
+    { appId: 'mini-app' },
+    { appId: 'website' }
   ];
 } 
