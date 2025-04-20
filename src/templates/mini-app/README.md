@@ -451,4 +451,68 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Support
 
-For support, please contact support@mixcore.org or visit our [forums](https://community.mixcore.org). 
+For support, please contact support@mixcore.org or visit our [forums](https://community.mixcore.org).
+
+## Using in Non-App Mode
+
+The mini-app can also be used as a standalone web application outside of the Mixcore dashboard context. This is useful when you want to embed the app in a different website or run it as a separate application.
+
+### Basic Usage
+
+```tsx
+import { WebApp } from '@mixcore/mini-app';
+
+function MyPage() {
+  return (
+    <WebApp 
+      webAppConfig={{
+        standalone: true,
+        hideHeader: false,
+        customTheme: 'light-theme',
+        apiBaseUrl: 'https://api.example.com'
+      }}
+    />
+  );
+}
+```
+
+### Configuration Options
+
+The `WebApp` component accepts the following configuration options:
+
+- `standalone` (boolean): Whether the app is running in standalone mode (default: true)
+- `hideHeader` (boolean): Whether to hide the app's internal header (default: false)
+- `customTheme` (string): Custom theme class to apply to the app
+- `apiBaseUrl` (string): Base URL for API requests when not using the default Mixcore API
+
+### Example Standalone Page
+
+The template includes a standalone page example at `pages/standalone.tsx` that demonstrates how to use the mini-app in non-app mode:
+
+```tsx
+import { StandalonePage } from '@mixcore/mini-app/pages/standalone';
+
+export default function MyPage() {
+  return (
+    <StandalonePage 
+      apiUrl="https://api.example.com"
+      theme="light-theme"
+    />
+  );
+}
+```
+
+### How Non-App Mode Works
+
+When using the mini-app in non-app mode:
+
+1. The app bypasses the Mixcore dashboard integration
+2. API requests are sent to the specified `apiBaseUrl` instead of the default `/api` path
+3. The app doesn't register itself with the Mixcore system
+4. Permissions are handled differently and not registered with the Mixcore auth system
+
+This mode is perfect for embedding the mini-app functionality in:
+- External websites
+- Standalone applications
+- Custom dashboards
+- Integrated experiences 

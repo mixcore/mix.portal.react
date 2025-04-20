@@ -5,6 +5,37 @@ import appConfig from './config/app.config.json';
 import schemaConfig from './config/mixdb.schema.json';
 import demoData from './config/demo-data.json';
 
+// Flag to track whether we're in standalone web app mode
+let isWebAppMode = false;
+
+/**
+ * Set web app mode - call this to enable standalone mode
+ */
+export function setWebAppMode(enabled: boolean): void {
+  isWebAppMode = enabled;
+  console.log(`Web app mode ${enabled ? 'enabled' : 'disabled'}`);
+}
+
+/**
+ * Get whether we're in web app mode
+ */
+export function isInWebAppMode(): boolean {
+  return isWebAppMode;
+}
+
+/**
+ * Get the API base URL, taking into account web app mode
+ */
+export function getApiBaseUrl(): string {
+  // In web app mode, check for custom API URL
+  if (isWebAppMode && typeof window !== 'undefined' && window.__MIXCORE_API_BASE_URL) {
+    return window.__MIXCORE_API_BASE_URL;
+  }
+  
+  // Default API base URL
+  return '/api';
+}
+
 /**
  * Initialize the Mini App
  * This function is called when the app is first installed or initialized
@@ -22,8 +53,11 @@ export async function initializeApp(): Promise<boolean> {
     }
     
     // For production with actual API endpoints
-    // Register app with Mixcore
-    await registerApp();
+    // Skip registration when in web app mode
+    if (!isWebAppMode) {
+      // Register app with Mixcore
+      await registerApp();
+    }
     
     // Setup MixDB collections
     await setupMixDBCollections();
@@ -33,8 +67,8 @@ export async function initializeApp(): Promise<boolean> {
       await loadDemoData();
     }
     
-    // Register permissions
-    if (appConfig.init.createDefaultPermissions) {
+    // Register permissions - skip in web app mode
+    if (appConfig.init.createDefaultPermissions && !isWebAppMode) {
       await registerPermissions();
     }
     
@@ -74,7 +108,7 @@ async function simulateInitialization(): Promise<void> {
 async function registerApp(): Promise<void> {
   try {
     // Register app metadata with Mixcore system
-    const response = await fetch('/api/apps/register', {
+    const response = await fetch(`${getApiBaseUrl()}/apps/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -108,7 +142,7 @@ async function registerApp(): Promise<void> {
 async function setupMixDBCollections(): Promise<void> {
   try {
     // Create the required collections in MixDB
-    const response = await fetch('/api/mixdb/collections/create-many', {
+    const response = await fetch(`${getApiBaseUrl()}/mixdb/collections/create-many`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -134,7 +168,7 @@ async function loadDemoData(): Promise<void> {
   try {
     // For each collection in the demo data, insert the records
     for (const [collectionName, records] of Object.entries(demoData.data)) {
-      const response = await fetch(`/api/mixdb/collections/${collectionName}/records/create-many`, {
+      const response = await fetch(`${getApiBaseUrl()}/mixdb/collections/${collectionName}/records/create-many`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -160,7 +194,7 @@ async function loadDemoData(): Promise<void> {
 async function registerPermissions(): Promise<void> {
   try {
     // Register permissions with the auth system
-    const response = await fetch('/api/auth/permissions/create-many', {
+    const response = await fetch(`${getApiBaseUrl()}/auth/permissions/create-many`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -192,14 +226,14 @@ export function getAppConfig(): MixcoreAppConfig {
 export async function uninstallApp(): Promise<boolean> {
   try {
     // In development mode, simulate successful uninstallation
-    if (process.env.NODE_ENV === 'development' || !isApiEndpointAvailable()) {
+    if (process.env.NODE_ENV === 'development' || !isApiEndpointAvailable() || isWebAppMode) {
       await new Promise(resolve => setTimeout(resolve, 500));
       console.log(`${appConfig.displayName} app uninstallation simulated`);
       return true;
     }
     
     // Clean up app data and registrations
-    await fetch(`/api/apps/${appConfig.appId}/uninstall`, {
+    await fetch(`${getApiBaseUrl()}/apps/${appConfig.appId}/uninstall`, {
       method: 'POST',
     });
     
@@ -215,4 +249,7 @@ export default {
   initializeApp,
   getAppConfig,
   uninstallApp,
+  setWebAppMode,
+  isInWebAppMode,
+  getApiBaseUrl
 }; 
