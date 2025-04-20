@@ -36,7 +36,11 @@ import {
   ResponsiveContainer,
   ReferenceLine,
   Area,
-  AreaChart
+  AreaChart,
+  BarChart,
+  Bar,
+  ComposedChart,
+  Legend
 } from 'recharts';
 
 interface MmWaveData {
@@ -57,12 +61,20 @@ interface MmWaveData {
   };
 }
 
+interface VitalDataPoint {
+  time: string;
+  heartRate: number;
+  breathRate: number;
+}
+
 const SensorMonitoring: React.FC = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [sensorData, setSensorData] = useState<MmWaveData | null>(null);
   const [heartRateHistory, setHeartRateHistory] = useState<{ time: string; value: number }[]>([]);
   const [error, setError] = useState<string | null>(null);
   const clientRef = useRef<mqtt.MqttClient | null>(null);
+  const [vitalSignsHistory, setVitalSignsHistory] = useState<VitalDataPoint[]>([]);
+  const [timelineData, setTimelineData] = useState<{time: string; present: number}[]>([]);
   
   useEffect(() => {
     // Connect to MQTT broker
@@ -82,6 +94,21 @@ const SensorMonitoring: React.FC = () => {
               setError(`Failed to subscribe: ${err.message}`);
             }
           });
+          
+          // Initialize timeline data with past hour (simulated data)
+          const initialTimelineData: {time: string; present: number}[] = [];
+          const now = new Date();
+          
+          for (let i = 60; i >= 0; i--) {
+            const timePoint = new Date(now.getTime() - (i * 60000));
+            const hourMin = timePoint.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            // Generate random presence data (0 or 1)
+            initialTimelineData.push({
+              time: hourMin,
+              present: Math.random() > 0.3 ? 1 : 0
+            });
+          }
+          setTimelineData(initialTimelineData);
         });
         
         client.on('message', (topic, message) => {
@@ -96,6 +123,30 @@ const SensorMonitoring: React.FC = () => {
                 const newHistory = [...prev, { time: now, value: data.heart.heart_phase! }];
                 // Keep only the last 20 data points
                 return newHistory.slice(-20);
+              });
+              
+              // Update vital signs correlation data
+              if (data.heart?.heart_rate && data.heart?.breath_rate) {
+                const timeStr = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+                setVitalSignsHistory(prev => {
+                  const newHistory = [...prev, { 
+                    time: timeStr, 
+                    heartRate: data.heart.heart_rate!, 
+                    breathRate: data.heart.breath_rate! 
+                  }];
+                  // Keep only recent history
+                  return newHistory.slice(-15);
+                });
+              }
+              
+              // Update presence timeline data
+              const currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+              setTimelineData(prev => {
+                const newData = [...prev, {
+                  time: currentTime,
+                  present: data.human?.is_detected ? 1 : 0
+                }];
+                return newData.slice(-60); // Keep last hour
               });
             }
           } catch (e) {
@@ -208,6 +259,30 @@ const SensorMonitoring: React.FC = () => {
     return data;
   };
 
+  // Generate breath rate waveform data
+  const generateBreathWaveform = (breathRate: number) => {
+    const dataPoints = 40;
+    const data = [];
+    
+    // Create a smoother sine wave for breathing pattern
+    for (let i = 0; i < dataPoints; i++) {
+      const x = i / dataPoints;
+      
+      // Breathing is a simpler sine wave
+      const value = 50 + 30 * Math.sin(2 * Math.PI * x);
+      
+      // Scale factor based on breath rate (breaths per minute)
+      const scaleFactor = 0.7 + (breathRate / 30);
+      
+      data.push({
+        id: i,
+        value: value * scaleFactor
+      });
+    }
+    
+    return data;
+  };
+
   return (
     <div className="space-y-6">
       <Card>
@@ -240,14 +315,18 @@ const SensorMonitoring: React.FC = () => {
         
         <CardContent>
           <Tabs defaultValue="heart-rate">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="heart-rate">
                 <HeartPulse className="h-4 w-4 mr-2" />
-                Heart Rate Monitoring
+                Heart Rate
               </TabsTrigger>
               <TabsTrigger value="human-detection">
                 <Users className="h-4 w-4 mr-2" />
                 Human Detection
+              </TabsTrigger>
+              <TabsTrigger value="advanced-metrics">
+                <Activity className="h-4 w-4 mr-2" />
+                Advanced Metrics
               </TabsTrigger>
             </TabsList>
             
@@ -469,6 +548,125 @@ const SensorMonitoring: React.FC = () => {
               
               <div className="text-sm text-muted-foreground">
                 <p>The MR60BHA2 can detect human presence up to 6 meters away and track multiple targets simultaneously.</p>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="advanced-metrics" className="space-y-4 pt-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <Card>
+                  <CardHeader className="py-2 px-4">
+                    <CardTitle className="text-sm">Vital Signs Correlation</CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-2">
+                    <div className="h-64">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <ComposedChart
+                          data={vitalSignsHistory}
+                          margin={{ top: 10, right: 30, left: 0, bottom: 10 }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="time" />
+                          <YAxis yAxisId="heart" orientation="left" domain={[40, 180]} label={{ value: 'Heart Rate (BPM)', angle: -90, position: 'insideLeft' }} />
+                          <YAxis yAxisId="breath" orientation="right" domain={[5, 30]} label={{ value: 'Breath Rate (BPM)', angle: -90, position: 'insideRight' }} />
+                          <Tooltip />
+                          <Legend />
+                          <Line yAxisId="heart" type="monotone" dataKey="heartRate" stroke="#ff6384" activeDot={{ r: 8 }} name="Heart Rate" />
+                          <Line yAxisId="breath" type="monotone" dataKey="breathRate" stroke="#36a2eb" activeDot={{ r: 8 }} name="Breath Rate" />
+                        </ComposedChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader className="py-2 px-4">
+                    <CardTitle className="text-sm">Breath Rate Visualization</CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-2">
+                    <div className="h-64">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart
+                          data={generateBreathWaveform(sensorData?.heart?.breath_rate || 15)}
+                          margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+                        >
+                          <defs>
+                            <linearGradient id="breathRateGradient" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#36a2eb" stopOpacity={0.8} />
+                              <stop offset="95%" stopColor="#36a2eb" stopOpacity={0.2} />
+                            </linearGradient>
+                          </defs>
+                          <Area 
+                            type="natural"
+                            dataKey="value"
+                            stroke="#36a2eb"
+                            strokeWidth={2}
+                            fill="url(#breathRateGradient)"
+                            isAnimationActive={true}
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <div className="text-center mt-2">
+                      <div className="text-sm font-medium">Current Rate: {sensorData?.heart?.breath_rate || '--'} breaths/min</div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+              
+              <Card>
+                <CardHeader className="py-2 px-4">
+                  <CardTitle className="text-sm">Presence Detection Timeline (Last Hour)</CardTitle>
+                </CardHeader>
+                <CardContent className="p-2">
+                  <div className="h-32">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart 
+                        data={timelineData} 
+                        margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+                        barCategoryGap={0}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                        <XAxis 
+                          dataKey="time" 
+                          interval={Math.floor(timelineData.length / 10)} 
+                          angle={-45} 
+                          textAnchor="end"
+                          height={50}
+                          scale="band"
+                        />
+                        <YAxis domain={[0, 1]} hide />
+                        <Tooltip
+                          formatter={(value) => [value === 1 ? 'Present' : 'Absent', 'Status']}
+                          labelFormatter={(label) => `Time: ${label}`}
+                        />
+                        <Bar 
+                          dataKey="present" 
+                          fill="#4ade80" 
+                          radius={[0, 0, 0, 0]}
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div className="flex justify-between items-center mt-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-green-400 rounded-sm"></div>
+                      <span className="text-sm text-muted-foreground">Present</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-gray-200 rounded-sm"></div>
+                      <span className="text-sm text-muted-foreground">Absent</span>
+                    </div>
+                    <div className="text-sm">
+                      <span className="font-medium">Occupancy Rate: </span>
+                      {Math.round((timelineData.filter(d => d.present === 1).length / timelineData.length) * 100)}%
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <div className="text-sm text-muted-foreground">
+                <p>The advanced metrics showcase correlations between different vital signs and patterns of presence detection over time.</p>
+                <p>These visualizations can help identify trends and anomalies in the sensor data for more comprehensive analysis.</p>
               </div>
             </TabsContent>
           </Tabs>
