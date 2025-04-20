@@ -5,6 +5,7 @@ import { AppShell } from './layouts/AppShell';
 import { TableList } from './components/TableList';
 import { TableDetail } from './components/TableDetail';
 import { QueryEditor } from './components/QueryEditor';
+import { DbContextSettings } from './components/DbContextSettings';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { initializeApp } from './app-loader';
 import { DatabaseProvider } from './contexts/DatabaseContext';
@@ -157,12 +158,7 @@ export function MixDBApp(props: MixDBAppProps) {
           </div>
         );
       case 'settings':
-        return (
-          <div className="p-4 border rounded-md">
-            <h3 className="text-lg font-medium mb-2">MixDB Settings</h3>
-            <p className="text-muted-foreground">Settings configuration coming soon</p>
-          </div>
-        );
+        return <DbContextSettings />;
       case 'tables':
       default:
         return <TableList onTableClick={handleTableClick} />;
