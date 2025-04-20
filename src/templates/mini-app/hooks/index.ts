@@ -5,10 +5,12 @@ export { default as useLeftSidebarMenuItems } from './useLeftSidebarMenuItems';
 export { default as useCtaButton } from './useCtaButton';
 export { default as useNotifications } from './useNotifications';
 export { default as useHelpButton } from './useHelpButton';
+export { default as useSearchButton } from './useSearchButton';
 
 // Export types
 export type { BreadcrumbItem } from './useBreadcrumb';
 export type { SidebarMenuItem } from './useLeftSidebarMenuItems';
 export type { CtaButton } from './useCtaButton';
 export type { Notification } from './useNotifications';
-export type { HelpContent } from './useHelpButton'; 
+export type { HelpContent } from './useHelpButton';
+export type { SearchConfig } from './useSearchButton'; 
