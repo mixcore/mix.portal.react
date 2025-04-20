@@ -20,7 +20,16 @@ import {
   AlertCircle,
   Wifi,
   WifiOff,
-  Settings
+  Settings,
+  Search,
+  Map,
+  Filter,
+  MapPin,
+  Building,
+  ArrowUpDown,
+  Check,
+  ChevronsUpDown,
+  Thermometer
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import mqtt from 'mqtt';
@@ -42,6 +51,46 @@ import {
   ComposedChart,
   Legend
 } from 'recharts';
+import { Input } from '@/components/ui/input';
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
+} from '@/components/ui/command';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 
 interface MmWaveData {
   heart: {
@@ -67,6 +116,24 @@ interface VitalDataPoint {
   breathRate: number;
 }
 
+// Add new interfaces for sensor management
+interface SensorLocation {
+  id: string;
+  name: string;
+  floor: string;
+  building: string;
+  coordinates: { x: number; y: number };
+}
+
+interface Sensor {
+  id: string;
+  name: string;
+  type: 'heart-rate' | 'motion' | 'presence' | 'temperature' | 'multi';
+  locationId: string;
+  status: 'online' | 'offline' | 'warning';
+  lastUpdated: string;
+}
+
 const SensorMonitoring: React.FC = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [sensorData, setSensorData] = useState<MmWaveData | null>(null);
@@ -75,6 +142,50 @@ const SensorMonitoring: React.FC = () => {
   const clientRef = useRef<mqtt.MqttClient | null>(null);
   const [vitalSignsHistory, setVitalSignsHistory] = useState<VitalDataPoint[]>([]);
   const [timelineData, setTimelineData] = useState<{time: string; present: number}[]>([]);
+  
+  // State for sensor management
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState<string>('all');
+  const [selectedSensor, setSelectedSensor] = useState<string>('sensor-001');
+  const [showLocationMap, setShowLocationMap] = useState(false);
+  
+  // Mock sensor locations data
+  const sensorLocations: SensorLocation[] = [
+    { id: 'loc-001', name: 'Living Room', floor: '1st Floor', building: 'Main Building', coordinates: { x: 120, y: 80 } },
+    { id: 'loc-002', name: 'Bedroom', floor: '1st Floor', building: 'Main Building', coordinates: { x: 220, y: 80 } },
+    { id: 'loc-003', name: 'Kitchen', floor: '1st Floor', building: 'Main Building', coordinates: { x: 80, y: 150 } },
+    { id: 'loc-004', name: 'Bathroom', floor: '1st Floor', building: 'Main Building', coordinates: { x: 180, y: 150 } },
+    { id: 'loc-005', name: 'Office', floor: '2nd Floor', building: 'Main Building', coordinates: { x: 120, y: 80 } },
+    { id: 'loc-006', name: 'Conference Room', floor: '2nd Floor', building: 'Main Building', coordinates: { x: 220, y: 80 } },
+    { id: 'loc-007', name: 'Lobby', floor: 'Ground Floor', building: 'Annex Building', coordinates: { x: 100, y: 100 } },
+  ];
+  
+  // Mock sensors data
+  const sensors: Sensor[] = [
+    { id: 'sensor-001', name: 'Living Room Sensor', type: 'multi', locationId: 'loc-001', status: 'online', lastUpdated: '30 sec ago' },
+    { id: 'sensor-002', name: 'Bedroom Sensor', type: 'heart-rate', locationId: 'loc-002', status: 'online', lastUpdated: '1 min ago' },
+    { id: 'sensor-003', name: 'Kitchen Sensor', type: 'motion', locationId: 'loc-003', status: 'warning', lastUpdated: '5 min ago' },
+    { id: 'sensor-004', name: 'Bathroom Sensor', type: 'presence', locationId: 'loc-004', status: 'offline', lastUpdated: '1 day ago' },
+    { id: 'sensor-005', name: 'Office Sensor 1', type: 'multi', locationId: 'loc-005', status: 'online', lastUpdated: '2 min ago' },
+    { id: 'sensor-006', name: 'Office Sensor 2', type: 'temperature', locationId: 'loc-005', status: 'online', lastUpdated: '3 min ago' },
+    { id: 'sensor-007', name: 'Conference Sensor', type: 'presence', locationId: 'loc-006', status: 'online', lastUpdated: '2 min ago' },
+    { id: 'sensor-008', name: 'Lobby Sensor', type: 'motion', locationId: 'loc-007', status: 'online', lastUpdated: '1 min ago' },
+  ];
+  
+  // Filter sensors based on search and location
+  const filteredSensors = sensors.filter(sensor => {
+    const matchesSearch = sensor.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                         sensor.id.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesLocation = selectedLocation === 'all' || sensor.locationId === selectedLocation;
+    
+    return matchesSearch && matchesLocation;
+  });
+  
+  // Get the selected sensor
+  const currentSensor = sensors.find(s => s.id === selectedSensor) || sensors[0];
+  
+  // Get the selected sensor's location
+  const currentLocation = sensorLocations.find(loc => loc.id === currentSensor.locationId);
   
   useEffect(() => {
     // Connect to MQTT broker
@@ -285,13 +396,225 @@ const SensorMonitoring: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Sensor selection and filtering UI */}
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold">Sensor Monitoring</h1>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => setShowLocationMap(!showLocationMap)}>
+              <Map className="h-4 w-4 mr-2" />
+              {showLocationMap ? 'Hide Map' : 'Show Map'}
+            </Button>
+            <Button variant="outline" size="sm">
+              <Settings className="h-4 w-4 mr-2" />
+              Settings
+            </Button>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Search input */}
+          <div className="relative">
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search sensors..."
+              className="pl-8"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          
+          {/* Location filter */}
+          <Select value={selectedLocation} onValueChange={setSelectedLocation}>
+            <SelectTrigger>
+              <SelectValue placeholder="Filter by location" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="all">All Locations</SelectItem>
+                <SelectLabel>Buildings</SelectLabel>
+                {Array.from(new Set(sensorLocations.map(loc => loc.building))).map(building => (
+                  <SelectItem key={building} value={`building-${building}`}>
+                    {building}
+                  </SelectItem>
+                ))}
+                <SelectLabel>Locations</SelectLabel>
+                {sensorLocations.map(location => (
+                  <SelectItem key={location.id} value={location.id}>
+                    {location.name} ({location.floor})
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          
+          {/* Sensor selector with smart suggestions */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" role="combobox" className="justify-between w-full">
+                {currentSensor ? currentSensor.name : "Select sensor..."}
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-full p-0" align="start">
+              <Command>
+                <CommandInput placeholder="Search sensor..." />
+                <CommandEmpty>No sensor found.</CommandEmpty>
+                <CommandGroup>
+                  {filteredSensors.map((sensor) => (
+                    <CommandItem
+                      key={sensor.id}
+                      value={sensor.id}
+                      onSelect={() => {
+                        setSelectedSensor(sensor.id);
+                      }}
+                    >
+                      <Check
+                        className={`mr-2 h-4 w-4 ${
+                          sensor.id === selectedSensor ? "opacity-100" : "opacity-0"
+                        }`}
+                      />
+                      <span className="flex-1">{sensor.name}</span>
+                      <Badge 
+                        variant="outline" 
+                        className={
+                          sensor.status === 'online' ? "bg-green-50 text-green-700 border-green-200" : 
+                          sensor.status === 'warning' ? "bg-yellow-50 text-yellow-700 border-yellow-200" :
+                          "bg-red-50 text-red-700 border-red-200"
+                        }
+                      >
+                        {sensor.status}
+                      </Badge>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        </div>
+        
+        {/* Visual sensor map */}
+        {showLocationMap && (
+          <Card className="p-4">
+            <div className="mb-2 flex justify-between items-center">
+              <h3 className="text-lg font-medium">Sensor Location Map</h3>
+              <Select defaultValue="1st Floor">
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue placeholder="Select floor" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Ground Floor">Ground Floor</SelectItem>
+                  <SelectItem value="1st Floor">1st Floor</SelectItem>
+                  <SelectItem value="2nd Floor">2nd Floor</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="relative border rounded-md h-[300px] bg-slate-50">
+              {/* Example simplified floor map with sensor positions */}
+              <div className="absolute w-full h-full">
+                {/* Room outlines - simplified for demo */}
+                <div className="absolute border-2 border-gray-300 rounded-md left-20 top-10 w-40 h-30 bg-white/70">
+                  <div className="text-xs text-center mt-1 text-gray-600">Living Room</div>
+                </div>
+                <div className="absolute border-2 border-gray-300 rounded-md left-70 top-10 w-40 h-30 bg-white/70">
+                  <div className="text-xs text-center mt-1 text-gray-600">Bedroom</div>
+                </div>
+                <div className="absolute border-2 border-gray-300 rounded-md left-20 top-60 w-30 h-30 bg-white/70">
+                  <div className="text-xs text-center mt-1 text-gray-600">Kitchen</div>
+                </div>
+                <div className="absolute border-2 border-gray-300 rounded-md left-60 top-60 w-30 h-30 bg-white/70">
+                  <div className="text-xs text-center mt-1 text-gray-600">Bathroom</div>
+                </div>
+                
+                {/* Sensor markers */}
+                {sensors
+                  .filter(s => {
+                    const loc = sensorLocations.find(l => l.id === s.locationId);
+                    return loc && loc.floor === "1st Floor";
+                  })
+                  .map(sensor => {
+                    const location = sensorLocations.find(l => l.id === sensor.locationId);
+                    if (!location) return null;
+                    
+                    return (
+                      <div 
+                        key={sensor.id}
+                        className={`absolute w-6 h-6 rounded-full flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 cursor-pointer ${
+                          sensor.id === selectedSensor ? 'ring-2 ring-primary' : ''
+                        } ${
+                          sensor.status === 'online' ? 'bg-green-100 text-green-700' :
+                          sensor.status === 'warning' ? 'bg-yellow-100 text-yellow-700' :
+                          'bg-red-100 text-red-700'
+                        }`}
+                        style={{
+                          top: `${location.coordinates.y}px`,
+                          left: `${location.coordinates.x}px`
+                        }}
+                        onClick={() => setSelectedSensor(sensor.id)}
+                      >
+                        {sensor.type === 'heart-rate' ? <HeartPulse className="h-3 w-3" /> :
+                         sensor.type === 'motion' ? <Activity className="h-3 w-3" /> :
+                         sensor.type === 'presence' ? <Users className="h-3 w-3" /> :
+                         sensor.type === 'temperature' ? <Thermometer className="h-3 w-3" /> :
+                         <Wifi className="h-3 w-3" />}
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+            <div className="flex items-center gap-4 mt-2 text-sm">
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                <span>Online</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <span>Warning</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                <span>Offline</span>
+              </div>
+            </div>
+          </Card>
+        )}
+        
+        {/* Selected Sensor Context Information */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Badge 
+              variant="outline" 
+              className={
+                currentSensor.status === 'online' ? "bg-green-50 text-green-700 border-green-200" : 
+                currentSensor.status === 'warning' ? "bg-yellow-50 text-yellow-700 border-yellow-200" :
+                "bg-red-50 text-red-700 border-red-200"
+              }
+            >
+              {currentSensor.status === 'online' ? <Wifi className="h-3 w-3 mr-1" /> : <WifiOff className="h-3 w-3 mr-1" />}
+              {currentSensor.status}
+            </Badge>
+            <span className="text-sm text-muted-foreground">
+              Location: <span className="font-medium">{currentLocation?.name} ({currentLocation?.floor})</span>
+            </span>
+            <span className="text-sm text-muted-foreground">
+              Last Updated: <span className="font-medium">{currentSensor.lastUpdated}</span>
+            </span>
+          </div>
+          <Button variant="outline" size="sm" onClick={handleReconnect} disabled={isConnected}>
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Reconnect
+          </Button>
+        </div>
+      </div>
+      
+      {/* Main sensor data card with tabs */}
       <Card>
         <CardHeader>
           <div className="flex justify-between items-start">
             <div>
-              <CardTitle>mmWave Sensor Monitoring</CardTitle>
+              <CardTitle>{currentSensor.name}</CardTitle>
               <CardDescription>
-                Real-time heart rate and human detection data from MR60BHA2 sensor
+                Real-time data from MR60BHA2 sensor
               </CardDescription>
             </div>
             <Badge 
@@ -671,17 +994,6 @@ const SensorMonitoring: React.FC = () => {
             </TabsContent>
           </Tabs>
         </CardContent>
-        
-        <CardFooter className="border-t flex justify-between pt-4">
-          <Button variant="outline" size="sm" onClick={handleReconnect} disabled={isConnected}>
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Reconnect
-          </Button>
-          <Button variant="outline" size="sm">
-            <Settings className="h-4 w-4 mr-2" />
-            Sensor Settings
-          </Button>
-        </CardFooter>
       </Card>
     </div>
   );
