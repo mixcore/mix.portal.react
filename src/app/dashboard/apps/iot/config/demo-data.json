@@ -1,0 +1,257 @@
+{
+  "data": {
+    "iot_devices": [
+      {
+        "name": "Temperature Sensor 1",
+        "deviceId": "temp-sensor-001",
+        "type": "sensor",
+        "status": "online",
+        "location": {
+          "area": "Office",
+          "latitude": 37.7749,
+          "longitude": -122.4194
+        },
+        "ipAddress": "192.168.1.100",
+        "macAddress": "00:1A:2B:3C:4D:5E",
+        "firmware": "1.2.0",
+        "lastSeen": "2023-09-15T08:30:00Z",
+        "tags": ["temperature", "office", "indoor"]
+      },
+      {
+        "name": "Humidity Sensor 1",
+        "deviceId": "hum-sensor-001",
+        "type": "sensor",
+        "status": "online",
+        "location": {
+          "area": "Office",
+          "latitude": 37.7749,
+          "longitude": -122.4194
+        },
+        "ipAddress": "192.168.1.101",
+        "macAddress": "00:1A:2B:3C:4D:5F",
+        "firmware": "1.2.0",
+        "lastSeen": "2023-09-15T08:29:00Z",
+        "tags": ["humidity", "office", "indoor"]
+      },
+      {
+        "name": "Smart Light Controller",
+        "deviceId": "light-ctrl-001",
+        "type": "actuator",
+        "status": "online",
+        "location": {
+          "area": "Conference Room",
+          "latitude": 37.7749,
+          "longitude": -122.4194
+        },
+        "ipAddress": "192.168.1.102",
+        "macAddress": "00:1A:2B:3C:4D:60",
+        "firmware": "2.0.1",
+        "lastSeen": "2023-09-15T08:28:00Z",
+        "tags": ["light", "conference", "indoor", "actuator"]
+      },
+      {
+        "name": "Gateway Hub 1",
+        "deviceId": "gateway-001",
+        "type": "gateway",
+        "status": "online",
+        "location": {
+          "area": "Server Room",
+          "latitude": 37.7749,
+          "longitude": -122.4194
+        },
+        "ipAddress": "192.168.1.1",
+        "macAddress": "00:1A:2B:3C:4D:61",
+        "firmware": "3.1.0",
+        "lastSeen": "2023-09-15T08:30:10Z",
+        "tags": ["gateway", "server-room", "indoor"]
+      },
+      {
+        "name": "Motion Sensor 1",
+        "deviceId": "motion-sensor-001",
+        "type": "sensor",
+        "status": "online",
+        "location": {
+          "area": "Entrance",
+          "latitude": 37.7749,
+          "longitude": -122.4194
+        },
+        "ipAddress": "192.168.1.103",
+        "macAddress": "00:1A:2B:3C:4D:62",
+        "firmware": "1.1.5",
+        "lastSeen": "2023-09-15T08:25:00Z",
+        "tags": ["motion", "entrance", "indoor", "security"]
+      },
+      {
+        "name": "Outdoor Camera 1",
+        "deviceId": "camera-001",
+        "type": "camera",
+        "status": "online",
+        "location": {
+          "area": "Parking Lot",
+          "latitude": 37.7751,
+          "longitude": -122.4196
+        },
+        "ipAddress": "192.168.1.104",
+        "macAddress": "00:1A:2B:3C:4D:63",
+        "firmware": "2.3.1",
+        "lastSeen": "2023-09-15T08:29:30Z",
+        "tags": ["camera", "outdoor", "security", "parking"]
+      },
+      {
+        "name": "Temperature Sensor 2",
+        "deviceId": "temp-sensor-002",
+        "type": "sensor",
+        "status": "offline",
+        "location": {
+          "area": "Warehouse",
+          "latitude": 37.7760,
+          "longitude": -122.4200
+        },
+        "ipAddress": "192.168.1.105",
+        "macAddress": "00:1A:2B:3C:4D:64",
+        "firmware": "1.2.0",
+        "lastSeen": "2023-09-14T18:45:00Z",
+        "tags": ["temperature", "warehouse", "indoor"]
+      },
+      {
+        "name": "Smart Thermostat",
+        "deviceId": "thermostat-001",
+        "type": "actuator",
+        "status": "online",
+        "location": {
+          "area": "Office",
+          "latitude": 37.7749,
+          "longitude": -122.4194
+        },
+        "ipAddress": "192.168.1.106",
+        "macAddress": "00:1A:2B:3C:4D:65",
+        "firmware": "2.5.0",
+        "lastSeen": "2023-09-15T08:27:00Z",
+        "tags": ["thermostat", "hvac", "office", "indoor", "actuator"]
+      }
+    ],
+    "iot_sensor_data": [
+      {
+        "deviceId": "temp-sensor-001",
+        "timestamp": "2023-09-15T08:00:00Z",
+        "sensorType": "temperature",
+        "value": 22.5,
+        "unit": "C"
+      },
+      {
+        "deviceId": "temp-sensor-001",
+        "timestamp": "2023-09-15T08:15:00Z",
+        "sensorType": "temperature",
+        "value": 22.7,
+        "unit": "C"
+      },
+      {
+        "deviceId": "temp-sensor-001",
+        "timestamp": "2023-09-15T08:30:00Z",
+        "sensorType": "temperature",
+        "value": 23.0,
+        "unit": "C"
+      },
+      {
+        "deviceId": "hum-sensor-001",
+        "timestamp": "2023-09-15T08:00:00Z",
+        "sensorType": "humidity",
+        "value": 45.2,
+        "unit": "%"
+      },
+      {
+        "deviceId": "hum-sensor-001",
+        "timestamp": "2023-09-15T08:15:00Z",
+        "sensorType": "humidity",
+        "value": 45.5,
+        "unit": "%"
+      },
+      {
+        "deviceId": "hum-sensor-001",
+        "timestamp": "2023-09-15T08:30:00Z",
+        "sensorType": "humidity",
+        "value": 46.0,
+        "unit": "%"
+      },
+      {
+        "deviceId": "motion-sensor-001",
+        "timestamp": "2023-09-15T08:10:00Z",
+        "sensorType": "motion",
+        "value": 1,
+        "unit": "other"
+      },
+      {
+        "deviceId": "motion-sensor-001",
+        "timestamp": "2023-09-15T08:25:00Z",
+        "sensorType": "motion",
+        "value": 1,
+        "unit": "other"
+      }
+    ],
+    "iot_automations": [
+      {
+        "name": "High Temperature Alert",
+        "description": "Send notification when temperature exceeds threshold",
+        "triggerType": "threshold",
+        "triggerCondition": {
+          "deviceId": "temp-sensor-001",
+          "sensorType": "temperature",
+          "operator": ">",
+          "value": 25
+        },
+        "actions": [
+          {
+            "actionType": "notification",
+            "parameters": {
+              "message": "Temperature is too high",
+              "severity": "warning"
+            }
+          }
+        ],
+        "isEnabled": true
+      },
+      {
+        "name": "Motion Detection - Turn On Lights",
+        "description": "Turn on lights when motion is detected",
+        "triggerType": "event",
+        "triggerCondition": {
+          "deviceId": "motion-sensor-001",
+          "sensorType": "motion",
+          "operator": "==",
+          "value": 1
+        },
+        "actions": [
+          {
+            "actionType": "control",
+            "targetDeviceId": "light-ctrl-001",
+            "command": "setState",
+            "parameters": {
+              "state": "on",
+              "brightness": 80
+            }
+          }
+        ],
+        "isEnabled": true
+      },
+      {
+        "name": "Night Time - Reduce Thermostat",
+        "description": "Lower thermostat temperature at night",
+        "triggerType": "schedule",
+        "triggerCondition": {
+          "schedule": "0 0 22 * * *"
+        },
+        "actions": [
+          {
+            "actionType": "control",
+            "targetDeviceId": "thermostat-001",
+            "command": "setTemperature",
+            "parameters": {
+              "temperature": 20
+            }
+          }
+        ],
+        "isEnabled": true
+      }
+    ]
+  }
+} 

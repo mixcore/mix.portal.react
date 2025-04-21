@@ -134,6 +134,26 @@ interface Sensor {
   lastUpdated: string;
 }
 
+// Add interfaces for medical alarm standards
+interface VitalSignThresholds {
+  name: string;
+  ranges: {
+    critical: { min: number; max: number };
+    warning: { min: number; max: number };
+    normal: { min: number; max: number };
+  };
+  unit: string;
+}
+
+interface AlarmEvent {
+  timestamp: Date;
+  type: 'heart_rate' | 'breath_rate' | 'connection' | 'movement';
+  severity: 'critical' | 'warning' | 'info';
+  message: string;
+  value?: number;
+  acknowledged: boolean;
+}
+
 const SensorMonitoring: React.FC = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [sensorData, setSensorData] = useState<MmWaveData | null>(null);
@@ -142,6 +162,10 @@ const SensorMonitoring: React.FC = () => {
   const clientRef = useRef<mqtt.MqttClient | null>(null);
   const [vitalSignsHistory, setVitalSignsHistory] = useState<VitalDataPoint[]>([]);
   const [timelineData, setTimelineData] = useState<{time: string; present: number}[]>([]);
+  const [alarmHistory, setAlarmHistory] = useState<AlarmEvent[]>([]);
+  const [alarmMuted, setAlarmMuted] = useState(false);
+  const [alarmAcknowledged, setAlarmAcknowledged] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   
   // State for sensor management
   const [searchTerm, setSearchTerm] = useState('');
@@ -187,6 +211,102 @@ const SensorMonitoring: React.FC = () => {
   // Get the selected sensor's location
   const currentLocation = sensorLocations.find(loc => loc.id === currentSensor.locationId);
   
+  // Medical standard thresholds based on global standards
+  const vitalSignsThresholds: { [key: string]: VitalSignThresholds } = {
+    heart_rate: {
+      name: "Heart Rate",
+      ranges: {
+        critical: { min: 40, max: 150 },
+        warning: { min: 50, max: 120 },
+        normal: { min: 60, max: 100 },
+      },
+      unit: "BPM"
+    },
+    breath_rate: {
+      name: "Respiratory Rate",
+      ranges: {
+        critical: { min: 5, max: 40 },
+        warning: { min: 8, max: 30 },
+        normal: { min: 12, max: 20 },
+      },
+      unit: "breaths/min"
+    }
+  };
+  
+  // Helper functions for vital sign classification
+  const classifyVitalSign = (type: 'heart_rate' | 'breath_rate', value: number): 'critical' | 'warning' | 'normal' => {
+    const thresholds = vitalSignsThresholds[type];
+    
+    if (value < thresholds.ranges.critical.min || value > thresholds.ranges.critical.max) {
+      return 'critical';
+    } else if (value < thresholds.ranges.warning.min || value > thresholds.ranges.warning.max) {
+      return 'normal';
+    } else {
+      return 'normal';
+    }
+  };
+  
+  const getStatusColor = (status: 'critical' | 'warning' | 'normal') => {
+    switch (status) {
+      case 'critical':
+        return {
+          bg: "bg-red-50",
+          text: "text-red-700",
+          border: "border-red-200",
+          fill: "#ef4444"
+        };
+      case 'warning':
+        return {
+          bg: "bg-yellow-50",
+          text: "text-yellow-700",
+          border: "border-yellow-200",
+          fill: "#eab308"
+        };
+      case 'normal':
+      default:
+        return {
+          bg: "bg-green-50",
+          text: "text-green-700",
+          border: "border-green-200",
+          fill: "#22c55e"
+        };
+    }
+  };
+  
+  // Function to add an alarm event
+  const addAlarmEvent = (type: 'heart_rate' | 'breath_rate' | 'connection' | 'movement', 
+                         severity: 'critical' | 'warning' | 'info',
+                         message: string,
+                         value?: number) => {
+    const newAlarm: AlarmEvent = {
+      timestamp: new Date(),
+      type,
+      severity,
+      message,
+      value,
+      acknowledged: false
+    };
+    
+    setAlarmHistory(prev => [newAlarm, ...prev.slice(0, 99)]); // Keep last 100 alarms
+    
+    // Play alarm sound for critical events if not muted
+    if (severity === 'critical' && !alarmMuted && audioRef.current) {
+      audioRef.current.play().catch(e => console.error("Failed to play alarm sound:", e));
+    }
+  };
+  
+  // Function to acknowledge all alarms
+  const acknowledgeAllAlarms = () => {
+    setAlarmHistory(prev => prev.map(alarm => ({ ...alarm, acknowledged: true })));
+    setAlarmAcknowledged(true);
+    
+    // Stop alarm sound
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+  };
+  
   useEffect(() => {
     // Connect to MQTT broker
     const connectMqtt = async () => {
@@ -226,6 +346,51 @@ const SensorMonitoring: React.FC = () => {
           try {
             const data = JSON.parse(message.toString()) as MmWaveData;
             setSensorData(data);
+            
+            // Process vital signs for alarms
+            if (data.heart?.heart_rate) {
+              const heartRate = data.heart.heart_rate;
+              const heartStatus = classifyVitalSign('heart_rate', heartRate);
+              
+              // Generate alarm for abnormal heart rate
+              if (heartStatus === 'critical') {
+                addAlarmEvent(
+                  'heart_rate', 
+                  'critical',
+                  `Critical heart rate detected: ${heartRate} BPM`, 
+                  heartRate
+                );
+              } else if (heartStatus === 'warning') {
+                addAlarmEvent(
+                  'heart_rate', 
+                  'warning',
+                  `Abnormal heart rate detected: ${heartRate} BPM`, 
+                  heartRate
+                );
+              }
+            }
+            
+            if (data.heart?.breath_rate) {
+              const breathRate = data.heart.breath_rate;
+              const breathStatus = classifyVitalSign('breath_rate', breathRate);
+              
+              // Generate alarm for abnormal breath rate
+              if (breathStatus === 'critical') {
+                addAlarmEvent(
+                  'breath_rate', 
+                  'critical',
+                  `Critical respiratory rate detected: ${breathRate} breaths/min`, 
+                  breathRate
+                );
+              } else if (breathStatus === 'warning') {
+                addAlarmEvent(
+                  'breath_rate', 
+                  'warning',
+                  `Abnormal respiratory rate detected: ${breathRate} breaths/min`, 
+                  breathRate
+                );
+              }
+            }
             
             // Update heart rate history for chart
             if (data.heart?.heart_phase !== undefined) {
@@ -288,6 +453,20 @@ const SensorMonitoring: React.FC = () => {
     };
     
     connectMqtt();
+    
+    // Initialize audio element for alarm sounds
+    audioRef.current = new Audio('/sounds/alarm.mp3');
+    audioRef.current.loop = true;
+    
+    return () => {
+      if (clientRef.current) {
+        clientRef.current.end();
+      }
+      
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+    };
   }, []);
   
   // Reconnect to MQTT broker
@@ -394,8 +573,57 @@ const SensorMonitoring: React.FC = () => {
     return data;
   };
 
+  // Get status of heart rate
+  const heartRateStatus = sensorData?.heart?.heart_rate 
+    ? classifyVitalSign('heart_rate', sensorData.heart.heart_rate)
+    : 'normal';
+    
+  // Get status of breath rate
+  const breathRateStatus = sensorData?.heart?.breath_rate
+    ? classifyVitalSign('breath_rate', sensorData.heart.breath_rate)
+    : 'normal';
+  
+  // Get colors for heart rate status
+  const heartRateColors = getStatusColor(heartRateStatus);
+  
+  // Get colors for breath rate status
+  const breathRateColors = getStatusColor(breathRateStatus);
+
   return (
     <div className="space-y-6">
+      {/* Alarm audio element */}
+      <audio ref={audioRef} src="/sounds/alarm.mp3" />
+      
+      {/* Active alarm banner */}
+      {alarmHistory.length > 0 && alarmHistory.some(a => a.severity === 'critical' && !a.acknowledged) && (
+        <div className="bg-red-50 border border-red-200 rounded-md p-3 flex items-center justify-between">
+          <div className="flex items-center">
+            <AlertCircle className="h-5 w-5 text-red-600 mr-2" />
+            <span className="font-medium text-red-800">
+              Critical alarm active: {alarmHistory[0].message}
+            </span>
+          </div>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="border-red-300 text-red-700 hover:bg-red-100"
+              onClick={acknowledgeAllAlarms}
+            >
+              Acknowledge
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="border-red-300 text-red-700 hover:bg-red-100"
+              onClick={() => setAlarmMuted(!alarmMuted)}
+            >
+              {alarmMuted ? 'Unmute' : 'Mute'} Alarm
+            </Button>
+          </div>
+        </div>
+      )}
+      
       {/* Sensor selection and filtering UI */}
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
@@ -638,7 +866,7 @@ const SensorMonitoring: React.FC = () => {
         
         <CardContent>
           <Tabs defaultValue="heart-rate">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="heart-rate">
                 <HeartPulse className="h-4 w-4 mr-2" />
                 Heart Rate
@@ -651,6 +879,10 @@ const SensorMonitoring: React.FC = () => {
                 <Activity className="h-4 w-4 mr-2" />
                 Advanced Metrics
               </TabsTrigger>
+              <TabsTrigger value="alarm-history">
+                <AlertCircle className="h-4 w-4 mr-2" />
+                Alarm History
+              </TabsTrigger>
             </TabsList>
             
             <TabsContent value="heart-rate" className="space-y-4 pt-4">
@@ -662,8 +894,19 @@ const SensorMonitoring: React.FC = () => {
                   </CardHeader>
                   <CardContent className="py-2 px-4">
                     <div className="text-2xl font-bold flex items-center">
-                      <HeartPulse className="h-5 w-5 mr-2 text-red-500" />
+                      <HeartPulse className={`h-5 w-5 mr-2 ${heartRateColors.text}`} />
                       {sensorData?.heart?.heart_rate || '--'} BPM
+                    </div>
+                    <div className="mt-2 text-xs">
+                      <div className="flex justify-between">
+                        <span>Critical: &lt;{vitalSignsThresholds.heart_rate.ranges.critical.min} or &gt;{vitalSignsThresholds.heart_rate.ranges.critical.max}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Warning: &lt;{vitalSignsThresholds.heart_rate.ranges.warning.min} or &gt;{vitalSignsThresholds.heart_rate.ranges.warning.max}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Normal: {vitalSignsThresholds.heart_rate.ranges.normal.min}-{vitalSignsThresholds.heart_rate.ranges.normal.max}</span>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -673,8 +916,20 @@ const SensorMonitoring: React.FC = () => {
                     <CardTitle className="text-sm">Breath Rate</CardTitle>
                   </CardHeader>
                   <CardContent className="py-2 px-4">
-                    <div className="text-2xl font-bold">
-                      {sensorData?.heart?.breath_rate || '--'} BPM
+                    <div className="text-2xl font-bold flex items-center">
+                      <Activity className={`h-5 w-5 mr-2 ${breathRateColors.text}`} />
+                      {sensorData?.heart?.breath_rate || '--'} breaths/min
+                    </div>
+                    <div className="mt-2 text-xs">
+                      <div className="flex justify-between">
+                        <span>Critical: &lt;{vitalSignsThresholds.breath_rate.ranges.critical.min} or &gt;{vitalSignsThresholds.breath_rate.ranges.critical.max}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Warning: &lt;{vitalSignsThresholds.breath_rate.ranges.warning.min} or &gt;{vitalSignsThresholds.breath_rate.ranges.warning.max}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Normal: {vitalSignsThresholds.breath_rate.ranges.normal.min}-{vitalSignsThresholds.breath_rate.ranges.normal.max}</span>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -686,12 +941,33 @@ const SensorMonitoring: React.FC = () => {
                   <CardContent className="py-2 px-4">
                     <Badge 
                       variant="outline" 
-                      className={sensorData?.human?.is_detected 
-                        ? "bg-green-50 text-green-700 border-green-200" 
-                        : "bg-yellow-50 text-yellow-700 border-yellow-200"}
+                      className={`${
+                        heartRateStatus === 'critical' || breathRateStatus === 'critical' 
+                          ? "bg-red-50 text-red-700 border-red-200" 
+                          : heartRateStatus === 'warning' || breathRateStatus === 'warning'
+                          ? "bg-yellow-50 text-yellow-700 border-yellow-200"
+                          : "bg-green-50 text-green-700 border-green-200"
+                      }`}
                     >
-                      {sensorData?.human?.is_detected ? 'Human Detected' : 'No Detection'}
+                      {heartRateStatus === 'critical' || breathRateStatus === 'critical' 
+                        ? 'Critical Condition' 
+                        : heartRateStatus === 'warning' || breathRateStatus === 'warning'
+                        ? 'Requires Attention'
+                        : 'Normal'}
                     </Badge>
+                    <div className="mt-3">
+                      <div className="text-xs text-muted-foreground">
+                        Based on clinical vital sign standards:
+                      </div>
+                      <div className="mt-1 grid grid-cols-2 gap-2">
+                        <div className={`text-xs rounded px-2 py-1 ${heartRateColors.bg} ${heartRateColors.text}`}>
+                          Heart Rate: {heartRateStatus}
+                        </div>
+                        <div className={`text-xs rounded px-2 py-1 ${breathRateColors.bg} ${breathRateColors.text}`}>
+                          Breath Rate: {breathRateStatus}
+                        </div>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </div>
@@ -707,17 +983,28 @@ const SensorMonitoring: React.FC = () => {
                     >
                       <defs>
                         <linearGradient id="heartRateGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#ff6384" stopOpacity={0.8} />
-                          <stop offset="95%" stopColor="#ff6384" stopOpacity={0.2} />
+                          <stop offset="5%" stopColor={heartRateColors.fill} stopOpacity={0.8} />
+                          <stop offset="95%" stopColor={heartRateColors.fill} stopOpacity={0.2} />
                         </linearGradient>
                       </defs>
                       <Area 
                         type="monotone"
                         dataKey="value"
-                        stroke="#ff6384"
+                        stroke={heartRateColors.fill}
                         strokeWidth={2}
                         fill="url(#heartRateGradient)"
                         isAnimationActive={true}
+                      />
+                      {/* Add reference lines for threshold values */}
+                      <ReferenceLine 
+                        y={vitalSignsThresholds.heart_rate.ranges.critical.min} 
+                        stroke="red" 
+                        strokeDasharray="3 3" 
+                      />
+                      <ReferenceLine 
+                        y={vitalSignsThresholds.heart_rate.ranges.critical.max} 
+                        stroke="red" 
+                        strokeDasharray="3 3" 
                       />
                     </AreaChart>
                   </ResponsiveContainer>
@@ -726,8 +1013,12 @@ const SensorMonitoring: React.FC = () => {
                   <div className="text-sm text-muted-foreground">Current BPM: {sensorData?.heart?.heart_rate || '--'}</div>
                   <div className="text-sm">
                     <span className="font-medium mr-2">Status:</span>
-                    <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                      Normal
+                    <Badge 
+                      variant="outline" 
+                      className={`${heartRateColors.bg} ${heartRateColors.text} ${heartRateColors.border}`}
+                    >
+                      {heartRateStatus === 'normal' ? 'Normal' : 
+                       heartRateStatus === 'warning' ? 'Abnormal' : 'Critical'}
                     </Badge>
                   </div>
                 </div>
@@ -990,6 +1281,125 @@ const SensorMonitoring: React.FC = () => {
               <div className="text-sm text-muted-foreground">
                 <p>The advanced metrics showcase correlations between different vital signs and patterns of presence detection over time.</p>
                 <p>These visualizations can help identify trends and anomalies in the sensor data for more comprehensive analysis.</p>
+              </div>
+            </TabsContent>
+            
+            {/* New Alarm History tab */}
+            <TabsContent value="alarm-history" className="space-y-4 pt-4">
+              <div className="flex justify-between items-center mb-4">
+                <div>
+                  <h3 className="text-sm font-medium">Alarm History</h3>
+                  <p className="text-xs text-muted-foreground">
+                    Recent alerts and notifications ({alarmHistory.length})
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={acknowledgeAllAlarms}
+                    disabled={alarmHistory.every(a => a.acknowledged)}
+                  >
+                    Acknowledge All
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setAlarmMuted(!alarmMuted)}
+                  >
+                    {alarmMuted ? 'Unmute Alarms' : 'Mute Alarms'}
+                  </Button>
+                </div>
+              </div>
+              
+              <Card>
+                <CardContent className="p-0">
+                  <div className="border-t">
+                    <table className="w-full">
+                      <thead>
+                        <tr>
+                          <th className="text-left text-xs font-medium text-muted-foreground p-2">Time</th>
+                          <th className="text-left text-xs font-medium text-muted-foreground p-2">Severity</th>
+                          <th className="text-left text-xs font-medium text-muted-foreground p-2">Type</th>
+                          <th className="text-left text-xs font-medium text-muted-foreground p-2">Message</th>
+                          <th className="text-right text-xs font-medium text-muted-foreground p-2">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {alarmHistory.length > 0 ? (
+                          alarmHistory.slice(0, 15).map((alarm, i) => (
+                            <tr key={i} className="border-t hover:bg-muted/50">
+                              <td className="p-2 text-xs">
+                                {alarm.timestamp.toLocaleTimeString()}
+                              </td>
+                              <td className="p-2 text-xs">
+                                <Badge 
+                                  className={
+                                    alarm.severity === 'critical' ? "bg-red-100 text-red-800 hover:bg-red-100" :
+                                    alarm.severity === 'warning' ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-100" :
+                                    "bg-blue-100 text-blue-800 hover:bg-blue-100"
+                                  }
+                                  variant="secondary"
+                                >
+                                  {alarm.severity}
+                                </Badge>
+                              </td>
+                              <td className="p-2 text-xs">
+                                {alarm.type === 'heart_rate' ? 'Heart Rate' :
+                                 alarm.type === 'breath_rate' ? 'Breath Rate' :
+                                 alarm.type === 'connection' ? 'Connection' : 'Movement'}
+                              </td>
+                              <td className="p-2 text-xs">
+                                {alarm.message}
+                              </td>
+                              <td className="p-2 text-xs text-right">
+                                <Badge 
+                                  variant="outline"
+                                  className={alarm.acknowledged ? "bg-gray-50 text-gray-500" : "bg-blue-50 text-blue-700"}
+                                >
+                                  {alarm.acknowledged ? 'Acknowledged' : 'New'}
+                                </Badge>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr className="border-t">
+                            <td colSpan={5} className="p-2 text-xs text-center text-muted-foreground">
+                              No alarms recorded
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <div className="p-4 border rounded-md">
+                <h4 className="text-sm font-medium mb-2">Medical Standard Vital Signs Reference</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <h5 className="text-xs font-medium mb-1">Heart Rate (Adult)</h5>
+                    <ul className="text-xs space-y-1">
+                      <li><span className="inline-block w-3 h-3 rounded-full bg-red-500 mr-2"></span> Critical: &lt;40 or &gt;150 BPM</li>
+                      <li><span className="inline-block w-3 h-3 rounded-full bg-yellow-500 mr-2"></span> Warning: 40-50 or 120-150 BPM</li>
+                      <li><span className="inline-block w-3 h-3 rounded-full bg-green-500 mr-2"></span> Normal: 60-100 BPM</li>
+                      <li><span className="inline-block w-3 h-3 rounded-full bg-blue-500 mr-2"></span> Athletic: 40-60 BPM</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h5 className="text-xs font-medium mb-1">Respiratory Rate (Adult)</h5>
+                    <ul className="text-xs space-y-1">
+                      <li><span className="inline-block w-3 h-3 rounded-full bg-red-500 mr-2"></span> Critical: &lt;5 or &gt;40 breaths/min</li>
+                      <li><span className="inline-block w-3 h-3 rounded-full bg-yellow-500 mr-2"></span> Warning: 5-8 or 30-40 breaths/min</li>
+                      <li><span className="inline-block w-3 h-3 rounded-full bg-green-500 mr-2"></span> Normal: 12-20 breaths/min</li>
+                      <li><span className="inline-block w-3 h-3 rounded-full bg-blue-500 mr-2"></span> At Rest: 8-12 breaths/min</li>
+                    </ul>
+                  </div>
+                </div>
+                <div className="mt-3 text-xs text-muted-foreground">
+                  Based on WHO and AHA clinical standards. Thresholds may vary based on age, health condition, and activity level.
+                </div>
               </div>
             </TabsContent>
           </Tabs>
