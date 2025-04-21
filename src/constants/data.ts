@@ -214,55 +214,64 @@ export const appContexts = [
     id: 'website',
     name: 'Websites',
     description: 'Website, eCommerce, Blog, Forum, Chat and eLearning',
-    icon: 'fileText'
+    icon: 'fileText',
+    appId: 'website'
   },
   {
     id: 'sales',
     name: 'Sales',
     description: 'CRM, Sales, Point of Sale, Subscriptions and Rental',
-    icon: 'product'
+    icon: 'product',
+    appId: 'sales'
   },
   {
     id: 'finance',
     name: 'Finance',
     description: 'Accounting, Invoicing, Expenses, Spreadsheets, Documents and Sign',
-    icon: 'billing'
+    icon: 'billing',
+    appId: 'finance'
   },
   {
     id: 'inventory',
     name: 'Supply Chain',
     description: 'Inventory, Manufacturing, PLM, Purchase, Maintenance and Quality',
-    icon: 'folder'
+    icon: 'folder',
+    appId: 'inventory'
   },
   {
     id: 'hr',
     name: 'Human Resources',
     description: 'Employees, Recruitment, Time Off, Appraisals, Referrals and Fleet',
-    icon: 'user'
+    icon: 'user',
+    appId: 'hr'
   },
   {
     id: 'marketing',
     name: 'Marketing',
     description: 'Social, Email, SMS, Events, Automation and Surveys',
-    icon: 'file'
+    icon: 'file',
+    appId: 'marketing'
   },
   {
     id: 'services',
     name: 'Services',
     description: 'Project, Timesheets, Field Service, Helpdesk, Planning and Appointments',
-    icon: 'help'
+    icon: 'help',
+    appId: 'services'
   },
   {
     id: 'productivity',
     name: 'Productivity',
     description: 'Discuss, Approvals, IoT, VoIP, Knowledge, WhatsApp and Automation',
-    icon: 'check'
+    icon: 'check',
+    appId: 'productivity'
   },
   {
     id: 'customization',
     name: 'Customization',
     description: 'Studio and app customization',
-    icon: 'settings'
+    icon: 'settings',
+    appId: 'customization'
   }
 ];
 

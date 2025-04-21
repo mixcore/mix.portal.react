@@ -207,6 +207,31 @@ export default function AppSidebar() {
     return groupedNav;
   }, [filteredNavItems]);
 
+  // Helper function to check if an item or any of its children is active
+  const isItemActive = (item: (typeof filteredNavItems)[0], exactMatch: boolean = false): boolean => {
+    // If the item doesn't have a URL, it can't be active directly
+    if (!item.url || item.url === '#') {
+      // But its children might be
+      if (item.items && item.items.length > 0) {
+        return item.items.some(subItem => isItemActive(subItem, false));
+      }
+      return false;
+    }
+    
+    // For non-exact match, check if the pathname includes the item's URL
+    // This works better for nested routes
+    if (!exactMatch) {
+      // Handle special case for dashboard which could match many routes
+      if (item.url === '/dashboard/overview' || item.url === '/dashboard') {
+        return pathname === item.url;
+      }
+      return pathname.includes(item.url);
+    }
+    
+    // For exact match, the pathname must exactly match the item's URL
+    return pathname === item.url;
+  };
+
   // Helper function to render a navigation item
   const renderNavItem = (item: (typeof filteredNavItems)[0]) => {
     const Icon = item.icon ? Icons[item.icon] : Icons.dashboard;
@@ -214,9 +239,7 @@ export default function AppSidebar() {
     // If it has child items, render as a collapsible menu
     if (item.items && item.items.length > 0) {
       // Check if any child item is active
-      const isActive = item.items.some(subItem => 
-        pathname?.includes(subItem.url)
-      );
+      const isActive = isItemActive(item);
       
       return (
         <Collapsible
@@ -247,7 +270,7 @@ export default function AppSidebar() {
                   // Check if this subitem has further items
                   if (subItem.items && subItem.items.length > 0) {
                     // Nested collapsible for third level navigation
-                    const isSubActive = pathname?.includes(subItem.url);
+                    const isSubActive = isItemActive(subItem);
                     
                     return (
                       <Collapsible
@@ -270,35 +293,34 @@ export default function AppSidebar() {
                             </SidebarMenuSubButton>
                           </CollapsibleTrigger>
                           <CollapsibleContent>
-                            {subItem.items.map(tertiaryItem => (
-                              <div key={tertiaryItem.title} className='py-1'>
-                                <Link
-                                  href={tertiaryItem.url}
-                                  className={cn(
-                                    'flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md py-1.5 px-2',
-                                    pathname === tertiaryItem.url && 'bg-accent text-foreground font-medium'
-                                  )}
-                                >
-                                  <div className='w-1.5 h-1.5 rounded-full bg-muted-foreground mr-2'></div>
-                                  {tertiaryItem.title}
-                                </Link>
-                              </div>
-                            ))}
+                            <SidebarMenuSub className='pl-4'>
+                              {subItem.items.map(grandchildItem => (
+                                <SidebarMenuSubItem key={grandchildItem.title}>
+                                  <SidebarMenuSubButton
+                                    asChild
+                                    isActive={isItemActive(grandchildItem, true)}
+                                  >
+                                    <Link href={grandchildItem.url || '#'}>
+                                      <span>{grandchildItem.title}</span>
+                                    </Link>
+                                  </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+                              ))}
+                            </SidebarMenuSub>
                           </CollapsibleContent>
                         </SidebarMenuSubItem>
                       </Collapsible>
                     );
                   }
                   
-                  // Regular subitem without further nesting
+                  // Otherwise render as a simple menu sub-item
                   return (
                     <SidebarMenuSubItem key={subItem.title}>
                       <SidebarMenuSubButton
                         asChild
-                        isActive={pathname?.includes(subItem.url)}
+                        isActive={isItemActive(subItem, true)}
                       >
-                        <Link href={subItem.url}>
-                          <SubIcon className="h-4 w-4" />
+                        <Link href={subItem.url || '#'}>
                           <span>{subItem.title}</span>
                         </Link>
                       </SidebarMenuSubButton>
@@ -318,7 +340,7 @@ export default function AppSidebar() {
         <SidebarMenuButton
           asChild
           tooltip={isCollapsed ? item.title : undefined}
-          isActive={pathname === item.url}
+          isActive={isItemActive(item, true)}
         >
           <Link href={item.url || '#'}>
             <Icon className="h-4 w-4" />

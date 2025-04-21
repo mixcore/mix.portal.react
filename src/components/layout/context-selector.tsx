@@ -37,6 +37,27 @@ export function ContextSelector({ className }: { className?: string }) {
 
   const handleContextChange = (value: string) => {
     setActiveContextId(value);
+    
+    // Find the corresponding context to get its appId
+    const selectedContext = availableContexts.find(c => c.id === value);
+    
+    // If this context has an associated app, and we're in the apps section
+    if (selectedContext?.appId && pathname.includes('/dashboard/apps')) {
+      // Build new URL with the app parameter
+      let newPath = `/dashboard/apps/${selectedContext.appId}`;
+      
+      // If we have a specific view in the current URL, preserve it
+      const pathParts = pathname.split('/');
+      if (pathParts.length > 3) {
+        const currentView = pathParts[3];
+        if (currentView) {
+          newPath += `/${currentView}`;
+        }
+      }
+      
+      // Redirect to the new URL
+      router.push(newPath);
+    }
   };
 
   const handlePersonaChange = (value: string) => {

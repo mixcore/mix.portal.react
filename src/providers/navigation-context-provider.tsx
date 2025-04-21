@@ -10,7 +10,13 @@ type NavigationContextType = {
   setActiveContextId: (id: string | null) => void;
   activePersonaId: string | null;
   setActivePersonaId: (id: string | null) => void;
-  availableContexts: typeof appContexts;
+  availableContexts: Array<{
+    id: string;
+    name: string;
+    description: string;
+    icon: string;
+    appId?: string;
+  }>;
   availablePersonas: typeof personas;
   filteredNavItems: NavItem[];
   tenantEnabledContexts: string[];

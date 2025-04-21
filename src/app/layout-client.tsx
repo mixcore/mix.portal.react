@@ -11,6 +11,7 @@ import './globals.css';
 import './theme.css';
 import 'material-icons/iconfont/material-icons.css';
 import { useEffect, useState } from 'react';
+import { useNavigationSync } from '@/hooks/use-navigation-sync';
 
 const META_THEME_COLORS = {
   light: '#ffffff',
@@ -30,6 +31,8 @@ export default function RootLayout({
     setActiveThemeValue(storedTheme || '');
     setIsScaled(!!storedTheme?.endsWith('-scaled'));
   }, []);
+
+  useNavigationSync();
 
   return (
     <html lang='en' suppressHydrationWarning>
