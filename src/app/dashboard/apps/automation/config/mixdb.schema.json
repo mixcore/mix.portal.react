@@ -1,0 +1,651 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Mixcore Mini App Schema",
+  "description": "Database schema definitions for Mixcore Mini App Template",
+  "type": "object",
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "appId": {
+          "type": "string",
+          "const": "mini-app"
+        },
+        "version": {
+          "type": "string",
+          "const": "1.0.0"
+        },
+        "displayName": {
+          "type": "string",
+          "const": "Mini App Template"
+        },
+        "description": {
+          "type": "string",
+          "const": "A comprehensive template for creating mini-apps for Mixcore CMS"
+        },
+        "category": {
+          "type": "string",
+          "const": "template"
+        },
+        "icon": {
+          "type": "string",
+          "const": "apps"
+        },
+        "requiredPermissions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["mini-app.view", "mini-app.create", "mini-app.edit", "mini-app.delete", "mini-app.admin"]
+          }
+        }
+      },
+      "required": ["appId", "version", "displayName", "category", "icon"]
+    },
+    "collections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "displayName": { "type": "string" },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "displayName": { "type": "string" },
+                "dataType": { "type": "string" },
+                "isRequired": { "type": "boolean" },
+                "isIndex": { "type": "boolean" },
+                "isUnique": { "type": "boolean" },
+                "defaultValue": { "type": ["string", "number", "boolean", "null"] },
+                "description": { "type": "string" },
+                "options": { "type": "object" }
+              },
+              "required": ["name", "displayName", "dataType"]
+            }
+          }
+        },
+        "required": ["name", "displayName", "fields"]
+      }
+    }
+  },
+  "required": ["metadata", "collections"],
+  "collections": [
+    {
+      "name": "items",
+      "displayName": "Items",
+      "description": "Main items in the mini-app",
+      "fields": [
+        {
+          "name": "id",
+          "displayName": "ID",
+          "dataType": "string",
+          "isRequired": true,
+          "isIndex": true,
+          "isUnique": true,
+          "description": "Unique identifier for the item"
+        },
+        {
+          "name": "title",
+          "displayName": "Title",
+          "dataType": "string",
+          "isRequired": true,
+          "description": "Item title"
+        },
+        {
+          "name": "description",
+          "displayName": "Description",
+          "dataType": "text",
+          "isRequired": false,
+          "description": "Item description"
+        },
+        {
+          "name": "status",
+          "displayName": "Status",
+          "dataType": "string",
+          "isRequired": true,
+          "defaultValue": "draft",
+          "options": {
+            "enum": ["draft", "published", "archived"]
+          },
+          "description": "Current item status"
+        },
+        {
+          "name": "category",
+          "displayName": "Category",
+          "dataType": "string",
+          "isRequired": false,
+          "description": "Item category"
+        },
+        {
+          "name": "tags",
+          "displayName": "Tags",
+          "dataType": "array",
+          "items": {
+            "dataType": "string"
+          },
+          "description": "List of tags associated with the item"
+        },
+        {
+          "name": "createdBy",
+          "displayName": "Created By",
+          "dataType": "string",
+          "isRequired": true,
+          "description": "User ID of item creator"
+        },
+        {
+          "name": "createdDate",
+          "displayName": "Created Date",
+          "dataType": "datetime",
+          "isRequired": true,
+          "description": "Date and time when the item was created"
+        },
+        {
+          "name": "modifiedBy",
+          "displayName": "Modified By",
+          "dataType": "string",
+          "description": "User ID of last modifier"
+        },
+        {
+          "name": "modifiedDate",
+          "displayName": "Modified Date",
+          "dataType": "datetime",
+          "description": "Date and time when the item was last modified"
+        },
+        {
+          "name": "metadata",
+          "displayName": "Metadata",
+          "dataType": "json",
+          "description": "Arbitrary JSON metadata for the item"
+        }
+      ]
+    },
+    {
+      "name": "item_comments",
+      "displayName": "Item Comments",
+      "description": "Comments on items",
+      "fields": [
+        {
+          "name": "id",
+          "displayName": "ID",
+          "dataType": "string",
+          "isRequired": true,
+          "isIndex": true,
+          "isUnique": true,
+          "description": "Unique identifier for the comment"
+        },
+        {
+          "name": "itemId",
+          "displayName": "Item ID",
+          "dataType": "string",
+          "isRequired": true,
+          "isIndex": true,
+          "description": "ID of the item this comment belongs to"
+        },
+        {
+          "name": "content",
+          "displayName": "Content",
+          "dataType": "text",
+          "isRequired": true,
+          "description": "Comment content"
+        },
+        {
+          "name": "author",
+          "displayName": "Author",
+          "dataType": "string",
+          "isRequired": true,
+          "description": "User ID of the comment author"
+        },
+        {
+          "name": "createdDate",
+          "displayName": "Created Date",
+          "dataType": "datetime",
+          "isRequired": true,
+          "description": "Date and time when the comment was created"
+        },
+        {
+          "name": "modifiedDate",
+          "displayName": "Modified Date",
+          "dataType": "datetime",
+          "description": "Date and time when the comment was last modified"
+        }
+      ]
+    },
+    {
+      "name": "item_attachments",
+      "displayName": "Item Attachments",
+      "description": "Files attached to items",
+      "fields": [
+        {
+          "name": "id",
+          "displayName": "ID",
+          "dataType": "string",
+          "isRequired": true,
+          "isIndex": true,
+          "isUnique": true,
+          "description": "Unique identifier for the attachment"
+        },
+        {
+          "name": "itemId",
+          "displayName": "Item ID",
+          "dataType": "string",
+          "isRequired": true,
+          "isIndex": true,
+          "description": "ID of the item this attachment belongs to"
+        },
+        {
+          "name": "fileName",
+          "displayName": "File Name",
+          "dataType": "string",
+          "isRequired": true,
+          "description": "Original file name"
+        },
+        {
+          "name": "fileSize",
+          "displayName": "File Size",
+          "dataType": "number",
+          "isRequired": true,
+          "description": "File size in bytes"
+        },
+        {
+          "name": "fileType",
+          "displayName": "File Type",
+          "dataType": "string",
+          "isRequired": true,
+          "description": "MIME type of the file"
+        },
+        {
+          "name": "filePath",
+          "displayName": "File Path",
+          "dataType": "string",
+          "isRequired": true,
+          "description": "Path to the stored file"
+        },
+        {
+          "name": "uploadedBy",
+          "displayName": "Uploaded By",
+          "dataType": "string",
+          "isRequired": true,
+          "description": "User ID of the uploader"
+        },
+        {
+          "name": "uploadDate",
+          "displayName": "Upload Date",
+          "dataType": "datetime",
+          "isRequired": true,
+          "description": "Date and time when the file was uploaded"
+        }
+      ]
+    },
+    {
+      "name": "automation_workflows",
+      "displayName": "Automation Workflows",
+      "description": "Workflows for automating processes in Mixcore",
+      "app": "automation",
+      "icon": "workflow",
+      "fields": [
+        {
+          "name": "id",
+          "displayName": "ID",
+          "type": "string",
+          "isRequired": true,
+          "isPrimaryKey": true,
+          "description": "Unique identifier for the workflow",
+          "isAutoGenerated": true
+        },
+        {
+          "name": "name",
+          "displayName": "Name",
+          "type": "string",
+          "isRequired": true,
+          "minLength": 3,
+          "maxLength": 100,
+          "description": "Name of the workflow",
+          "isSearchable": true
+        },
+        {
+          "name": "description",
+          "displayName": "Description",
+          "type": "text",
+          "isRequired": false,
+          "description": "Description of the workflow",
+          "isSearchable": true
+        },
+        {
+          "name": "status",
+          "displayName": "Status",
+          "type": "enum",
+          "values": ["draft", "active", "inactive", "archived"],
+          "defaultValue": "draft",
+          "isRequired": true,
+          "description": "Current status of the workflow",
+          "isFilterable": true
+        },
+        {
+          "name": "triggerType",
+          "displayName": "Trigger Type",
+          "type": "enum",
+          "values": ["schedule", "event", "manual", "api", "webhook"],
+          "isRequired": true,
+          "description": "Type of trigger that initiates the workflow",
+          "isFilterable": true
+        },
+        {
+          "name": "triggerConfig",
+          "displayName": "Trigger Configuration",
+          "type": "json",
+          "isRequired": true,
+          "description": "Configuration details for the trigger",
+          "defaultValue": {
+            "type": "manual"
+          }
+        },
+        {
+          "name": "steps",
+          "displayName": "Workflow Steps",
+          "type": "json",
+          "isRequired": true,
+          "description": "Ordered steps to execute in the workflow",
+          "defaultValue": []
+        },
+        {
+          "name": "inputSchema",
+          "displayName": "Input Schema",
+          "type": "json",
+          "isRequired": false,
+          "description": "JSON schema for workflow inputs",
+          "defaultValue": {}
+        },
+        {
+          "name": "outputSchema",
+          "displayName": "Output Schema",
+          "type": "json",
+          "isRequired": false,
+          "description": "JSON schema for workflow outputs",
+          "defaultValue": {}
+        },
+        {
+          "name": "tags",
+          "displayName": "Tags",
+          "type": "array",
+          "arrayType": "string",
+          "isRequired": false,
+          "description": "Tags for categorizing the workflow",
+          "isFilterable": true
+        },
+        {
+          "name": "createdBy",
+          "displayName": "Created By",
+          "type": "reference",
+          "referenceCollection": "users",
+          "isRequired": true,
+          "isSystem": true,
+          "description": "User who created the workflow"
+        },
+        {
+          "name": "createdDate",
+          "displayName": "Created Date",
+          "type": "dateTime",
+          "isRequired": true,
+          "isSystem": true,
+          "description": "Date when the workflow was created"
+        },
+        {
+          "name": "modifiedBy",
+          "displayName": "Modified By",
+          "type": "reference",
+          "referenceCollection": "users",
+          "isRequired": true,
+          "isSystem": true,
+          "description": "User who last modified the workflow"
+        },
+        {
+          "name": "modifiedDate",
+          "displayName": "Modified Date",
+          "type": "dateTime",
+          "isRequired": true,
+          "isSystem": true,
+          "description": "Date when the workflow was last modified"
+        },
+        {
+          "name": "lastRun",
+          "displayName": "Last Run",
+          "type": "dateTime",
+          "isRequired": false,
+          "description": "Date when the workflow was last executed"
+        },
+        {
+          "name": "lastRunStatus",
+          "displayName": "Last Run Status",
+          "type": "enum",
+          "values": ["success", "failure", "partial", "running", "none"],
+          "defaultValue": "none",
+          "isRequired": true,
+          "description": "Status of the last workflow execution",
+          "isFilterable": true
+        }
+      ]
+    },
+    {
+      "name": "automation_rules",
+      "displayName": "Automation Rules",
+      "description": "Conditional rules for automation workflows",
+      "app": "automation",
+      "icon": "rules",
+      "fields": [
+        {
+          "name": "id",
+          "displayName": "ID",
+          "type": "string",
+          "isRequired": true,
+          "isPrimaryKey": true,
+          "description": "Unique identifier for the rule",
+          "isAutoGenerated": true
+        },
+        {
+          "name": "name",
+          "displayName": "Name",
+          "type": "string",
+          "isRequired": true,
+          "minLength": 3,
+          "maxLength": 100,
+          "description": "Name of the rule",
+          "isSearchable": true
+        },
+        {
+          "name": "description",
+          "displayName": "Description",
+          "type": "text",
+          "isRequired": false,
+          "description": "Description of the rule",
+          "isSearchable": true
+        },
+        {
+          "name": "status",
+          "displayName": "Status",
+          "type": "enum",
+          "values": ["draft", "active", "inactive", "archived"],
+          "defaultValue": "draft",
+          "isRequired": true,
+          "description": "Current status of the rule",
+          "isFilterable": true
+        },
+        {
+          "name": "conditions",
+          "displayName": "Conditions",
+          "type": "json",
+          "isRequired": true,
+          "description": "Conditions that determine when the rule should be applied",
+          "defaultValue": []
+        },
+        {
+          "name": "actions",
+          "displayName": "Actions",
+          "type": "json",
+          "isRequired": true,
+          "description": "Actions to perform when conditions are met",
+          "defaultValue": []
+        },
+        {
+          "name": "priority",
+          "displayName": "Priority",
+          "type": "number",
+          "isRequired": true,
+          "defaultValue": 1,
+          "description": "Priority of the rule (lower numbers have higher priority)",
+          "isFilterable": true
+        },
+        {
+          "name": "workflowId",
+          "displayName": "Workflow ID",
+          "type": "reference",
+          "referenceCollection": "automation_workflows",
+          "isRequired": false,
+          "description": "Associated workflow for this rule",
+          "isFilterable": true
+        },
+        {
+          "name": "tags",
+          "displayName": "Tags",
+          "type": "array",
+          "arrayType": "string",
+          "isRequired": false,
+          "description": "Tags for categorizing the rule",
+          "isFilterable": true
+        },
+        {
+          "name": "createdBy",
+          "displayName": "Created By",
+          "type": "reference",
+          "referenceCollection": "users",
+          "isRequired": true,
+          "isSystem": true,
+          "description": "User who created the rule"
+        },
+        {
+          "name": "createdDate",
+          "displayName": "Created Date",
+          "type": "dateTime",
+          "isRequired": true,
+          "isSystem": true,
+          "description": "Date when the rule was created"
+        },
+        {
+          "name": "modifiedBy",
+          "displayName": "Modified By",
+          "type": "reference",
+          "referenceCollection": "users",
+          "isRequired": true,
+          "isSystem": true,
+          "description": "User who last modified the rule"
+        },
+        {
+          "name": "modifiedDate",
+          "displayName": "Modified Date",
+          "type": "dateTime",
+          "isRequired": true,
+          "isSystem": true,
+          "description": "Date when the rule was last modified"
+        }
+      ]
+    },
+    {
+      "name": "automation_execution_logs",
+      "displayName": "Execution Logs",
+      "description": "Logs for automation workflow executions",
+      "app": "automation",
+      "icon": "history",
+      "fields": [
+        {
+          "name": "id",
+          "displayName": "ID",
+          "type": "string",
+          "isRequired": true,
+          "isPrimaryKey": true,
+          "description": "Unique identifier for the execution log",
+          "isAutoGenerated": true
+        },
+        {
+          "name": "workflowId",
+          "displayName": "Workflow ID",
+          "type": "reference",
+          "referenceCollection": "automation_workflows",
+          "isRequired": true,
+          "description": "Reference to the workflow that was executed",
+          "isFilterable": true
+        },
+        {
+          "name": "executionStartTime",
+          "displayName": "Execution Start Time",
+          "type": "dateTime",
+          "isRequired": true,
+          "description": "Time when execution started",
+          "isFilterable": true
+        },
+        {
+          "name": "executionEndTime",
+          "displayName": "Execution End Time",
+          "type": "dateTime",
+          "isRequired": false,
+          "description": "Time when execution ended"
+        },
+        {
+          "name": "status",
+          "displayName": "Status",
+          "type": "enum",
+          "values": ["success", "failure", "partial", "running", "canceled"],
+          "isRequired": true,
+          "description": "Status of the execution",
+          "isFilterable": true
+        },
+        {
+          "name": "triggeredBy",
+          "displayName": "Triggered By",
+          "type": "string",
+          "isRequired": true,
+          "description": "What triggered the workflow execution",
+          "isFilterable": true
+        },
+        {
+          "name": "userId",
+          "displayName": "User ID",
+          "type": "reference",
+          "referenceCollection": "users",
+          "isRequired": false,
+          "description": "User who triggered the workflow (if applicable)",
+          "isFilterable": true
+        },
+        {
+          "name": "inputData",
+          "displayName": "Input Data",
+          "type": "json",
+          "isRequired": false,
+          "description": "Input data provided to the workflow"
+        },
+        {
+          "name": "outputData",
+          "displayName": "Output Data",
+          "type": "json",
+          "isRequired": false,
+          "description": "Output data produced by the workflow"
+        },
+        {
+          "name": "logs",
+          "displayName": "Step Logs",
+          "type": "json",
+          "isRequired": false,
+          "description": "Detailed logs for each step of the workflow execution"
+        },
+        {
+          "name": "errorMessage",
+          "displayName": "Error Message",
+          "type": "text",
+          "isRequired": false,
+          "description": "Error message if execution failed"
+        }
+      ]
+    }
+  ]
+} 

@@ -1,0 +1,163 @@
+{
+  "appId": "automation",
+  "version": "1.0.0",
+  "displayName": "Automation",
+  "description": "Automation workflows and rule management for Mixcore CMS",
+  "category": "system",
+  "icon": "move",
+  "author": {
+    "name": "Mixcore Team",
+    "email": "support@mixcore.org",
+    "url": "https://mixcore.org"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mixcore/mix.portal.react"
+  },
+  "entryPoint": "index.tsx",
+  "init": {
+    "initOnInstall": true,
+    "schemaFile": "./mixdb.schema.json",
+    "demoDataFile": "./demo-data.json",
+    "createDefaultPermissions": true
+  },
+  "mainStyles": "app-globals.css",
+  "navigation": {
+    "position": "main",
+    "priority": 5,
+    "menuItem": {
+      "title": "Automation",
+      "icon": "move",
+      "url": "/dashboard/apps/automation",
+      "badge": null,
+      "contextId": "automation"
+    }
+  },
+  "permissions": [
+    {
+      "name": "automation.view",
+      "displayName": "View Automation",
+      "description": "Can view automation workflows and rules"
+    },
+    {
+      "name": "automation.create",
+      "displayName": "Create Automations",
+      "description": "Can create new automation workflows and rules"
+    },
+    {
+      "name": "automation.edit",
+      "displayName": "Edit Automations",
+      "description": "Can edit existing automation workflows and rules"
+    },
+    {
+      "name": "automation.delete",
+      "displayName": "Delete Automations",
+      "description": "Can delete automation workflows and rules"
+    },
+    {
+      "name": "automation.execute",
+      "displayName": "Execute Automations",
+      "description": "Can manually execute automation workflows"
+    },
+    {
+      "name": "automation.admin",
+      "displayName": "Administer Automation",
+      "description": "Can administer the automation system configuration"
+    }
+  ],
+  "settings": {
+    "enableFullScreenByDefault": false,
+    "enableNotifications": true,
+    "showDetailPanel": true,
+    "defaultSortField": "createdDate",
+    "defaultSortDirection": "desc",
+    "enableComments": true,
+    "enableAttachments": true,
+    "enableSharing": true
+  },
+  "integrations": {
+    "cms": {
+      "enabled": true,
+      "createContentTypes": true
+    },
+    "mixdb": {
+      "enabled": true
+    },
+    "authentication": {
+      "enabled": true,
+      "requiredRoles": ["Administrator", "Editor", "Member"]
+    },
+    "notifications": {
+      "enabled": true,
+      "supportedChannels": ["inApp", "email"]
+    },
+    "search": {
+      "enabled": true,
+      "indexContent": true
+    }
+  },
+  "ui": {
+    "theme": {
+      "useSystemTheme": true,
+      "colors": {
+        "primary": "blue",
+        "secondary": "gray",
+        "accent": "purple",
+        "danger": "red",
+        "success": "green",
+        "warning": "amber"
+      }
+    },
+    "layout": {
+      "fluid": true,
+      "container": "max-w-7xl",
+      "padding": "p-4 md:p-6"
+    },
+    "animations": {
+      "enabled": true,
+      "transition": "ease-in-out"
+    }
+  },
+  "storage": {
+    "local": {
+      "enabled": true,
+      "prefix": "mixcore_automation_"
+    },
+    "persistent": {
+      "enabled": true,
+      "schema": "./mixdb.schema.json"
+    }
+  },
+  "extensions": {
+    "dashboard": {
+      "widgets": [
+        {
+          "id": "automation-summary",
+          "title": "Automation Summary",
+          "description": "Shows a summary of automation workflows and rules",
+          "size": "normal",
+          "permissions": ["automation.view"]
+        }
+      ]
+    },
+    "contextMenu": {
+      "items": [
+        {
+          "id": "run-automation",
+          "title": "Run Automation",
+          "icon": "move",
+          "condition": "item.type === 'automation-workflow'",
+          "action": "runAutomation",
+          "permissions": ["automation.execute"]
+        }
+      ]
+    }
+  },
+  "documentation": {
+    "gettingStarted": "README.md",
+    "userGuide": "docs/USER-GUIDE.md",
+    "apiReference": "docs/API-REFERENCE.md",
+    "developerGuide": "docs/DEVELOPER-GUIDE.md"
+  }
+} 

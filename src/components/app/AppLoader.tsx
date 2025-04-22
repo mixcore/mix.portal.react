@@ -11,7 +11,8 @@ const APPS = {
   workflow: () => import('@/app/dashboard/apps/workflow'),
   blogs: () => import('@/app/dashboard/apps/blogs'),
   'mini-app': () => import('@/app/dashboard/apps/mini-app'),
-  website: () => import('@/app/dashboard/apps/website/components/index.js')
+  website: () => import('@/app/dashboard/apps/website/components/index.js'),
+  automation: () => import('@/app/dashboard/apps/automation')
   // Additional apps can be registered here
 };
 
