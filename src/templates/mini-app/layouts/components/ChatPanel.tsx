@@ -7,7 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { X, Send, User, Users, Bot, MessageSquare, Info, Search } from 'lucide-react';
+import { X, Send, User, Users, Bot, MessageSquare, Info, Search, Inbox } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 // Mock data for online users
@@ -98,7 +98,18 @@ const mockChats = {
   ]
 };
 
-type ChatType = 'direct' | 'groups' | 'ai';
+// Define concrete types to help TypeScript
+type DirectChat = typeof mockChats.direct[0];
+type GroupChat = typeof mockChats.groups[0];
+type AIChat = typeof mockChats.ai[0];
+
+// Union type for all chat types with a discriminator
+type AllChat = 
+  | (DirectChat & { type: 'direct' })
+  | (GroupChat & { type: 'groups' })
+  | (AIChat & { type: 'ai' });
+
+type ChatType = 'all' | 'direct' | 'groups' | 'ai';
 
 interface ChatPanelProps {
   isOpen: boolean;
@@ -106,7 +117,7 @@ interface ChatPanelProps {
 }
 
 export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
-  const [activeTab, setActiveTab] = useState<ChatType>('direct');
+  const [activeTab, setActiveTab] = useState<ChatType>('all');
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [messageInput, setMessageInput] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -114,6 +125,20 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
   // Get current active chat based on type and ID
   const getActiveChat = () => {
     if (!activeChatId) return null;
+    
+    // Check all chat types when in "all" tab
+    if (activeTab === 'all') {
+      let directChat = mockChats.direct.find(chat => chat.id === activeChatId);
+      if (directChat) return { ...directChat, type: 'direct' as const } as AllChat;
+      
+      let groupChat = mockChats.groups.find(chat => chat.id === activeChatId);
+      if (groupChat) return { ...groupChat, type: 'groups' as const } as AllChat;
+      
+      let aiChat = mockChats.ai.find(chat => chat.id === activeChatId);
+      if (aiChat) return { ...aiChat, type: 'ai' as const } as AllChat;
+      
+      return null;
+    }
     
     switch (activeTab) {
       case 'direct':
@@ -142,7 +167,7 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
   };
 
   // Filter chats based on search query
-  const getFilteredChats = (chats: any[], type: 'direct' | 'groups' | 'ai') => {
+  const getFilteredChats = (chats: any[], type: 'all' | 'direct' | 'groups' | 'ai') => {
     if (!searchQuery.trim()) return chats;
     
     return chats.filter(chat => {
@@ -161,11 +186,40 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
           (chat.topic && chat.topic.toLowerCase().includes(searchQuery.toLowerCase()))
         );
       }
+      // For "all" type, check based on chat properties
+      else if (type === 'all') {
+        if ('user' in chat) { // Direct chat
+          return chat.user.name.toLowerCase().includes(searchQuery.toLowerCase());
+        } else if ('members' in chat) { // Group chat
+          return chat.name.toLowerCase().includes(searchQuery.toLowerCase());
+        } else if ('topic' in chat) { // AI chat
+          return (
+            chat.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (chat.topic && chat.topic.toLowerCase().includes(searchQuery.toLowerCase()))
+          );
+        }
+      }
       return false;
     });
   };
 
+  // Get all conversations for "all" tab
+  const getAllConversations = (): AllChat[] => {
+    const directChats = mockChats.direct.map(chat => ({ ...chat, type: 'direct' as const })) as AllChat[];
+    const groupChats = mockChats.groups.map(chat => ({ ...chat, type: 'groups' as const })) as AllChat[];
+    const aiChats = mockChats.ai.map(chat => ({ ...chat, type: 'ai' as const })) as AllChat[];
+    return [...directChats, ...groupChats, ...aiChats];
+  };
+
   const activeChat = getActiveChat();
+  const activeChatType = activeTab === 'all' && activeChat && 'type' in activeChat 
+    ? (activeChat as AllChat).type 
+    : activeTab;
+
+  // Type guards for the different chat types
+  const isDirectChat = (chat: any): chat is DirectChat => 'user' in chat;
+  const isGroupChat = (chat: any): chat is GroupChat => 'members' in chat && !('user' in chat);
+  const isAIChat = (chat: any): chat is AIChat => 'topic' in chat && !('user' in chat) && !('members' in chat);
 
   if (!isOpen) return null;
 
@@ -197,14 +251,31 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
       
       <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as ChatType)} className="flex-1 flex flex-col overflow-hidden">
         <div className="px-4 pt-2 pb-0 shrink-0">
-          <TabsList className="grid grid-cols-3 w-full h-9 bg-muted rounded-md">
+          <TabsList className="grid grid-cols-4 w-full h-9 bg-muted rounded-md">
+            <TabsTrigger 
+              value="all" 
+              className="rounded-sm data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm flex items-center justify-center relative"
+              aria-label="All conversations"
+            >
+              <Inbox className="h-4 w-4" />
+              <span className="sr-only">All</span>
+              {[...mockChats.direct, ...mockChats.groups, ...mockChats.ai].some(chat => 
+                'messages' in chat && chat.messages.length > 0
+              ) && (
+                <span className="absolute -top-1.5 -right-1.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-secondary text-[10px] font-medium text-secondary-foreground">
+                  {[...mockChats.direct, ...mockChats.groups, ...mockChats.ai].filter(chat => 
+                    'messages' in chat && chat.messages.length > 0
+                  ).length}
+                </span>
+              )}
+            </TabsTrigger>
             <TabsTrigger 
               value="direct" 
               className="rounded-sm data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm flex items-center justify-center relative"
               aria-label="Direct messages"
             >
-              <User className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">Direct</span>
+              <User className="h-4 w-4" />
+              <span className="sr-only">Direct</span>
               {mockChats.direct.some(chat => chat.messages.some(m => m.sender === 'them')) && (
                 <span className="absolute -top-1.5 -right-1.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-destructive text-[10px] font-medium text-destructive-foreground">
                   {mockChats.direct.filter(chat => chat.messages.some(m => m.sender === 'them')).length}
@@ -216,8 +287,8 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
               className="rounded-sm data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm flex items-center justify-center relative"
               aria-label="Group chats"
             >
-              <Users className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">Groups</span>
+              <Users className="h-4 w-4" />
+              <span className="sr-only">Groups</span>
               {mockChats.groups.some(group => group.messages.length > 0) && (
                 <span className="absolute -top-1.5 -right-1.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
                   {mockChats.groups.filter(group => group.messages.length > 0).length}
@@ -229,8 +300,8 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
               className="rounded-sm data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm flex items-center justify-center"
               aria-label="AI assistant chat"
             >
-              <Bot className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">AI</span>
+              <Bot className="h-4 w-4" />
+              <span className="sr-only">AI</span>
             </TabsTrigger>
           </TabsList>
         </div>
@@ -267,6 +338,105 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
             <TabsContent value={activeTab} className="flex-1 p-0 mt-2 mb-0 border-0 data-[state=active]:block data-[state=inactive]:hidden focus-visible:outline-none">
               <ScrollArea className="h-full">
                 <div className="p-4">
+                  {activeTab === 'all' && (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between px-2 py-1.5">
+                        <p className="text-xs font-medium text-muted-foreground">All Conversations</p>
+                      </div>
+                      {getFilteredChats(getAllConversations(), 'all').length > 0 ? (
+                        <div className="space-y-1">
+                          {getFilteredChats(getAllConversations(), 'all').map((chat: AllChat) => (
+                            <div
+                              key={`${chat.type}-${chat.id}`}
+                              className="flex items-center gap-3 py-2 px-3 rounded-md hover:bg-accent/50 cursor-pointer transition-colors"
+                              onClick={() => selectChat(chat.id)}
+                            >
+                              {chat.type === 'direct' ? (
+                                <div className="relative">
+                                  <Avatar className="h-9 w-9 border border-border">
+                                    <div className="flex h-full w-full items-center justify-center bg-muted overflow-hidden">
+                                      {chat.user.avatar ? (
+                                        <img src={chat.user.avatar} alt={chat.user.name} className="h-full w-full object-cover" />
+                                      ) : (
+                                        chat.user.name.charAt(0)
+                                      )}
+                                    </div>
+                                  </Avatar>
+                                  <span className={`absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full ${
+                                    chat.user.status === 'online' ? 'bg-green-500' : 
+                                    chat.user.status === 'away' ? 'bg-yellow-500' : 'bg-red-500'
+                                  } ring-1 ring-background`}></span>
+                                </div>
+                              ) : chat.type === 'groups' ? (
+                                <div className="relative flex items-center justify-center h-9 w-9">
+                                  {chat.members.slice(0, 2).map((member, index) => (
+                                    <Avatar 
+                                      key={member.id}
+                                      className={`border border-background ${
+                                        index === 0 
+                                          ? 'h-6 w-6 absolute left-0.5 bottom-0.5' 
+                                          : 'h-6 w-6 absolute right-0.5 top-0.5'
+                                      }`}
+                                    >
+                                      <AvatarImage src={member.avatar} alt={member.name} />
+                                      <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
+                                    </Avatar>
+                                  ))}
+                                </div>
+                              ) : (
+                                <Avatar className="h-9 w-9 border border-primary/20">
+                                  <div className="flex h-full w-full items-center justify-center bg-primary/10 text-primary overflow-hidden">
+                                    {chat.avatar ? (
+                                      <img src={chat.avatar} alt={chat.name} className="h-full w-full object-cover" />
+                                    ) : (
+                                      <Bot className="h-5 w-5" />
+                                    )}
+                                  </div>
+                                </Avatar>
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between">
+                                  <p className="text-sm font-medium truncate">
+                                    {chat.type === 'direct' ? chat.user.name : chat.name}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground">
+                                    {chat.messages.length > 0 && (
+                                      <span className="inline-flex items-center justify-center h-4 w-4 rounded-full bg-primary/10 text-primary text-[10px]">
+                                        {chat.messages.length}
+                                      </span>
+                                    )}
+                                  </p>
+                                </div>
+                                <p className="text-xs text-muted-foreground truncate">
+                                  {chat.type === 'direct' ? (
+                                    chat.user.status === 'online' ? 'Online' : 
+                                    chat.user.status === 'away' ? 'Away' : 'Busy'
+                                  ) : chat.type === 'groups' ? (
+                                    `${chat.members.length} members`
+                                  ) : (
+                                    chat.topic
+                                  )}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : searchQuery ? (
+                        <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
+                          <p className="text-sm text-muted-foreground">No conversations found matching "{searchQuery}"</p>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+                          <div className="h-12 w-12 rounded-full bg-muted/50 flex items-center justify-center mb-3">
+                            <Inbox className="h-6 w-6 text-muted-foreground" />
+                          </div>
+                          <h3 className="text-sm font-medium">No conversations</h3>
+                          <p className="text-xs text-muted-foreground mt-1 mb-4">You don't have any active conversations.</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  
                   {activeTab === 'direct' && (
                     <div className="space-y-2">
                       <div className="flex items-center justify-between px-2 py-1.5">
@@ -474,54 +644,90 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
             <div className="flex flex-col h-full overflow-hidden">
               <div className="py-2 px-3 border-b flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-2">
-                  {activeTab === 'direct' && activeChat && (
+                  {activeChatType === 'direct' && activeChat && (
                     <>
                       <div className="relative">
                         <Avatar className="h-7 w-7">
                           <div className="flex h-full w-full items-center justify-center bg-muted overflow-hidden">
-                            {(activeChat as any).user.avatar ? (
+                            {activeTab === 'all' && isDirectChat(activeChat) ? (
+                              <>
+                                {activeChat.user.avatar ? (
+                                  <img src={activeChat.user.avatar} alt={activeChat.user.name} className="h-full w-full object-cover" />
+                                ) : (
+                                  activeChat.user.name.charAt(0)
+                                )}
+                              </>
+                            ) : (activeChat as any).user?.avatar ? (
                               <img src={(activeChat as any).user.avatar} alt={(activeChat as any).user.name} className="h-full w-full object-cover" />
                             ) : (
-                              (activeChat as any).user.name.charAt(0)
+                              (activeChat as any).user?.name.charAt(0)
                             )}
                           </div>
                         </Avatar>
                         <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-500 ring-1 ring-background"></span>
                       </div>
                       <div>
-                        <p className="text-sm font-medium leading-none">{(activeChat as any).user.name}</p>
+                        <p className="text-sm font-medium leading-none">
+                          {activeTab === 'all' && isDirectChat(activeChat) ? activeChat.user.name : (activeChat as any).user?.name}
+                        </p>
                         <p className="text-xs text-muted-foreground mt-0.5">Online</p>
                       </div>
                     </>
                   )}
-                  {activeTab === 'groups' && activeChat && (
+                  {activeChatType === 'groups' && activeChat && (
                     <>
                       <div className="relative h-7 w-7 flex items-center justify-center">
-                        {(activeChat as any).members.slice(0, 2).map((member: { id: string; name: string; avatar: string }, index: number) => (
-                          <Avatar 
-                            key={member.id} 
-                            className={`border border-background ${
-                              index === 0 
-                                ? 'h-5 w-5 absolute left-0 bottom-0' 
-                                : 'h-5 w-5 absolute right-0 top-0'
-                            }`}
-                          >
-                            <AvatarImage src={member.avatar} alt={member.name} />
-                            <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
-                          </Avatar>
-                        ))}
+                        {activeTab === 'all' && isGroupChat(activeChat) ? (
+                          activeChat.members.slice(0, 2).map((member, index) => (
+                            <Avatar 
+                              key={member.id} 
+                              className={`border border-background ${
+                                index === 0 
+                                  ? 'h-5 w-5 absolute left-0 bottom-0' 
+                                  : 'h-5 w-5 absolute right-0 top-0'
+                              }`}
+                            >
+                              <AvatarImage src={member.avatar} alt={member.name} />
+                              <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                          ))
+                        ) : (
+                          (activeChat as any).members.slice(0, 2).map((member: { id: string; name: string; avatar: string }, index: number) => (
+                            <Avatar 
+                              key={member.id} 
+                              className={`border border-background ${
+                                index === 0 
+                                  ? 'h-5 w-5 absolute left-0 bottom-0' 
+                                  : 'h-5 w-5 absolute right-0 top-0'
+                              }`}
+                            >
+                              <AvatarImage src={member.avatar} alt={member.name} />
+                              <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                          ))
+                        )}
                       </div>
                       <div>
-                        <p className="text-sm font-medium leading-none">{(activeChat as any).name}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">{(activeChat as any).members.length} members</p>
+                        <p className="text-sm font-medium leading-none">
+                          {activeTab === 'all' && isGroupChat(activeChat) ? activeChat.name : (activeChat as any).name}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {activeTab === 'all' && isGroupChat(activeChat) ? `${activeChat.members.length} members` : `${(activeChat as any).members.length} members`}
+                        </p>
                       </div>
                     </>
                   )}
-                  {activeTab === 'ai' && activeChat && (
+                  {activeChatType === 'ai' && activeChat && (
                     <>
                       <Avatar className="h-7 w-7">
                         <div className="flex h-full w-full items-center justify-center bg-primary/10 text-primary overflow-hidden">
-                          {(activeChat as any).avatar ? (
+                          {activeTab === 'all' && isAIChat(activeChat) ? (
+                            activeChat.avatar ? (
+                              <img src={activeChat.avatar} alt={activeChat.name} className="h-full w-full object-cover" />
+                            ) : (
+                              <Bot className="h-3.5 w-3.5" />
+                            )
+                          ) : (activeChat as any).avatar ? (
                             <img src={(activeChat as any).avatar} alt={(activeChat as any).name} className="h-full w-full object-cover" />
                           ) : (
                             <Bot className="h-3.5 w-3.5" />
@@ -529,8 +735,12 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
                         </div>
                       </Avatar>
                       <div>
-                        <p className="text-sm font-medium leading-none">{(activeChat as any).name}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">{(activeChat as any).topic}</p>
+                        <p className="text-sm font-medium leading-none">
+                          {activeTab === 'all' && isAIChat(activeChat) ? activeChat.name : (activeChat as any).name}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {activeTab === 'all' && isAIChat(activeChat) ? activeChat.topic : (activeChat as any).topic}
+                        </p>
                       </div>
                     </>
                   )}
