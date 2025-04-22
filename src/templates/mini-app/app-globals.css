@@ -266,7 +266,7 @@
 /* View-specific styling */
 .editor-view {
   /* Remove borders for editor views */
-  border-left: none !important;
+  /* border-left: none !important; */
 }
 
 .editor-view > div {
