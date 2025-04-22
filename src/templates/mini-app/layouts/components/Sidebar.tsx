@@ -20,12 +20,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   handleViewChange 
 }) => (
   <div className={`hidden md:block app-sidebar bg-background border-r transition-all duration-300 ${sidebarOpen ? 'w-[240px]' : 'w-[60px]'}`}>
-    <div className="p-3 border-b">
-      <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => setSidebarOpen(!sidebarOpen)}>
-        <Menu className="h-5 w-5 mr-2" />
-        {sidebarOpen && <span>Toggle sidebar</span>}
-      </Button>
-    </div>
     <nav className="p-3 flex flex-col gap-1">
       <Button
         variant={activeView === 'dashboard' ? 'secondary' : 'ghost'}

@@ -8,7 +8,9 @@ import {
   Eye, 
   Copy,
   Maximize2, 
-  Minimize2 
+  Minimize2,
+  PanelLeft,
+  Menu
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -32,8 +34,10 @@ interface MenubarHeaderProps {
   appConfig: any;
   activeView: ViewType;
   isFluidLayout: boolean;
+  isSidebarOpen: boolean;
   handleViewChange: (view: ViewType) => void;
   toggleContainerClass: () => void;
+  toggleSidebar: () => void;
   copyDeepLink: () => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
@@ -44,14 +48,28 @@ export const MenubarHeader: React.FC<MenubarHeaderProps> = ({
   appConfig,
   activeView,
   isFluidLayout,
+  isSidebarOpen,
   handleViewChange,
   toggleContainerClass,
+  toggleSidebar,
   copyDeepLink,
   searchQuery,
   setSearchQuery,
   selectedItemId
 }) => (
   <div className="flex items-center px-4 py-1 border-b">
+    <div className="flex items-center mr-2">
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="ghost" size="icon" onClick={toggleSidebar}>
+            <Menu className="h-5 w-5 mr-2" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>{isSidebarOpen ? 'Hide sidebar' : 'Show sidebar'}</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
     <div className="flex-1">
       <Menubar className="border-none shadow-none">
         <MenubarMenu>

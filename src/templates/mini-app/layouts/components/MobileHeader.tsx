@@ -6,7 +6,8 @@ import {
   Menu, 
   Share, 
   Maximize2, 
-  Minimize2 
+  Minimize2,
+  PanelLeft
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -19,8 +20,10 @@ interface MobileHeaderProps {
   appConfig: any; 
   activeView: ViewType;
   isFluidLayout: boolean;
+  isSidebarOpen: boolean;
   handleViewChange: (view: ViewType) => void;
   toggleContainerClass: () => void;
+  toggleSidebar: () => void;
   copyDeepLink: () => void;
   shareTooltip: string;
 }
@@ -29,8 +32,10 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
   appConfig, 
   activeView, 
   isFluidLayout, 
+  isSidebarOpen,
   handleViewChange, 
   toggleContainerClass,
+  toggleSidebar,
   copyDeepLink,
   shareTooltip
 }) => (
@@ -72,7 +77,11 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
           </nav>
         </SheetContent>
       </Sheet>
-      <span className="text-lg font-medium ml-2">{appConfig.displayName}</span>
+      <Button variant="ghost" size="icon" onClick={toggleSidebar} className="mr-1">
+        <PanelLeft className="h-5 w-5" />
+        <span className="sr-only">Toggle sidebar</span>
+      </Button>
+      <span className="text-lg font-medium ml-1">{appConfig.displayName}</span>
     </div>
     <div className="flex items-center gap-1">
       <TooltipProvider>

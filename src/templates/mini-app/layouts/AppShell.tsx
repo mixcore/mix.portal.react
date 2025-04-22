@@ -228,8 +228,10 @@ export function AppShell({
           appConfig={appConfig}
           activeView={activeView}
           isFluidLayout={isFluidLayout}
+          isSidebarOpen={sidebarOpen}
           handleViewChange={handleViewChange}
           toggleContainerClass={toggleContainerClass}
+          toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
           copyDeepLink={copyDeepLink}
           shareTooltip={shareTooltip}
         />
@@ -240,8 +242,10 @@ export function AppShell({
             appConfig={appConfig}
             activeView={activeView}
             isFluidLayout={isFluidLayout}
+            isSidebarOpen={sidebarOpen}
             handleViewChange={handleViewChange}
             toggleContainerClass={toggleContainerClass}
+            toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
             copyDeepLink={copyDeepLink}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
