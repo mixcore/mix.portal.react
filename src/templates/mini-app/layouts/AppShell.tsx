@@ -255,7 +255,7 @@ export function AppShell({
       </header>
       
       {/* Main content with sidebar */}
-      <div className={`flex flex-grow ${isFluidLayout ? '' : 'overflow-hidden h-[calc(100vh-4rem)]'}`}>
+      <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         <Sidebar 
           sidebarOpen={sidebarOpen}
