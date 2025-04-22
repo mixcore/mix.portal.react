@@ -20,36 +20,38 @@ export const Sidebar: React.FC<SidebarProps> = ({
   handleViewChange 
 }) => (
   <div className={`hidden md:block app-sidebar bg-background border-r transition-all duration-300 ${sidebarOpen ? 'w-[240px]' : 'w-[60px]'}`}>
-    <nav className="p-3 flex flex-col gap-1">
-      <Button
-        variant={activeView === 'dashboard' ? 'secondary' : 'ghost'}
-        size="sm"
-        className="justify-start"
-        onClick={() => handleViewChange('dashboard')}
-      >
-        <LayoutDashboard className="h-5 w-5 mr-2" />
-        {sidebarOpen && <span>Dashboard</span>}
-      </Button>
-      <Button
-        variant={activeView === 'list' ? 'secondary' : 'ghost'}
-        size="sm"
-        className="justify-start"
-        onClick={() => handleViewChange('list')}
-      >
-        <ListTodo className="h-5 w-5 mr-2" />
-        {sidebarOpen && <span>Items</span>}
-      </Button>
-      <Separator className="my-2" />
-      <Button
-        variant={activeView === 'settings' ? 'secondary' : 'ghost'}
-        size="sm"
-        className="justify-start"
-        onClick={() => handleViewChange('settings')}
-      >
-        <Settings className="h-5 w-5 mr-2" />
-        {sidebarOpen && <span>Settings</span>}
-      </Button>
-    </nav>
+    <div className="sticky top-0 h-[calc(100vh-4rem)] overflow-y-auto">
+      <nav className="p-3 flex flex-col gap-1">
+        <Button
+          variant={activeView === 'dashboard' ? 'secondary' : 'ghost'}
+          size="sm"
+          className="justify-start"
+          onClick={() => handleViewChange('dashboard')}
+        >
+          <LayoutDashboard className="h-5 w-5 mr-2" />
+          {sidebarOpen && <span>Dashboard</span>}
+        </Button>
+        <Button
+          variant={activeView === 'list' ? 'secondary' : 'ghost'}
+          size="sm"
+          className="justify-start"
+          onClick={() => handleViewChange('list')}
+        >
+          <ListTodo className="h-5 w-5 mr-2" />
+          {sidebarOpen && <span>Items</span>}
+        </Button>
+        <Separator className="my-2" />
+        <Button
+          variant={activeView === 'settings' ? 'secondary' : 'ghost'}
+          size="sm"
+          className="justify-start"
+          onClick={() => handleViewChange('settings')}
+        >
+          <Settings className="h-5 w-5 mr-2" />
+          {sidebarOpen && <span>Settings</span>}
+        </Button>
+      </nav>
+    </div>
   </div>
 );
 

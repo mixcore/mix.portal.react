@@ -32,7 +32,7 @@ export default async function DashboardLayout({
               <Header />
 
               {/* Main content container */}
-              <main className='flex-1 overflow-auto' data-app-view="default">
+              <main className='flex-1 overflow-auto-x' data-app-view="default">
                 <LayoutContainer>
                   {children}
                 </LayoutContainer>

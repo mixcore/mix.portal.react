@@ -122,7 +122,7 @@ export function Dashboard({ onItemClick }: DashboardProps) {
   ];
   
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 flex flex-col flex-grow">
       {/* Welcome header */}
       <div className="space-y-2 pb-4 border-b section-divider">
         <h1 className="text-3xl font-bold tracking-tight">Welcome to {appConfig.displayName}</h1>
