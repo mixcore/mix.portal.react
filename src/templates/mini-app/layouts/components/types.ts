@@ -1,5 +1,5 @@
 // Define view types for type safety
-export type ViewType = 'dashboard' | 'list' | 'detail' | 'settings';
+export type ViewType = 'dashboard' | 'list' | 'detail' | 'settings' | 'basicGrid' | 'kanban' | 'calendar' | 'canvas' | 'workflow';
 
 export interface AppConfig {
   appId: string;

@@ -1,10 +1,17 @@
 import React from 'react';
-import { LayoutDashboard, ListTodo, Settings, Menu } from 'lucide-react';
+import { 
+  LayoutDashboard, 
+  ListTodo, 
+  Settings, 
+  Grid, 
+  Trello, 
+  CalendarDays, 
+  Palette, 
+  Share2 
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-
-// Define view types for type safety
-type ViewType = 'dashboard' | 'list' | 'detail' | 'settings';
+import { ViewType } from './types';
 
 interface SidebarProps { 
   sidebarOpen: boolean;
@@ -26,7 +33,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
           variant={activeView === 'dashboard' ? 'secondary' : 'ghost'}
           size="sm"
           className="justify-start"
-          onClick={() => handleViewChange('dashboard')}
+          onClick={() => {
+            console.log('Sidebar: Clicked dashboard view');
+            handleViewChange('dashboard');
+          }}
         >
           <LayoutDashboard className="h-5 w-5 mr-2" />
           {sidebarOpen && <span>Dashboard</span>}
@@ -35,17 +45,104 @@ export const Sidebar: React.FC<SidebarProps> = ({
           variant={activeView === 'list' ? 'secondary' : 'ghost'}
           size="sm"
           className="justify-start"
-          onClick={() => handleViewChange('list')}
+          onClick={() => {
+            console.log('Sidebar: Clicked list view');
+            handleViewChange('list');
+          }}
         >
           <ListTodo className="h-5 w-5 mr-2" />
           {sidebarOpen && <span>Items</span>}
         </Button>
+        
         <Separator className="my-2" />
+        
+        {/* Layout views */}
+        <div className="py-1 px-2">
+          {sidebarOpen && <p className="text-xs text-muted-foreground mb-1">Layout Views</p>}
+        </div>
+        
+        <Button
+          variant={activeView === 'basicGrid' ? 'secondary' : 'ghost'}
+          size="sm"
+          className="justify-start"
+          onClick={() => {
+            console.log('Sidebar: Clicked basicGrid view');
+            handleViewChange('basicGrid');
+          }}
+        >
+          <Grid className="h-5 w-5 mr-2" />
+          {sidebarOpen && <span>Basic Grid</span>}
+        </Button>
+        
+        <Button
+          variant={activeView === 'kanban' ? 'secondary' : 'ghost'}
+          size="sm"
+          className="justify-start"
+          onClick={() => {
+            console.log('Sidebar: Clicked kanban view');
+            handleViewChange('kanban');
+          }}
+        >
+          <Trello className="h-5 w-5 mr-2" />
+          {sidebarOpen && <span>Kanban Board</span>}
+        </Button>
+        
+        <Button
+          variant={activeView === 'calendar' ? 'secondary' : 'ghost'}
+          size="sm"
+          className="justify-start"
+          onClick={() => {
+            console.log('Sidebar: Clicked calendar view');
+            handleViewChange('calendar');
+          }}
+        >
+          <CalendarDays className="h-5 w-5 mr-2" />
+          {sidebarOpen && <span>Calendar</span>}
+        </Button>
+        
+        <Separator className="my-2" />
+        
+        {/* Advanced views */}
+        <div className="py-1 px-2">
+          {sidebarOpen && <p className="text-xs text-muted-foreground mb-1">Advanced Editors</p>}
+        </div>
+        
+        <Button
+          variant={activeView === 'canvas' ? 'secondary' : 'ghost'}
+          size="sm"
+          className="justify-start"
+          onClick={() => {
+            console.log('Sidebar: Clicked canvas view');
+            handleViewChange('canvas');
+          }}
+        >
+          <Palette className="h-5 w-5 mr-2" />
+          {sidebarOpen && <span>Canvas Editor</span>}
+        </Button>
+        
+        <Button
+          variant={activeView === 'workflow' ? 'secondary' : 'ghost'}
+          size="sm"
+          className="justify-start"
+          onClick={() => {
+            console.log('Sidebar: Clicked workflow view');
+            handleViewChange('workflow');
+          }}
+        >
+          <Share2 className="h-5 w-5 mr-2" />
+          {sidebarOpen && <span>Workflow</span>}
+        </Button>
+        
+        <Separator className="my-2" />
+        
         <Button
           variant={activeView === 'settings' ? 'secondary' : 'ghost'}
           size="sm"
           className="justify-start"
-          onClick={() => handleViewChange('settings')}
+          onClick={() => {
+            console.log('Sidebar: Clicked settings view');
+            handleViewChange('settings');
+          }}
         >
           <Settings className="h-5 w-5 mr-2" />
           {sidebarOpen && <span>Settings</span>}

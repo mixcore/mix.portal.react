@@ -14,7 +14,12 @@ import {
   Filter,
   Check,
   MoreVertical,
-  Users
+  Users,
+  Grid,
+  Trello,
+  CalendarDays,
+  Palette,
+  Share2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -45,9 +50,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-
-// Define view types for type safety
-type ViewType = 'dashboard' | 'list' | 'detail' | 'settings';
+import { ViewType } from './types';
 
 // Sample online users data - in a real app, this would come from a real-time source
 const onlineUsers = [
@@ -290,6 +293,26 @@ export const MenubarHeader: React.FC<MenubarHeaderProps> = ({
               <ListTodo className="mr-2 h-4 w-4" />
               Items
             </MenubarItem>
+            <MenubarItem onClick={() => handleViewChange('basicGrid')}>
+              <Grid className="mr-2 h-4 w-4" />
+              Basic Grid
+            </MenubarItem>
+            <MenubarItem onClick={() => handleViewChange('kanban')}>
+              <Trello className="mr-2 h-4 w-4" />
+              Kanban Board
+            </MenubarItem>
+            <MenubarItem onClick={() => handleViewChange('calendar')}>
+              <CalendarDays className="mr-2 h-4 w-4" />
+              Calendar
+            </MenubarItem>
+            <MenubarItem onClick={() => handleViewChange('canvas')}>
+              <Palette className="mr-2 h-4 w-4" />
+              Canvas Editor
+            </MenubarItem>
+            <MenubarItem onClick={() => handleViewChange('workflow')}>
+              <Share2 className="mr-2 h-4 w-4" />
+              Workflow
+            </MenubarItem>
             <MenubarItem onClick={() => handleViewChange('settings')}>
               <Settings className="mr-2 h-4 w-4" />
               Settings
@@ -303,7 +326,10 @@ export const MenubarHeader: React.FC<MenubarHeaderProps> = ({
         </MenubarMenu>
         
         <MenubarMenu>
-          <MenubarTrigger className={activeView === 'dashboard' ? 'bg-accent text-accent-foreground' : ''}>
+          <MenubarTrigger 
+            className={activeView === 'dashboard' ? 'bg-accent text-accent-foreground' : ''}
+            onClick={() => handleViewChange('dashboard')}
+          >
             <LayoutDashboard className="mr-2 h-4 w-4 inline-block" />
             Dashboard
           </MenubarTrigger>
@@ -316,7 +342,10 @@ export const MenubarHeader: React.FC<MenubarHeaderProps> = ({
         </MenubarMenu>
         
         <MenubarMenu>
-          <MenubarTrigger className={activeView === 'list' ? 'bg-accent text-accent-foreground' : ''}>
+          <MenubarTrigger 
+            className={activeView === 'list' ? 'bg-accent text-accent-foreground' : ''}
+            onClick={() => handleViewChange('list')}
+          >
             <ListTodo className="mr-2 h-4 w-4 inline-block" />
             Items
           </MenubarTrigger>
@@ -346,6 +375,7 @@ export const MenubarHeader: React.FC<MenubarHeaderProps> = ({
           <MenubarTrigger 
             className={activeView === 'settings' ? 'bg-accent text-accent-foreground' : ''}
             disabled={activeView === 'detail' && !selectedItemId}
+            onClick={() => handleViewChange('settings')}
           >
             <Settings className="mr-2 h-4 w-4 inline-block" />
             Settings
@@ -355,6 +385,81 @@ export const MenubarHeader: React.FC<MenubarHeaderProps> = ({
             <MenubarItem>User Preferences</MenubarItem>
             <MenubarSeparator />
             <MenubarItem>Advanced Configuration</MenubarItem>
+          </MenubarContent>
+        </MenubarMenu>
+
+        <MenubarMenu>
+          <MenubarTrigger 
+            className={activeView === 'basicGrid' ? 'bg-accent text-accent-foreground' : ''}
+            onClick={() => handleViewChange('basicGrid')}
+          >
+            <Grid className="mr-2 h-4 w-4 inline-block" />
+            Grid
+          </MenubarTrigger>
+          <MenubarContent>
+            <MenubarItem onClick={() => handleViewChange('basicGrid')}>
+              Basic Grid View
+            </MenubarItem>
+          </MenubarContent>
+        </MenubarMenu>
+
+        <MenubarMenu>
+          <MenubarTrigger 
+            className={activeView === 'kanban' ? 'bg-accent text-accent-foreground' : ''}
+            onClick={() => handleViewChange('kanban')}
+          >
+            <Trello className="mr-2 h-4 w-4 inline-block" />
+            Kanban
+          </MenubarTrigger>
+          <MenubarContent>
+            <MenubarItem onClick={() => handleViewChange('kanban')}>
+              Kanban Board
+            </MenubarItem>
+          </MenubarContent>
+        </MenubarMenu>
+
+        <MenubarMenu>
+          <MenubarTrigger 
+            className={activeView === 'calendar' ? 'bg-accent text-accent-foreground' : ''}
+            onClick={() => handleViewChange('calendar')}
+          >
+            <CalendarDays className="mr-2 h-4 w-4 inline-block" />
+            Calendar
+          </MenubarTrigger>
+          <MenubarContent>
+            <MenubarItem onClick={() => handleViewChange('calendar')}>
+              Calendar View
+            </MenubarItem>
+          </MenubarContent>
+        </MenubarMenu>
+
+        <MenubarMenu>
+          <MenubarTrigger 
+            className={activeView === 'canvas' ? 'bg-accent text-accent-foreground' : ''}
+            onClick={() => handleViewChange('canvas')}
+          >
+            <Palette className="mr-2 h-4 w-4 inline-block" />
+            Canvas
+          </MenubarTrigger>
+          <MenubarContent>
+            <MenubarItem onClick={() => handleViewChange('canvas')}>
+              Canvas Editor
+            </MenubarItem>
+          </MenubarContent>
+        </MenubarMenu>
+
+        <MenubarMenu>
+          <MenubarTrigger 
+            className={activeView === 'workflow' ? 'bg-accent text-accent-foreground' : ''}
+            onClick={() => handleViewChange('workflow')}
+          >
+            <Share2 className="mr-2 h-4 w-4 inline-block" />
+            Workflow
+          </MenubarTrigger>
+          <MenubarContent>
+            <MenubarItem onClick={() => handleViewChange('workflow')}>
+              Workflow Editor
+            </MenubarItem>
           </MenubarContent>
         </MenubarMenu>
       </Menubar>
@@ -426,6 +531,38 @@ export const MenubarHeader: React.FC<MenubarHeaderProps> = ({
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => console.log('Export')}>
               Export as CSV
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuLabel>Views</DropdownMenuLabel>
+          <DropdownMenuGroup>
+            <DropdownMenuItem onClick={() => handleViewChange('dashboard')}>
+              <LayoutDashboard className="mr-2 h-4 w-4" />
+              Dashboard
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleViewChange('list')}>
+              <ListTodo className="mr-2 h-4 w-4" />
+              Items
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleViewChange('basicGrid')}>
+              <Grid className="mr-2 h-4 w-4" />
+              Basic Grid
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleViewChange('kanban')}>
+              <Trello className="mr-2 h-4 w-4" />
+              Kanban Board
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleViewChange('calendar')}>
+              <CalendarDays className="mr-2 h-4 w-4" />
+              Calendar
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleViewChange('canvas')}>
+              <Palette className="mr-2 h-4 w-4" />
+              Canvas Editor
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleViewChange('workflow')}>
+              <Share2 className="mr-2 h-4 w-4" />
+              Workflow
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />

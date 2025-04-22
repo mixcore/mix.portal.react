@@ -1,9 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, useRef } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import AppShell from './layouts/AppShell';
 import Dashboard from './components/Dashboard';
+import ItemList from './components/ItemList';
+import ItemDetail from './components/ItemDetail';
 import useContainerStatus from './hooks/useContainerStatus';
 import './app-globals.css'; // Import app-specific styles
 import { initializeApp, getAppConfig } from './app-loader';
@@ -14,7 +16,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 // Define possible views for the app
-type ViewType = 'dashboard' | 'list' | 'detail' | 'settings';
+type ViewType = 'dashboard' | 'list' | 'detail' | 'settings' | 'basicGrid' | 'kanban' | 'calendar' | 'canvas' | 'workflow';
 
 export interface MiniAppProps {
   standalone?: boolean;
@@ -36,7 +38,7 @@ export function MiniApp(props: MiniAppProps) {
   
   // Set initial view based on URL parameter or config
   const getInitialView = (): ViewType => {
-    if (viewParam && ['dashboard', 'list', 'detail', 'settings'].includes(viewParam as string)) {
+    if (viewParam && ['dashboard', 'list', 'detail', 'settings', 'basicGrid', 'kanban', 'calendar', 'canvas', 'workflow'].includes(viewParam as string)) {
       return viewParam as ViewType;
     }
     return 'dashboard';
@@ -47,11 +49,19 @@ export function MiniApp(props: MiniAppProps) {
   const isFluidLayout = useContainerStatus();
   const [isInitialized, setIsInitialized] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const isManualChange = useRef(false);
   
   // Update URL when view or item ID changes
   useEffect(() => {
+    console.log('MiniApp: URL update effect triggered');
+    console.log('MiniApp: Current activeView:', activeView);
+    console.log('MiniApp: Current selectedItemId:', selectedItemId);
+    
     // Skip URL updating if using the new URL structure (params prop provided)
-    if (props.params) return;
+    if (props.params) {
+      console.log('MiniApp: URL update skipped - using params prop');
+      return;
+    }
     
     // Create new URLSearchParams object
     const params = new URLSearchParams(searchParams.toString());
@@ -68,20 +78,34 @@ export function MiniApp(props: MiniAppProps) {
     
     // Update the URL without triggering navigation
     const newUrl = `${pathname}?${params.toString()}`;
+    console.log('MiniApp: Updating URL to:', newUrl);
     window.history.replaceState({}, '', newUrl);
   }, [activeView, selectedItemId, pathname, searchParams, props.params]);
   
   // Sync with URL parameters when they change
   useEffect(() => {
+    if (isManualChange.current) {
+      isManualChange.current = false;
+      return;
+    }
+    console.log('MiniApp: URL params sync effect triggered');
+    console.log('MiniApp: viewParam:', viewParam);
+    console.log('MiniApp: itemIdParam:', itemIdParam);
+    console.log('MiniApp: Current activeView:', activeView);
+    console.log('MiniApp: Current selectedItemId:', selectedItemId);
+    
     if (viewParam && viewParam !== activeView) {
+      console.log(`MiniApp: Syncing activeView from URL: ${viewParam}`);
       setActiveView(viewParam as ViewType);
     }
     
     if (itemIdParam !== selectedItemId) {
+      console.log(`MiniApp: Syncing selectedItemId from URL: ${itemIdParam}`);
       setSelectedItemId(itemIdParam);
       
       // If item ID is set but view isn't detail, update view
       if (itemIdParam && activeView !== 'detail') {
+        console.log('MiniApp: Setting view to detail based on URL item ID');
         setActiveView('detail');
       }
     }
@@ -146,12 +170,24 @@ export function MiniApp(props: MiniAppProps) {
   
   // Handle view change
   const handleViewChange = (viewType: ViewType) => {
+    isManualChange.current = true;
+    console.log('MiniApp: handleViewChange called with viewType:', viewType);
+    console.log('MiniApp: Current activeView before change:', activeView);
+    
+    if (viewType === activeView) {
+      console.log('MiniApp: View type is the same as current, not changing');
+      return;
+    }
+    
+    console.log('MiniApp: Setting new active view:', viewType);
     setActiveView(viewType);
     
     // If changing away from detail view, clear selected item
     if (viewType !== 'detail') {
       setSelectedItemId(null);
     }
+    
+    console.log('MiniApp: View change complete');
   };
   
   // Set body class for fluid layout when this app is active
@@ -276,33 +312,80 @@ export function MiniApp(props: MiniAppProps) {
   
   // Render the active view
   const renderView = () => {
+    console.log('MiniApp: renderView called with activeView:', activeView);
+    
     switch (activeView) {
       case 'dashboard':
+        console.log('MiniApp: Rendering Dashboard view');
         return <Dashboard onItemClick={handleItemClick} />;
       case 'list':
-        // Import ItemList dynamically if needed
-        const ItemList = require('./components/ItemList').default;
-        return <ItemList onItemClick={handleItemClick} />;
+        console.log('MiniApp: Rendering List view');
+        return props.standalone ? <ItemList /> : <ItemList onItemClick={handleItemClick} />;
       case 'detail':
-        if (selectedItemId) {
-          // Import ItemDetail dynamically if needed
-          const ItemDetail = require('./components/ItemDetail').default;
-          return <ItemDetail itemId={selectedItemId} onBack={() => handleViewChange('dashboard')} />;
-        }
-        return <div>No item selected</div>;
+        console.log('MiniApp: Rendering Detail view');
+        return selectedItemId ? <ItemDetail itemId={selectedItemId} /> : <div>No item selected</div>;
       case 'settings':
+        console.log('MiniApp: Rendering Settings view');
         return (
           <Card>
             <CardHeader>
               <CardTitle>Settings</CardTitle>
-              <CardDescription>Configure your app preferences</CardDescription>
+              <CardDescription>
+                Configure the application settings
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <p>Settings content will appear here.</p>
+              <p className="text-muted-foreground">Settings content will be available soon.</p>
             </CardContent>
           </Card>
         );
+      case 'basicGrid':
+        console.log('MiniApp: Rendering BasicGrid view');
+        // Import the BasicGrid component dynamically
+        const BasicGrid = lazy(() => import('./components/BasicGrid'));
+        return (
+          <React.Suspense fallback={<div className="flex items-center justify-center p-12">Loading grid view...</div>}>
+            <BasicGrid onItemClick={handleItemClick} />
+          </React.Suspense>
+        );
+      case 'kanban':
+        console.log('MiniApp: Rendering Kanban view');
+        // Import the KanbanBoard component dynamically
+        const KanbanBoard = lazy(() => import('./components/KanbanBoard'));
+        return (
+          <React.Suspense fallback={<div className="flex items-center justify-center p-12">Loading kanban board...</div>}>
+            <KanbanBoard onCardClick={handleItemClick} />
+          </React.Suspense>
+        );
+      case 'calendar':
+        console.log('MiniApp: Rendering Calendar view');
+        // Import the CalendarView component dynamically
+        const CalendarView = lazy(() => import('./components/CalendarView'));
+        return (
+          <React.Suspense fallback={<div className="flex items-center justify-center p-12">Loading calendar view...</div>}>
+            <CalendarView onEventClick={handleItemClick} />
+          </React.Suspense>
+        );
+      case 'canvas':
+        console.log('MiniApp: Rendering Canvas view');
+        // Import the CanvasEditor component dynamically
+        const CanvasEditor = lazy(() => import('./components/CanvasEditor'));
+        return (
+          <React.Suspense fallback={<div className="flex items-center justify-center p-12">Loading canvas editor...</div>}>
+            <CanvasEditor />
+          </React.Suspense>
+        );
+      case 'workflow':
+        console.log('MiniApp: Rendering Workflow view');
+        // Import the WorkflowEditor component dynamically
+        const WorkflowEditor = lazy(() => import('./components/WorkflowEditor'));
+        return (
+          <React.Suspense fallback={<div className="flex items-center justify-center p-12">Loading workflow editor...</div>}>
+            <WorkflowEditor />
+          </React.Suspense>
+        );
       default:
+        console.log('MiniApp: Rendering default Dashboard view (activeView not recognized)');
         return <Dashboard onItemClick={handleItemClick} />;
     }
   };

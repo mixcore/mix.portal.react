@@ -7,14 +7,17 @@ import {
   Share, 
   Maximize2, 
   Minimize2,
-  PanelLeft
+  PanelLeft,
+  Grid,
+  Trello,
+  CalendarDays,
+  Palette,
+  Share2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-
-// Define view types for type safety
-type ViewType = 'dashboard' | 'list' | 'detail' | 'settings';
+import { ViewType } from './types';
 
 interface MobileHeaderProps { 
   appConfig: any; 
@@ -66,6 +69,53 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
               <ListTodo className="mr-2 h-5 w-5" />
               Items
             </Button>
+            
+            <div className="text-xs text-muted-foreground mt-4 mb-2 px-2">Layout Views</div>
+            
+            <Button
+              variant={activeView === 'basicGrid' ? 'default' : 'ghost'}
+              className="justify-start"
+              onClick={() => handleViewChange('basicGrid')}
+            >
+              <Grid className="mr-2 h-5 w-5" />
+              Basic Grid
+            </Button>
+            <Button
+              variant={activeView === 'kanban' ? 'default' : 'ghost'}
+              className="justify-start"
+              onClick={() => handleViewChange('kanban')}
+            >
+              <Trello className="mr-2 h-5 w-5" />
+              Kanban Board
+            </Button>
+            <Button
+              variant={activeView === 'calendar' ? 'default' : 'ghost'}
+              className="justify-start"
+              onClick={() => handleViewChange('calendar')}
+            >
+              <CalendarDays className="mr-2 h-5 w-5" />
+              Calendar
+            </Button>
+            
+            <div className="text-xs text-muted-foreground mt-4 mb-2 px-2">Advanced Editors</div>
+            
+            <Button
+              variant={activeView === 'canvas' ? 'default' : 'ghost'}
+              className="justify-start"
+              onClick={() => handleViewChange('canvas')}
+            >
+              <Palette className="mr-2 h-5 w-5" />
+              Canvas Editor
+            </Button>
+            <Button
+              variant={activeView === 'workflow' ? 'default' : 'ghost'}
+              className="justify-start"
+              onClick={() => handleViewChange('workflow')}
+            >
+              <Share2 className="mr-2 h-5 w-5" />
+              Workflow
+            </Button>
+            
             <Button
               variant={activeView === 'settings' ? 'default' : 'ghost'}
               className="justify-start"

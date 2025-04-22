@@ -30,6 +30,8 @@ export function AppShell({
   selectedItemId,
   selectedItemTitle
 }: AppShellProps) {
+  console.log('AppShell rendering with props:', { activeView, selectedItemId, selectedItemTitle });
+  
   // State hooks
   const isFluidLayout = useContainerStatus();
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -43,6 +45,11 @@ export function AppShell({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { setBreadcrumbs } = useBreadcrumb();
+  
+  // Log when activeView changes
+  useEffect(() => {
+    console.log('AppShell: activeView prop changed to:', activeView);
+  }, [activeView]);
   
   // Set app context for the dashboard header
   useEffect(() => {
@@ -116,8 +123,15 @@ export function AppShell({
   
   // Handler for view changes
   const handleViewChange = (view: ViewType) => {
+    console.log('AppShell: handleViewChange called with view:', view);
+    console.log('AppShell: Current activeView is:', activeView);
+    console.log('AppShell: Valid view types are:', ['dashboard', 'list', 'detail', 'settings', 'basicGrid', 'kanban', 'calendar', 'canvas', 'workflow'].includes(view) ? 'Valid view type' : 'INVALID VIEW TYPE');
+    
     if (onViewChange) {
+      console.log('AppShell: Calling parent onViewChange');
       onViewChange(view);
+    } else {
+      console.warn('AppShell: No onViewChange prop provided by parent component');
     }
   };
   
