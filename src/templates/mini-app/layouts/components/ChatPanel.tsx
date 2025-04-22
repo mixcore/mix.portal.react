@@ -2,12 +2,12 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Avatar } from '@/components/ui/avatar';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { X, Send, User, Users, Bot, MessageSquare, Info } from 'lucide-react';
+import { X, Send, User, Users, Bot, MessageSquare, Info, Search } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 // Mock data for online users
@@ -109,6 +109,7 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
   const [activeTab, setActiveTab] = useState<ChatType>('direct');
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [messageInput, setMessageInput] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Get current active chat based on type and ID
   const getActiveChat = () => {
@@ -138,6 +139,30 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
   // Select a chat conversation
   const selectChat = (chatId: string) => {
     setActiveChatId(chatId);
+  };
+
+  // Filter chats based on search query
+  const getFilteredChats = (chats: any[], type: 'direct' | 'groups' | 'ai') => {
+    if (!searchQuery.trim()) return chats;
+    
+    return chats.filter(chat => {
+      // For direct chats, search in user name
+      if (type === 'direct') {
+        return chat.user.name.toLowerCase().includes(searchQuery.toLowerCase());
+      }
+      // For group chats, search in group name
+      else if (type === 'groups') {
+        return chat.name.toLowerCase().includes(searchQuery.toLowerCase());
+      }
+      // For AI chats, search in name and topic
+      else if (type === 'ai') {
+        return (
+          chat.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (chat.topic && chat.topic.toLowerCase().includes(searchQuery.toLowerCase()))
+        );
+      }
+      return false;
+    });
   };
 
   const activeChat = getActiveChat();
@@ -209,7 +234,34 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
             </TabsTrigger>
           </TabsList>
         </div>
-      
+        
+        {/* Search field */}
+        {!activeChatId && (
+          <div className="px-4 pt-3 pb-2 shrink-0">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search conversations..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-8 h-8 text-xs"
+              />
+              {searchQuery && (
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="absolute right-1 top-1 h-6 w-6 opacity-70 hover:opacity-100"
+                  onClick={() => setSearchQuery('')}
+                >
+                  <X className="h-3 w-3" />
+                  <span className="sr-only">Clear search</span>
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
+        
         <div className="flex-1 flex flex-col">
           {!activeChatId ? (
             <TabsContent value={activeTab} className="flex-1 p-0 mt-2 mb-0 border-0 data-[state=active]:block data-[state=inactive]:hidden focus-visible:outline-none">
@@ -221,9 +273,9 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
                         <p className="text-xs font-medium text-muted-foreground">Online Users</p>
                         <p className="text-xs text-muted-foreground">{onlineUsers.filter(u => u.status === 'online').length} online</p>
                       </div>
-                      {onlineUsers.length > 0 ? (
+                      {getFilteredChats(onlineUsers, 'direct').length > 0 ? (
                         <div className="space-y-1">
-                          {onlineUsers.map(user => (
+                          {getFilteredChats(onlineUsers, 'direct').map(user => (
                             <div
                               key={user.id}
                               className="flex items-center gap-3 py-2 px-3 rounded-md hover:bg-accent/50 cursor-pointer transition-colors"
@@ -270,6 +322,10 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
                             </div>
                           ))}
                         </div>
+                      ) : searchQuery ? (
+                        <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
+                          <p className="text-sm text-muted-foreground">No users found matching "{searchQuery}"</p>
+                        </div>
                       ) : (
                         <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
                           <div className="h-12 w-12 rounded-full bg-muted/50 flex items-center justify-center mb-3">
@@ -291,31 +347,26 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
                           <span className="sr-only">Create Group</span>
                         </Button>
                       </div>
-                      {mockChats.groups.length > 0 ? (
+                      {getFilteredChats(mockChats.groups, 'groups').length > 0 ? (
                         <div className="space-y-1">
-                          {mockChats.groups.map(group => (
+                          {getFilteredChats(mockChats.groups, 'groups').map(group => (
                             <div
                               key={group.id}
                               className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent/50 cursor-pointer transition-colors"
                               onClick={() => selectChat(group.id)}
                             >
                               <div className="relative flex items-center justify-center h-9 w-9">
-                                {group.members.slice(0, 2).map((member, index) => (
+                                {(group.members as { id: string; name: string; avatar: string }[]).slice(0, 2).map((member: { id: string; name: string; avatar: string }, index: number) => (
                                   <Avatar 
                                     key={member.id} 
-                                    className={`border-2 border-background ${
+                                    className={`border border-background ${
                                       index === 0 
                                         ? 'h-6 w-6 absolute left-0.5 bottom-0.5' 
                                         : 'h-6 w-6 absolute right-0.5 top-0.5'
                                     }`}
                                   >
-                                    <div className="flex h-full w-full items-center justify-center bg-muted text-xs overflow-hidden">
-                                      {member.avatar ? (
-                                        <img src={member.avatar} alt={member.name} className="h-full w-full object-cover" />
-                                      ) : (
-                                        member.name.charAt(0)
-                                      )}
-                                    </div>
+                                    <AvatarImage src={member.avatar} alt={member.name} />
+                                    <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
                                   </Avatar>
                                 ))}
                               </div>
@@ -336,6 +387,10 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
                               </div>
                             </div>
                           ))}
+                        </div>
+                      ) : searchQuery ? (
+                        <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
+                          <p className="text-sm text-muted-foreground">No groups found matching "{searchQuery}"</p>
                         </div>
                       ) : (
                         <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
@@ -362,9 +417,9 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
                           <span className="sr-only">New AI Chat</span>
                         </Button>
                       </div>
-                      {mockChats.ai.length > 0 ? (
+                      {getFilteredChats(mockChats.ai, 'ai').length > 0 ? (
                         <div className="space-y-1">
-                          {mockChats.ai.map(ai => (
+                          {getFilteredChats(mockChats.ai, 'ai').map(ai => (
                             <div
                               key={ai.id}
                               className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent/50 cursor-pointer transition-colors"
@@ -390,6 +445,10 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
                               </div>
                             </div>
                           ))}
+                        </div>
+                      ) : searchQuery ? (
+                        <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
+                          <p className="text-sm text-muted-foreground">No AI assistants found matching "{searchQuery}"</p>
                         </div>
                       ) : (
                         <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
@@ -438,7 +497,7 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
                   {activeTab === 'groups' && activeChat && (
                     <>
                       <div className="relative h-7 w-7 flex items-center justify-center">
-                        {(activeChat as any).members.slice(0, 2).map((member: any, index: number) => (
+                        {(activeChat as any).members.slice(0, 2).map((member: { id: string; name: string; avatar: string }, index: number) => (
                           <Avatar 
                             key={member.id} 
                             className={`border border-background ${
@@ -447,13 +506,8 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
                                 : 'h-5 w-5 absolute right-0 top-0'
                             }`}
                           >
-                            <div className="flex h-full w-full items-center justify-center bg-muted text-xs overflow-hidden">
-                              {member.avatar ? (
-                                <img src={member.avatar} alt={member.name} className="h-full w-full object-cover" />
-                              ) : (
-                                member.name.charAt(0)
-                              )}
-                            </div>
+                            <AvatarImage src={member.avatar} alt={member.name} />
+                            <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
                           </Avatar>
                         ))}
                       </div>
