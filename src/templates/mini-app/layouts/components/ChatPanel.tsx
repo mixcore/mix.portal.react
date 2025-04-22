@@ -61,14 +61,40 @@ const mockChats = {
   ai: [
     { 
       id: '1', 
-      name: 'AI Assistant', 
+      name: 'General Assistant', 
       avatar: 'https://avataaars.io/?avatarStyle=Circle&topType=WinterHat4&accessoriesType=Round&hatColor=Blue&facialHairType=Blank&clotheType=GraphicShirt&clotheColor=Gray&graphicType=Cumbia&eyeType=Surprised&eyebrowType=RaisedExcitedNatural&mouthType=Serious&skinColor=Pale',
+      lastActive: '12:05 PM',
+      topic: 'Project planning assistance',
       messages: [
         { id: '1', content: 'Hello! How can I help you today?', sender: 'ai', time: '9:00 AM' },
         { id: '2', content: 'I need help with setting up a new project', sender: 'me', time: '9:05 AM' },
         { id: '3', content: 'I can help with that! What kind of project are you setting up?', sender: 'ai', time: '9:06 AM' },
       ]
     },
+    {
+      id: '2',
+      name: 'Code Assistant',
+      avatar: 'https://avataaars.io/?avatarStyle=Circle&topType=NoHair&accessoriesType=Prescription02&facialHairType=BeardMajestic&facialHairColor=BrownDark&clotheType=Hoodie&clotheColor=Black&eyeType=Happy&eyebrowType=Default&mouthType=Smile&skinColor=Light',
+      lastActive: 'Yesterday',
+      topic: 'Debugging React components',
+      messages: [
+        { id: '1', content: 'Hi there! I can help with your code questions.', sender: 'ai', time: '10:30 AM' },
+        { id: '2', content: 'I have a bug in my React component. The state is not updating correctly.', sender: 'me', time: '10:32 AM' },
+        { id: '3', content: 'Let\'s take a look. Can you share the component code?', sender: 'ai', time: '10:33 AM' },
+      ]
+    },
+    {
+      id: '3',
+      name: 'Research Assistant',
+      avatar: 'https://avataaars.io/?avatarStyle=Circle&topType=LongHairStraight&accessoriesType=Prescription01&hairColor=Blonde&facialHairType=Blank&clotheType=CollarSweater&clotheColor=PastelRed&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Pale',
+      lastActive: '3 days ago',
+      topic: 'Market research for new product',
+      messages: [
+        { id: '1', content: 'How can I assist with your research today?', sender: 'ai', time: '2:15 PM' },
+        { id: '2', content: 'I need to find market statistics for our new product launch', sender: 'me', time: '2:20 PM' },
+        { id: '3', content: 'I can help gather that information. What industry and region are you targeting?', sender: 'ai', time: '2:22 PM' },
+      ]
+    }
   ]
 };
 
@@ -119,8 +145,8 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="h-full flex flex-col border-l bg-background w-72 md:w-80">
-      <div className="p-2 border-b flex justify-between items-center">
+    <div className="h-[calc(100vh-7.5rem)] flex flex-col border-l bg-background w-72 md:w-80 overflow-hidden">
+      <div className="p-2 border-b flex justify-between items-center shrink-0">
         <h3 className="font-semibold text-sm flex items-center">
           <MessageSquare className="w-3.5 h-3.5 mr-1.5" />
           Chat
@@ -133,8 +159,7 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
               </TooltipTrigger>
               <TooltipContent side="bottom" className="w-80 p-2">
                 <p className="text-xs">
-                  Avatars generated using <a href="https://getavataaars.com/" target="_blank" rel="noopener noreferrer" className="text-primary underline">avataaars.io</a>, 
-                  a free avatar generator created by Pablo Stanley and Fang-Pen Lin.
+                    ...
                 </p>
               </TooltipContent>
             </Tooltip>
@@ -145,8 +170,8 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
         </Button>
       </div>
       
-      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as ChatType)} className="flex-1 flex flex-col">
-        <div className="px-4 pt-2 pb-0">
+      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as ChatType)} className="flex-1 flex flex-col overflow-hidden">
+        <div className="px-4 pt-2 pb-0 shrink-0">
           <TabsList className="grid grid-cols-3 w-full h-9 bg-muted rounded-md">
             <TabsTrigger 
               value="direct" 
@@ -274,9 +299,16 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
                               className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent/50 cursor-pointer transition-colors"
                               onClick={() => selectChat(group.id)}
                             >
-                              <div className="relative flex -space-x-2 h-9 w-9">
+                              <div className="relative flex items-center justify-center h-9 w-9">
                                 {group.members.slice(0, 2).map((member, index) => (
-                                  <Avatar key={member.id} className={`${index === 0 ? 'absolute left-0 bottom-0' : 'absolute right-0 top-0'} h-7 w-7 border-2 border-background`}>
+                                  <Avatar 
+                                    key={member.id} 
+                                    className={`border-2 border-background ${
+                                      index === 0 
+                                        ? 'h-6 w-6 absolute left-0.5 bottom-0.5' 
+                                        : 'h-6 w-6 absolute right-0.5 top-0.5'
+                                    }`}
+                                  >
                                     <div className="flex h-full w-full items-center justify-center bg-muted text-xs overflow-hidden">
                                       {member.avatar ? (
                                         <img src={member.avatar} alt={member.name} className="h-full w-full object-cover" />
@@ -325,6 +357,10 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
                     <div className="space-y-2">
                       <div className="flex items-center justify-between px-2 py-1.5">
                         <p className="text-xs font-medium text-muted-foreground">AI Assistants</p>
+                        <Button variant="ghost" size="icon" className="h-5 w-5 rounded-full">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                          <span className="sr-only">New AI Chat</span>
+                        </Button>
                       </div>
                       {mockChats.ai.length > 0 ? (
                         <div className="space-y-1">
@@ -346,10 +382,10 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between">
                                   <p className="text-sm font-medium truncate">{ai.name}</p>
-                                  <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                                  <p className="text-xs text-muted-foreground">{ai.lastActive}</p>
                                 </div>
                                 <p className="text-xs text-muted-foreground truncate">
-                                  Always available
+                                  {ai.topic}
                                 </p>
                               </div>
                             </div>
@@ -360,10 +396,14 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
                           <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
                             <Bot className="h-6 w-6 text-primary" />
                           </div>
-                          <h3 className="text-sm font-medium">No AI assistants available</h3>
+                          <h3 className="text-sm font-medium">No AI conversations</h3>
                           <p className="text-xs text-muted-foreground mt-1 mb-4">
-                            AI assistants are currently unavailable.
+                            Start a new conversation with an AI assistant.
                           </p>
+                          <Button variant="outline" size="sm" className="gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                            New AI Chat
+                          </Button>
                         </div>
                       )}
                     </div>
@@ -372,8 +412,8 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
               </ScrollArea>
             </TabsContent>
           ) : (
-            <div className="flex flex-col h-full">
-              <div className="py-2 px-3 border-b flex items-center justify-between">
+            <div className="flex flex-col h-full overflow-hidden">
+              <div className="py-2 px-3 border-b flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-2">
                   {activeTab === 'direct' && activeChat && (
                     <>
@@ -397,20 +437,25 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
                   )}
                   {activeTab === 'groups' && activeChat && (
                     <>
-                      <div className="relative h-7 w-7">
-                        <div className="flex -space-x-1 absolute">
-                          {(activeChat as any).members.slice(0, 2).map((member: any, index: number) => (
-                            <Avatar key={member.id} className={`h-5 w-5 border border-background ${index === 0 ? 'absolute left-0 bottom-0' : 'absolute right-0 top-0'}`}>
-                              <div className="flex h-full w-full items-center justify-center bg-muted text-xs overflow-hidden">
-                                {member.avatar ? (
-                                  <img src={member.avatar} alt={member.name} className="h-full w-full object-cover" />
-                                ) : (
-                                  member.name.charAt(0)
-                                )}
-                              </div>
-                            </Avatar>
-                          ))}
-                        </div>
+                      <div className="relative h-7 w-7 flex items-center justify-center">
+                        {(activeChat as any).members.slice(0, 2).map((member: any, index: number) => (
+                          <Avatar 
+                            key={member.id} 
+                            className={`border border-background ${
+                              index === 0 
+                                ? 'h-5 w-5 absolute left-0 bottom-0' 
+                                : 'h-5 w-5 absolute right-0 top-0'
+                            }`}
+                          >
+                            <div className="flex h-full w-full items-center justify-center bg-muted text-xs overflow-hidden">
+                              {member.avatar ? (
+                                <img src={member.avatar} alt={member.name} className="h-full w-full object-cover" />
+                              ) : (
+                                member.name.charAt(0)
+                              )}
+                            </div>
+                          </Avatar>
+                        ))}
                       </div>
                       <div>
                         <p className="text-sm font-medium leading-none">{(activeChat as any).name}</p>
@@ -431,7 +476,7 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
                       </Avatar>
                       <div>
                         <p className="text-sm font-medium leading-none">{(activeChat as any).name}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">AI Assistant</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{(activeChat as any).topic}</p>
                       </div>
                     </>
                   )}
@@ -455,8 +500,8 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
                 </div>
               </div>
             
-              <ScrollArea className="flex-1 p-3">
-                <div className="space-y-4">
+              <ScrollArea className="flex-1 overflow-y-auto">
+                <div className="space-y-4 p-3">
                   {activeChat?.messages.map((message: any) => (
                     <div 
                       key={message.id} 
@@ -504,7 +549,7 @@ export function ChatPanel({ isOpen, onClose }: ChatPanelProps) {
                 </div>
               </ScrollArea>
             
-              <form onSubmit={handleSendMessage} className="p-4 border-t">
+              <form onSubmit={handleSendMessage} className="p-4 border-t shrink-0">
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-1.5">
                     <Button type="button" size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-foreground">
