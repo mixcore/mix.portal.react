@@ -262,3 +262,30 @@
     transform: translateY(0);
   }
 }
+
+/* View-specific styling */
+.editor-view {
+  /* Remove borders for editor views */
+  border-left: none !important;
+}
+
+.editor-view > div {
+  /* Ensure the editor container takes full width and height */
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Canvas editor specific styles */
+[data-view-type="canvas"] {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+/* Workflow editor specific styles */
+[data-view-type="workflow"] {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden;
+}

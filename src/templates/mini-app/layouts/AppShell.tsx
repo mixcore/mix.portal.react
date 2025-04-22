@@ -296,6 +296,7 @@ export function AppShell({
         <MainContent 
           isFluidLayout={isFluidLayout}
           appHeight={appHeight}
+          viewType={activeView}
         >
           {children}
         </MainContent>
