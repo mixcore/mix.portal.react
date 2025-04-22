@@ -51,10 +51,34 @@ type ViewType = 'dashboard' | 'list' | 'detail' | 'settings';
 
 // Sample online users data - in a real app, this would come from a real-time source
 const onlineUsers = [
-  { id: '1', name: 'Alex Smith', avatar: '/avatars/01.png', status: 'active', lastActive: 'now' },
-  { id: '2', name: 'Maria Garcia', avatar: '/avatars/02.png', status: 'active', lastActive: 'now' },
-  { id: '3', name: 'John Doe', avatar: '/avatars/03.png', status: 'active', lastActive: '5m ago' },
-  { id: '4', name: 'Sarah Wilson', avatar: '/avatars/04.png', status: 'idle', lastActive: '15m ago' },
+  { 
+    id: '1', 
+    name: 'Alex Smith', 
+    avatar: 'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortCurly&accessoriesType=Prescription01&hairColor=Black&facialHairType=BeardMedium&facialHairColor=Black&clotheType=ShirtCrewNeck&clotheColor=Blue&eyeType=Happy&eyebrowType=Default&mouthType=Smile&skinColor=Light', 
+    status: 'active', 
+    lastActive: 'now' 
+  },
+  { 
+    id: '2', 
+    name: 'Maria Garcia', 
+    avatar: 'https://avataaars.io/?avatarStyle=Circle&topType=LongHairCurly&accessoriesType=Blank&hairColor=Brown&facialHairType=Blank&clotheType=BlazerSweater&clotheColor=PastelRed&eyeType=Default&eyebrowType=RaisedExcited&mouthType=Smile&skinColor=Tanned', 
+    status: 'active', 
+    lastActive: 'now' 
+  },
+  { 
+    id: '3', 
+    name: 'John Doe', 
+    avatar: 'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairDreads01&accessoriesType=Sunglasses&hairColor=Auburn&facialHairType=MoustacheFancy&facialHairColor=Auburn&clotheType=CollarSweater&clotheColor=Gray&eyeType=Squint&eyebrowType=FlatNatural&mouthType=Default&skinColor=DarkBrown', 
+    status: 'active', 
+    lastActive: '5m ago' 
+  },
+  { 
+    id: '4', 
+    name: 'Sarah Wilson', 
+    avatar: 'https://avataaars.io/?avatarStyle=Circle&topType=LongHairStraight2&accessoriesType=Round&hairColor=Blonde&facialHairType=Blank&clotheType=ShirtVNeck&clotheColor=Pink&eyeType=Default&eyebrowType=Default&mouthType=Twinkle&skinColor=Pale', 
+    status: 'idle', 
+    lastActive: '15m ago' 
+  },
 ];
 
 // Online users avatar group component
@@ -67,8 +91,15 @@ const OnlineUsersGroup = () => {
       <HoverCardTrigger asChild>
         <div className="flex items-center cursor-pointer">
           <div className="flex -space-x-2 overflow-hidden">
-            {displayedUsers.map((user) => (
-              <Avatar key={user.id} className="border-2 border-background h-7 w-7 ring-0">
+            {displayedUsers.map((user, index) => (
+              <Avatar 
+                key={user.id} 
+                className={`border-2 border-background h-7 w-7 ring-0 transition-transform hover:scale-110 duration-200 ${
+                  index === 0 ? 'hover:-translate-y-1' : 
+                  index === 1 ? 'hover:translate-y-1' : 
+                  'hover:-translate-y-1'
+                }`}
+              >
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback className="text-xs">
                   {user.name.split(' ').map(n => n[0]).join('')}
@@ -82,7 +113,7 @@ const OnlineUsersGroup = () => {
             )}
           </div>
           <div className="ml-2 flex items-center text-xs text-muted-foreground">
-            <span className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5"></span>
+            <span className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5 animate-pulse"></span>
             <span className="hidden md:inline-block">{onlineUsers.filter(u => u.status === 'active').length} online</span>
           </div>
         </div>
@@ -91,12 +122,17 @@ const OnlineUsersGroup = () => {
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-semibold">Online Users</h4>
-            <span className="text-xs text-muted-foreground">{onlineUsers.filter(u => u.status === 'active').length} active</span>
+            <div className="flex items-center gap-1">
+              <span className="text-xs text-muted-foreground">{onlineUsers.filter(u => u.status === 'active').length} active</span>
+              <a href="https://getavataaars.com/" target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline ml-2">
+                avataaars.io
+              </a>
+            </div>
           </div>
           <div className="space-y-3">
             {onlineUsers.map((user) => (
-              <div key={user.id} className="flex items-center gap-3">
-                <Avatar className="h-8 w-8">
+              <div key={user.id} className="flex items-center gap-3 hover:bg-accent/50 p-2 rounded-md transition-colors">
+                <Avatar className="h-8 w-8 transition-transform hover:scale-110 duration-200">
                   <AvatarImage src={user.avatar} alt={user.name} />
                   <AvatarFallback>
                     {user.name.split(' ').map(n => n[0]).join('')}
@@ -106,7 +142,7 @@ const OnlineUsersGroup = () => {
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-medium">{user.name}</p>
                     {user.status === 'active' && (
-                      <span className="h-2 w-2 rounded-full bg-green-500"></span>
+                      <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
                     )}
                   </div>
                   <p className="text-xs text-muted-foreground">
@@ -208,6 +244,7 @@ interface MenubarHeaderProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   selectedItemId: string | null;
+  extraActions?: React.ReactNode;
 }
 
 export const MenubarHeader: React.FC<MenubarHeaderProps> = ({
@@ -221,7 +258,8 @@ export const MenubarHeader: React.FC<MenubarHeaderProps> = ({
   copyDeepLink,
   searchQuery,
   setSearchQuery,
-  selectedItemId
+  selectedItemId,
+  extraActions
 }) => (
   <div className="flex items-center px-4 py-2 border-b">
     <div className="flex items-center mr-3">
@@ -322,106 +360,81 @@ export const MenubarHeader: React.FC<MenubarHeaderProps> = ({
       </Menubar>
     </div>
     
-    <div className="flex items-center">
-      <div className="flex items-center space-x-1">
+    <div className="flex items-center ml-auto space-x-2">
+      <CollapsibleSearch 
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />
+      
+      <div className="hidden md:block">
         <OnlineUsersGroup />
-        
-        <CollapsibleSearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-        
-        <div className="flex items-center space-x-1">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9" onClick={toggleContainerClass}>
-                  {isFluidLayout ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">{isFluidLayout ? 'Exit fullscreen' : 'Fullscreen'}</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-9 w-9">
-                <Filter className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end">
-              <DropdownMenuLabel>Filter Options</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <Check className="mr-2 h-4 w-4" />
-                  <span>Active items</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Check className="mr-2 h-4 w-4 opacity-0" />
-                  <span>Draft items</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Check className="mr-2 h-4 w-4 opacity-0" />
-                  <span>Archived items</span>
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <span>Reset filters</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" className="h-9 w-9">
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">Create New</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-9 w-9">
-                      <MoreVertical className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56" align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuGroup>
-                      <DropdownMenuItem>
-                        <Eye className="mr-2 h-4 w-4" />
-                        <span>Preview App</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Copy className="mr-2 h-4 w-4" />
-                        <span>Duplicate</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuGroup>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuGroup>
-                      <DropdownMenuItem>
-                        <Plus className="mr-2 h-4 w-4" />
-                        <span>Create New Item</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Plus className="mr-2 h-4 w-4" />
-                        <span>Import Items...</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuGroup>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">More Options</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
       </div>
+      
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button 
+              variant="ghost" 
+              size="icon"
+              className="h-9 w-9" 
+              onClick={toggleContainerClass}
+            >
+              {isFluidLayout 
+                ? <Minimize2 className="h-4 w-4" /> 
+                : <Maximize2 className="h-4 w-4" />}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            {isFluidLayout ? 'Standard view' : 'Full width view'}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button 
+              variant="ghost" 
+              size="icon"
+              className="h-9 w-9" 
+              onClick={copyDeepLink}
+            >
+              <Copy className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            Copy link to this view
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      
+      {/* Extra actions if provided */}
+      {extraActions}
+      
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon" className="h-9 w-9">
+            <MoreVertical className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem onClick={() => console.log('Refresh')}>
+              Refresh data
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => console.log('Export')}>
+              Export as CSV
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => handleViewChange('settings')}>
+            <Settings className="mr-2 h-4 w-4" />
+            Settings
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   </div>
 );

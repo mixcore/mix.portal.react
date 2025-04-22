@@ -10,8 +10,10 @@ import {
   MenubarHeader, 
   Sidebar, 
   MainContent,
+  ChatPanel,
   ViewType
 } from './components';
+import { MessageSquare } from 'lucide-react';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -31,6 +33,7 @@ export function AppShell({
   // State hooks
   const isFluidLayout = useContainerStatus();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [chatPanelOpen, setChatPanelOpen] = useState(false);
   const [appHeight, setAppHeight] = useState(0);
   const [shareTooltip, setShareTooltip] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -126,8 +129,9 @@ export function AppShell({
     if (dashboardContent) {
       if (isFluidLayout) {
         // Switch to contained view
-        dashboardContent.classList.add('container', 'mx-auto', 'max-w-7xl', 'p-4', 'md:p-6');
+        // dashboardContent.classList.add('container', 'mx-auto', 'max-w-7xl', 'p-4', 'md:p-6');
         if (mainContent) {
+          mainContent.classList.add('container', 'mx-auto', 'max-w-7xl', 'p-4', 'md:p-6');
           mainContent.classList.add('overflow-auto');
           mainContent.classList.remove('overflow-hidden');
           mainContent.setAttribute('data-app-view', 'default');
@@ -250,6 +254,16 @@ export function AppShell({
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             selectedItemId={selectedItemId || null}
+            extraActions={
+              <button
+                onClick={() => setChatPanelOpen(!chatPanelOpen)}
+                className={`relative h-9 w-9 rounded-md p-2 flex items-center justify-center ${chatPanelOpen ? 'bg-accent' : 'hover:bg-accent/50'}`}
+                title="Chat"
+              >
+                <MessageSquare className="h-5 w-5" />
+                <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-green-500"></span>
+              </button>
+            }
           />
         </div>
       </header>
@@ -271,6 +285,12 @@ export function AppShell({
         >
           {children}
         </MainContent>
+
+        {/* Chat Panel */}
+        <ChatPanel 
+          isOpen={chatPanelOpen} 
+          onClose={() => setChatPanelOpen(false)} 
+        />
       </div>
     </div>
   );
