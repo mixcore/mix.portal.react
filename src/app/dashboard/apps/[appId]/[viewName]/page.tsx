@@ -9,15 +9,20 @@ interface PageParams {
   searchParams: Record<string, string | string[]>;
 }
 
-export default function AppViewPage({ params, searchParams }: PageParams) {
-  const { appId, viewName } = params;
+export default async function AppViewPage({ params, searchParams }: PageParams) {
+  // Await params before destructuring
+  const appId = await params.appId;
+  const viewName = await params.viewName;
+  
+  // Await searchParams before processing
+  const searchParamsEntries = Object.entries(await searchParams);
   
   // Combine route params with search params
   const appParams = {
     view: viewName,
     ...Object.fromEntries(
       // Convert array values to string by taking first item
-      Object.entries(searchParams).map(([key, value]) => 
+      searchParamsEntries.map(([key, value]) => 
         [key, Array.isArray(value) ? value[0] : value]
       )
     )
