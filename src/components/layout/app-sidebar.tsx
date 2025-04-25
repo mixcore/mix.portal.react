@@ -417,7 +417,7 @@ export default function AppSidebar() {
   return (
     <Sidebar collapsible='icon'>
       <SidebarHeader className='pb-0'>
-        <div className='flex items-center gap-2 px-3 py-2'>
+        <div className='flex items-center gap-2 p-2'>
           <TooltipProvider delayDuration={200}>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -542,7 +542,7 @@ export default function AppSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className='px-3 py-2'>
+      <SidebarContent className='p-2'>
         {!isCollapsed && activeContext && (
           <div className="flex items-center space-x-2 mb-4 border-b">
           </div>
