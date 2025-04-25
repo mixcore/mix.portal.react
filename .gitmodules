@@ -1,0 +1,3 @@
+[submodule "src/app/apps/mini-app"]
+	path = src/app/apps/mini-app
+	url = https://github.com/mixcore/mini-app-template
