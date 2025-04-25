@@ -1,0 +1,115 @@
+{
+  "appId": "template",
+  "version": "1.0.0",
+  "displayName": "Mini App Template",
+  "description": "Template for creating mini-apps in Mixcore",
+  "category": "productivity",
+  "icon": "layout",
+  "author": {
+    "name": "Mixcore Team",
+    "email": "support@mixcore.org",
+    "url": "https://mixcore.org"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mixcore/mix.portal.react"
+  },
+  "entryPoint": "index.tsx",
+  "init": {
+    "initOnInstall": true,
+    "schemaFile": "./mixdb.schema.json",
+    "demoDataFile": "./demo-data.json",
+    "createDefaultPermissions": true
+  },
+  "mainStyles": "app-globals.css",
+  "navigation": {
+    "position": "main",
+    "priority": 5,
+    "menuItem": {
+      "title": "Template",
+      "icon": "layout",
+      "url": "/dashboard/apps/template",
+      "badge": null,
+      "contextId": "template"
+    }
+  },
+  "permissions": [
+    {
+      "name": "template.view",
+      "displayName": "View Template",
+      "description": "Can view template listings and details"
+    },
+    {
+      "name": "template.create",
+      "displayName": "Create Template Items",
+      "description": "Can create new template items"
+    },
+    {
+      "name": "template.edit",
+      "displayName": "Edit Template Items",
+      "description": "Can edit existing template items"
+    },
+    {
+      "name": "template.delete",
+      "displayName": "Delete Template Items",
+      "description": "Can delete template items"
+    }
+  ],
+  "settings": {
+    "enableFullScreenByDefault": false,
+    "enableNotifications": true,
+    "showCompletedItems": true,
+    "defaultSortField": "createdAt",
+    "defaultSortDirection": "desc"
+  },
+  "integrations": {
+    "cms": {
+      "enabled": true,
+      "createContentTypes": true
+    },
+    "mixdb": {
+      "enabled": true
+    },
+    "authentication": {
+      "enabled": true,
+      "requiredRoles": ["Administrator", "Editor", "Member"]
+    },
+    "notifications": {
+      "enabled": true,
+      "supportedChannels": ["inApp", "email"]
+    }
+  },
+  "ui": {
+    "theme": {
+      "useSystemTheme": true,
+      "colors": {
+        "primary": "blue",
+        "secondary": "gray",
+        "accent": "purple",
+        "danger": "red",
+        "success": "green",
+        "warning": "amber"
+      }
+    },
+    "layout": {
+      "fluid": true,
+      "container": "max-w-7xl",
+      "padding": "p-4 md:p-6"
+    },
+    "animations": {
+      "enabled": true,
+      "transition": "ease-in-out"
+    }
+  },
+  "storage": {
+    "local": {
+      "enabled": true,
+      "prefix": "mixcore_template_"
+    },
+    "persistent": {
+      "enabled": true,
+      "schema": "./mixdb.schema.json"
+    }
+  }
+} 

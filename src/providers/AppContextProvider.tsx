@@ -31,7 +31,7 @@ export function AppContextProvider({ children }: { children: ReactNode }) {
   
   // Update active app based on URL when navigating
   useEffect(() => {
-    if (pathname.startsWith('/dashboard/apps')) {
+    if (pathname.startsWith('/apps')) {
       const appParam = searchParams.get('app');
       if (appParam && ['cms', 'mixdb', 'projects'].includes(appParam)) {
         setActiveAppId(appParam as AppType);

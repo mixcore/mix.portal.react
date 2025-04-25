@@ -1,0 +1,197 @@
+/*
+  IoT Platform Specific Styles
+  This file contains styles specific to the IoT Platform app.
+  These styles are loaded only when the app is active.
+*/
+
+/* App-specific variable overrides */
+.iot-app-active {
+  --app-primary: 221 83% 53%; /* blue-500 */
+  --app-secondary: 215 20% 65%; /* gray-400 */
+  --app-accent: 226 70% 55%; /* indigo-500 */
+  --app-background: 210 20% 98%; /* light gray */
+}
+
+.dark .iot-app-active {
+  --app-primary: 217 91% 60%; /* blue-500 in dark mode */
+  --app-secondary: 215 16% 47%; /* gray-400 in dark mode */
+  --app-accent: 226 70% 40%; /* indigo-500 in dark mode */
+  --app-background: 222 47% 11%; /* dark gray */
+}
+
+/* Full screen mode for IoT Platform */
+body.iot-app-active {
+  background-color: hsl(var(--app-background));
+}
+
+/* Status indicator variants */
+.iot-status-indicator {
+  display: inline-flex;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 9999px;
+}
+
+.iot-status-indicator-online {
+  background-color: hsl(142 72% 29%); /* green-700 */
+  box-shadow: 0 0 0 2px hsl(141 78% 87% / 0.5); /* green-100 */
+}
+
+.iot-status-indicator-offline {
+  background-color: hsl(0 72% 51%); /* red-500 */
+  box-shadow: 0 0 0 2px hsl(0 86% 92% / 0.5); /* red-100 */
+}
+
+.iot-status-indicator-maintenance {
+  background-color: hsl(45 93% 47%); /* yellow-500 */
+  box-shadow: 0 0 0 2px hsl(60 94% 86% / 0.5); /* yellow-100 */
+}
+
+.iot-status-indicator-error {
+  background-color: hsl(0 72% 51%); /* red-500 */
+  box-shadow: 0 0 0 2px hsl(0 86% 92% / 0.5); /* red-100 */
+  animation: blink 1s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Device metrics indicator colors */
+.iot-metric-low {
+  color: hsl(142 72% 29%); /* green-700 */
+}
+
+.iot-metric-medium {
+  color: hsl(45 93% 47%); /* yellow-500 */
+}
+
+.iot-metric-high {
+  color: hsl(0 72% 51%); /* red-500 */
+}
+
+/* Device card styles */
+.iot-device-card {
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.iot-device-card-online {
+  border-left-color: hsl(142 72% 29%); /* green-700 */
+}
+
+.iot-device-card-offline {
+  border-left-color: hsl(215 20% 65%); /* gray-400 */
+}
+
+.iot-device-card-maintenance {
+  border-left-color: hsl(45 93% 47%); /* yellow-500 */
+}
+
+.iot-device-card-error {
+  border-left-color: hsl(0 72% 51%); /* red-500 */
+}
+
+.iot-device-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+/* Sensor data visualizations */
+.iot-chart-container {
+  width: 100%;
+  height: 100%;
+  min-height: 250px;
+}
+
+.iot-chart-tooltip {
+  background-color: hsl(var(--background));
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  z-index: 50;
+}
+
+/* Dashboard grid layout */
+.iot-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .iot-dashboard-grid {
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+/* Automation rule styles */
+.iot-automation-rule {
+  border-left: 4px solid hsl(226 70% 55%); /* indigo-500 */
+  transition: all 0.2s ease;
+}
+
+.iot-automation-rule-disabled {
+  border-left-color: hsl(215 20% 65%); /* gray-400 */
+  opacity: 0.7;
+}
+
+/* Map element for device location visualization */
+.iot-map-container {
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  background-color: hsl(var(--muted));
+  border-radius: 0.375rem;
+  overflow: hidden;
+}
+
+/* Fluid container for IoT app */
+.iot-container {
+  max-width: var(--app-max-width, 100%);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 1.5rem;
+}
+
+/* Floating action button for device management */
+.iot-floating-action-button {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 50;
+}
+
+/* Ensure IoT Platform app properly handles panel resizing */
+@media (max-width: 768px) {
+  .iot-responsive-panel {
+    flex-direction: column;
+  }
+  
+  .iot-responsive-panel > div {
+    width: 100%;
+  }
+}
+
+/* Ensure navigation elements are clickable */
+.iot-app-active button,
+.iot-app-active [role="button"],
+.iot-app-active a {
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+/* Fix for breadcrumb links */
+.iot-app-active .breadcrumb-link {
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+/* Ensure navigation buttons are properly clickable */
+.iot-app-active header button {
+  z-index: 20;
+} 

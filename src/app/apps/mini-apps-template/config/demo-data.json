@@ -1,0 +1,61 @@
+{
+  "data": {
+    "template_items": [
+      {
+        "id": "item-1",
+        "title": "First Demo Item",
+        "description": "This is the first demonstration item for the mini-app template",
+        "status": "Active",
+        "createdAt": "2023-01-01T00:00:00Z",
+        "updatedAt": "2023-01-01T00:00:00Z",
+        "createdBy": "admin",
+        "tags": ["demo", "first"],
+        "priority": 1
+      },
+      {
+        "id": "item-2",
+        "title": "Second Demo Item",
+        "description": "This is the second demonstration item for the mini-app template",
+        "status": "Active",
+        "createdAt": "2023-01-02T00:00:00Z",
+        "updatedAt": "2023-01-02T00:00:00Z",
+        "createdBy": "admin",
+        "tags": ["demo", "second"],
+        "priority": 2
+      },
+      {
+        "id": "item-3",
+        "title": "Draft Item",
+        "description": "This is a draft item for the mini-app template",
+        "status": "Draft",
+        "createdAt": "2023-01-03T00:00:00Z",
+        "updatedAt": "2023-01-03T00:00:00Z",
+        "createdBy": "admin",
+        "tags": ["demo", "draft"],
+        "priority": 3
+      },
+      {
+        "id": "item-4",
+        "title": "Completed Item",
+        "description": "This is a completed item for the mini-app template",
+        "status": "Completed",
+        "createdAt": "2023-01-04T00:00:00Z",
+        "updatedAt": "2023-01-04T00:00:00Z",
+        "createdBy": "admin",
+        "tags": ["demo", "completed"],
+        "priority": 4
+      },
+      {
+        "id": "item-5",
+        "title": "Archived Item",
+        "description": "This is an archived item for the mini-app template",
+        "status": "Archived",
+        "createdAt": "2023-01-05T00:00:00Z",
+        "updatedAt": "2023-01-05T00:00:00Z",
+        "createdBy": "admin",
+        "tags": ["demo", "archived"],
+        "priority": 5
+      }
+    ]
+  }
+} 

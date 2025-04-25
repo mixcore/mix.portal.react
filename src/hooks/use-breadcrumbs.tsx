@@ -25,6 +25,18 @@ const languageToCountry: Record<string, string> = {
   'zh-cn': 'China'
 };
 
+// App name mapping
+const appNameMapping: Record<string, string> = {
+  cms: 'Content Management',
+  mixdb: 'MixDB',
+  projects: 'Projects',
+  workflow: 'Workflow',
+  blogs: 'Blogs',
+  'mini-app': 'Mini App',
+  website: 'Website',
+  automation: 'Automation'
+};
+
 // This allows to add custom title as well
 const routeMapping: Record<string, BreadcrumbItem[]> = {
   '/dashboard': [{ title: 'Dashboard', link: '/dashboard' }],
@@ -36,7 +48,7 @@ const routeMapping: Record<string, BreadcrumbItem[]> = {
     { title: 'Dashboard', link: '/dashboard' },
     { title: 'Product', link: '/dashboard/product' }
   ]
-  // Add more custom mappings as needed
+  // Remove /apps mapping since we want apps to be the root
 };
 
 export function useBreadcrumbs() {
@@ -76,6 +88,38 @@ export function useBreadcrumbs() {
     // Check if we have a custom mapping for this exact path
     if (routeMapping[pathname]) {
       return routeMapping[pathname];
+    }
+
+    // Handle apps specially: treat app name as root item
+    if (pathname.startsWith('/apps/')) {
+      const segments = pathname.split('/').filter(Boolean);
+      
+      // Check if we have at least 'apps' and an appId
+      if (segments.length >= 2) {
+        const appId = segments[1];
+        const breadcrumbs: BreadcrumbItem[] = [];
+        
+        // Use the app name mapping or capitalize the app ID as the root breadcrumb
+        const appName = appNameMapping[appId] || appId.charAt(0).toUpperCase() + appId.slice(1);
+        breadcrumbs.push({
+          title: appName,
+          link: `/apps/${appId}`
+        });
+        
+        // Add additional path segments after the app ID
+        for (let i = 2; i < segments.length; i++) {
+          const segment = segments[i];
+          const path = `/${segments.slice(0, i + 1).join('/')}`;
+          
+          const title = segment.charAt(0).toUpperCase() + segment.slice(1);
+          breadcrumbs.push({
+            title,
+            link: path
+          });
+        }
+        
+        return breadcrumbs;
+      }
     }
 
     // If no exact match, fall back to generating breadcrumbs from the path

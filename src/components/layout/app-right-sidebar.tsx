@@ -14,22 +14,22 @@ export default function MicroAppsIconBar() {
     {
       name: 'Chat',
       icon: Icons.help,
-      href: '/dashboard/apps/chat',
+      href: '/apps/chat',
     },
     {
       name: 'Tasks',
       icon: Icons.kanban,
-      href: '/dashboard/apps/tasks',
+      href: '/apps/tasks',
     },
     {
       name: 'Notes',
       icon: Icons.fileText,
-      href: '/dashboard/apps/notes',
+      href: '/apps/notes',
     },
     {
       name: 'Database',
       icon: Icons.database,
-      href: '/dashboard/apps/mixdb',
+      href: '/apps/mixdb',
     },
   ];
 

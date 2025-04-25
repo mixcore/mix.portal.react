@@ -1,0 +1,19 @@
+{
+  "name": "Tenants",
+  "version": "1.0.0",
+  "description": "Mixcore Tenants Management Application",
+  "apiEndpoints": {
+    "base": "/api/v2/rest/mix-portal",
+    "tenants": "/api/v2/rest/mix-portal/mix-tenant",
+    "domains": "/api/v2/rest/mix-portal/mix-domain"
+  },
+  "defaultQueryParams": {
+    "pageSize": 20,
+    "status": "Published",
+    "direction": "Desc",
+    "compareOperator": "Like",
+    "conjunction": "Or"
+  },
+  "tenantColumns": ["id", "displayName", "systemName", "primaryDomain", "createdDateTime", "createdBy"],
+  "domainColumns": ["id", "displayName", "host", "createdDateTime", "createdBy"]
+} 

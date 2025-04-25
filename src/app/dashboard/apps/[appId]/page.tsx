@@ -1,24 +1,31 @@
-import React from 'react';
-import ClientAppLoader from '@/components/app/ClientAppLoader';
+'use client';
 
-export default function AppPage({ params }: { params: { appId: string } }) {
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Skeleton } from '@/components/ui/skeleton';
+
+export default function AppRedirectPage({ params }: { params: { appId: string } }) {
   const { appId } = params;
+  const router = useRouter();
   
-  // Map of app IDs to human-readable names
-  const appNames: Record<string, string> = {
-    cms: 'Content Management',
-    mixdb: 'MixDB',
-    projects: 'Projects',
-    workflow: 'Workflow Automation',
-    blogs: 'Blogs',
-    'mini-app': 'Mini App',
-    website: 'Website Manager',
-    automation: 'Automation'
-  };
+  // Redirect to the new URL structure
+  useEffect(() => {
+    const newUrl = `/apps/${appId}/dashboard`;
+    router.replace(newUrl);
+  }, [appId, router]);
   
+  // Show loading indicator while redirecting
   return (
-    <main className="app-container">
-      <ClientAppLoader appId={appId} />
+    <main className="app-container flex items-center justify-center">
+      <div className="space-y-4 w-full max-w-md">
+        <Skeleton className="h-8 w-64 mx-auto" />
+        <Skeleton className="h-32 w-full" />
+        <div className="grid grid-cols-3 gap-4">
+          <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-24 w-full" />
+        </div>
+      </div>
     </main>
   );
 }

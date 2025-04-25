@@ -42,9 +42,9 @@ export function ContextSelector({ className }: { className?: string }) {
     const selectedContext = availableContexts.find(c => c.id === value);
     
     // If this context has an associated app, and we're in the apps section
-    if (selectedContext?.appId && pathname.includes('/dashboard/apps')) {
+    if (selectedContext?.appId && pathname.includes('/apps')) {
       // Build new URL with the app parameter
-      let newPath = `/dashboard/apps/${selectedContext.appId}`;
+      let newPath = `/apps/${selectedContext.appId}`;
       
       // If we have a specific view in the current URL, preserve it
       const pathParts = pathname.split('/');

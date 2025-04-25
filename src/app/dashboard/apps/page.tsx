@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { PageLayout } from '@/components/layouts/PageLayout';
 import { Skeleton } from '@/components/ui/skeleton';
 
-export default function AppsPage() {
+export default function AppsRedirectPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const appId = searchParams.get('app') || 'cms'; // Default to CMS app if not specified
@@ -15,8 +15,8 @@ export default function AppsPage() {
     // Get the view parameter if it exists
     const view = searchParams.get('view') || 'dashboard';
     
-    // Build the new URL with the pattern /dashboard/apps/[appId]/[viewName]
-    let newUrl = `/dashboard/apps/${appId}/${view}`;
+    // Build the new URL with the pattern /apps/[appId]/[viewName]
+    let newUrl = `/apps/${appId}/${view}`;
     
     // Copy any additional query parameters
     const newParams = new URLSearchParams();

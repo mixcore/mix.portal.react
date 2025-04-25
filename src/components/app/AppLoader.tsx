@@ -5,14 +5,14 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 // App registry with dynamic imports
 const APPS = {
-  cms: () => import('@/app/dashboard/apps/cms'),
-  mixdb: () => import('@/app/dashboard/apps/mixdb'),
-  projects: () => import('@/app/dashboard/apps/projects'),
-  workflow: () => import('@/app/dashboard/apps/workflow'),
-  blogs: () => import('@/app/dashboard/apps/blogs'),
-  'mini-app': () => import('@/app/dashboard/apps/mini-app'),
-  website: () => import('@/app/dashboard/apps/website/components/index.js'),
-  automation: () => import('@/app/dashboard/apps/automation')
+  cms: () => import('@/app/apps/cms'),
+  mixdb: () => import('@/app/apps/mixdb'),
+  projects: () => import('@/app/apps/projects'),
+  workflow: () => import('@/app/apps/workflow'),
+  blogs: () => import('@/app/apps/blogs'),
+  'mini-app': () => import('@/app/apps/mini-app'),
+  website: () => import('@/app/apps/website/components/index.js'),
+  automation: () => import('@/app/apps/automation')
   // Additional apps can be registered here
 };
 

@@ -1,0 +1,89 @@
+/* 
+  Tenants App Global Styles
+  These styles are scoped to the Tenants micro-app only 
+*/
+
+.tenants-container {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.tenant-card {
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.tenant-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-color: hsl(var(--primary) / 0.5);
+}
+
+.tenant-card.active {
+  border-color: hsl(var(--primary));
+  background-color: hsl(var(--primary) / 0.05);
+}
+
+.tenant-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid hsl(var(--border));
+  margin-bottom: 1.5rem;
+}
+
+.tenant-domain-badge {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  background-color: hsl(var(--muted));
+  color: hsl(var(--muted-foreground));
+}
+
+.domain-item {
+  border-bottom: 1px solid hsl(var(--border));
+  padding: 0.75rem 0;
+}
+
+.domain-item:last-child {
+  border-bottom: none;
+}
+
+/* Status indicator styles */
+.status-indicator {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+.status-indicator.active {
+  background-color: hsl(var(--success));
+}
+
+.status-indicator.inactive {
+  background-color: hsl(var(--muted));
+}
+
+.status-indicator.suspended {
+  background-color: hsl(var(--destructive));
+}
+
+/* Animation for loading states */
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+.loading-pulse {
+  animation: pulse 1.5s infinite ease-in-out;
+} 

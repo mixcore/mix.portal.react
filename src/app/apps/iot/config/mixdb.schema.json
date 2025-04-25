@@ -1,0 +1,319 @@
+{
+  "collections": [
+    {
+      "name": "iot_devices",
+      "displayName": "IoT Devices",
+      "description": "Connected IoT devices",
+      "fields": [
+        {
+          "name": "name",
+          "displayName": "Device Name",
+          "dataType": "string",
+          "required": true,
+          "searchable": true,
+          "sortable": true
+        },
+        {
+          "name": "deviceId",
+          "displayName": "Device ID",
+          "dataType": "string",
+          "required": true,
+          "unique": true,
+          "searchable": true,
+          "sortable": true
+        },
+        {
+          "name": "type",
+          "displayName": "Device Type",
+          "dataType": "string",
+          "required": true,
+          "searchable": true,
+          "sortable": true,
+          "enumValues": ["sensor", "actuator", "gateway", "camera", "other"]
+        },
+        {
+          "name": "status",
+          "displayName": "Status",
+          "dataType": "string",
+          "required": true,
+          "searchable": true,
+          "sortable": true,
+          "enumValues": ["online", "offline", "maintenance", "error"]
+        },
+        {
+          "name": "location",
+          "displayName": "Location",
+          "dataType": "object",
+          "properties": [
+            {
+              "name": "area",
+              "displayName": "Area",
+              "dataType": "string",
+              "searchable": true,
+              "sortable": true
+            },
+            {
+              "name": "latitude",
+              "displayName": "Latitude",
+              "dataType": "number"
+            },
+            {
+              "name": "longitude",
+              "displayName": "Longitude",
+              "dataType": "number"
+            }
+          ]
+        },
+        {
+          "name": "ipAddress",
+          "displayName": "IP Address",
+          "dataType": "string",
+          "searchable": true
+        },
+        {
+          "name": "macAddress",
+          "displayName": "MAC Address",
+          "dataType": "string",
+          "searchable": true
+        },
+        {
+          "name": "firmware",
+          "displayName": "Firmware Version",
+          "dataType": "string",
+          "searchable": true,
+          "sortable": true
+        },
+        {
+          "name": "lastSeen",
+          "displayName": "Last Seen",
+          "dataType": "datetime",
+          "sortable": true
+        },
+        {
+          "name": "tags",
+          "displayName": "Tags",
+          "dataType": "array",
+          "arrayType": "string",
+          "searchable": true
+        },
+        {
+          "name": "createdDate",
+          "displayName": "Created Date",
+          "dataType": "datetime",
+          "required": true,
+          "defaultValue": "now()",
+          "sortable": true
+        },
+        {
+          "name": "modifiedDate",
+          "displayName": "Modified Date",
+          "dataType": "datetime",
+          "defaultValue": "now()",
+          "sortable": true
+        }
+      ],
+      "indexes": [
+        {
+          "name": "device_id_idx",
+          "fields": ["deviceId"],
+          "isUnique": true
+        },
+        {
+          "name": "status_idx",
+          "fields": ["status"]
+        },
+        {
+          "name": "device_type_idx",
+          "fields": ["type"]
+        }
+      ]
+    },
+    {
+      "name": "iot_sensor_data",
+      "displayName": "Sensor Data",
+      "description": "Data readings from IoT sensors",
+      "fields": [
+        {
+          "name": "deviceId",
+          "displayName": "Device ID",
+          "dataType": "string",
+          "required": true,
+          "searchable": true,
+          "sortable": true,
+          "foreignKey": {
+            "collection": "iot_devices",
+            "field": "deviceId"
+          }
+        },
+        {
+          "name": "timestamp",
+          "displayName": "Timestamp",
+          "dataType": "datetime",
+          "required": true,
+          "sortable": true
+        },
+        {
+          "name": "sensorType",
+          "displayName": "Sensor Type",
+          "dataType": "string",
+          "required": true,
+          "searchable": true,
+          "sortable": true,
+          "enumValues": ["temperature", "humidity", "pressure", "motion", "light", "sound", "voltage", "current", "other"]
+        },
+        {
+          "name": "value",
+          "displayName": "Value",
+          "dataType": "number",
+          "required": true,
+          "sortable": true
+        },
+        {
+          "name": "unit",
+          "displayName": "Unit",
+          "dataType": "string",
+          "required": true,
+          "enumValues": ["C", "F", "%", "hPa", "lux", "dB", "V", "A", "other"]
+        }
+      ],
+      "indexes": [
+        {
+          "name": "device_timestamp_idx",
+          "fields": ["deviceId", "timestamp"]
+        },
+        {
+          "name": "sensor_type_idx",
+          "fields": ["sensorType"]
+        }
+      ]
+    },
+    {
+      "name": "iot_automations",
+      "displayName": "Automations",
+      "description": "Automation rules for IoT devices",
+      "fields": [
+        {
+          "name": "name",
+          "displayName": "Rule Name",
+          "dataType": "string",
+          "required": true,
+          "searchable": true,
+          "sortable": true
+        },
+        {
+          "name": "description",
+          "displayName": "Description",
+          "dataType": "string",
+          "searchable": true
+        },
+        {
+          "name": "triggerType",
+          "displayName": "Trigger Type",
+          "dataType": "string",
+          "required": true,
+          "searchable": true,
+          "sortable": true,
+          "enumValues": ["threshold", "schedule", "event", "manual"]
+        },
+        {
+          "name": "triggerCondition",
+          "displayName": "Trigger Condition",
+          "dataType": "object",
+          "properties": [
+            {
+              "name": "deviceId",
+              "displayName": "Device ID",
+              "dataType": "string",
+              "searchable": true
+            },
+            {
+              "name": "sensorType",
+              "displayName": "Sensor Type",
+              "dataType": "string",
+              "searchable": true
+            },
+            {
+              "name": "operator",
+              "displayName": "Operator",
+              "dataType": "string",
+              "enumValues": [">", "<", ">=", "<=", "==", "!="]
+            },
+            {
+              "name": "value",
+              "displayName": "Value",
+              "dataType": "number"
+            },
+            {
+              "name": "schedule",
+              "displayName": "Schedule",
+              "dataType": "string"
+            }
+          ]
+        },
+        {
+          "name": "actions",
+          "displayName": "Actions",
+          "dataType": "array",
+          "arrayType": "object",
+          "properties": [
+            {
+              "name": "actionType",
+              "displayName": "Action Type",
+              "dataType": "string",
+              "required": true,
+              "enumValues": ["control", "notification", "data", "integration"]
+            },
+            {
+              "name": "targetDeviceId",
+              "displayName": "Target Device ID",
+              "dataType": "string"
+            },
+            {
+              "name": "command",
+              "displayName": "Command",
+              "dataType": "string"
+            },
+            {
+              "name": "parameters",
+              "displayName": "Parameters",
+              "dataType": "object"
+            }
+          ]
+        },
+        {
+          "name": "isEnabled",
+          "displayName": "Enabled",
+          "dataType": "boolean",
+          "required": true,
+          "defaultValue": true,
+          "sortable": true
+        },
+        {
+          "name": "createdDate",
+          "displayName": "Created Date",
+          "dataType": "datetime",
+          "required": true,
+          "defaultValue": "now()",
+          "sortable": true
+        },
+        {
+          "name": "modifiedDate",
+          "displayName": "Modified Date",
+          "dataType": "datetime",
+          "defaultValue": "now()",
+          "sortable": true
+        }
+      ],
+      "indexes": [
+        {
+          "name": "trigger_type_idx",
+          "fields": ["triggerType"]
+        },
+        {
+          "name": "enabled_idx",
+          "fields": ["isEnabled"]
+        }
+      ]
+    }
+  ]
+} 
